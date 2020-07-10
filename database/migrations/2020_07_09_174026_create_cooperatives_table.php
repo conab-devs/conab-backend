@@ -18,8 +18,7 @@ class CreateCooperativesTable extends Migration
             $table->string('name')->nullable(false);
             $table->string('dap')->unique()->nullable(false);
             $table->foreignId('addresses_id')
-                ->constrained()
-                ->onDelete('cascade');
+                ->constrained();
             $table->timestamps();
         });
     }

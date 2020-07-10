@@ -17,7 +17,9 @@ class CreateDocumentsTable extends Migration
             $table->id();
             $table->string('name')->nullable(false);
             $table->string('path')->unique()->nullable(false);
-            $table->foreignId('cooperative_id')->constrained();
+            $table->foreignId('cooperative_id')
+                ->constrained()
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

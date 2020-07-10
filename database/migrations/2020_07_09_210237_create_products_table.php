@@ -20,7 +20,9 @@ class CreateProductsTable extends Migration
             $table->double('price')->nullable(false);
             $table->string('name')->nullable(false);
             $table->text('negociation_term')->nullable();
-            $table->foreignId('cooperative_id')->constrained();
+            $table->foreignId('cooperative_id')
+                ->constrained()
+                ->onDelete('cascade');
             $table->foreignId('category_id')->constrained();
             $table->timestamps();
         });

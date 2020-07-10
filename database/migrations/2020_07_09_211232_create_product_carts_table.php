@@ -18,8 +18,8 @@ class CreateProductCartsTable extends Migration
             $table->integer('amount')->default(0);
             $table->double('price')->nullable(false);
             $table->dateTime('delivered_at')->nullable();
-            $table->foreignId('product_id')->constrained();
-            $table->foreignId('cart_id')->constrained();
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('cart_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
