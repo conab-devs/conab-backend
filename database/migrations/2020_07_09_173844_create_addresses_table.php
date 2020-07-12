@@ -18,7 +18,7 @@ class CreateAddressesTable extends Migration
             $table->string('street')->nullable(false);
             $table->string('neighborhood')->nullable(false);
             $table->string('city')->nullable(false);
-            $table->tinyInteger('number')->nullable(false);
+            $table->integer('number')->nullable(false);
             $table->timestamps();
         });
     }
