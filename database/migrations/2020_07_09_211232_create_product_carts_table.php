@@ -15,8 +15,8 @@ class CreateProductCartsTable extends Migration
     {
         Schema::create('product_carts', function (Blueprint $table) {
             $table->id();
-            $table->double('amount')->default(0.0);
-            $table->double('price')->nullable(false);
+            $table->decimal('amount', 8, 2)->default(0);
+            $table->decimal('price', 8, 2)->nullable(false);
             $table->dateTime('delivered_at')->nullable();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->foreignId('cart_id')->constrained()->onDelete('cascade');

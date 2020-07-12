@@ -15,9 +15,9 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->integer('estimated_delivery_time')->default(0);
+            $table->dateTime('estimated_delivery_time')->default(0);
             $table->string('photo_path')->unique()->nullable(false);
-            $table->double('price')->nullable(false);
+            $table->decimal('price', 8, 2)->nullable(false);
             $table->string('name')->nullable(false);
             $table->foreignId('cooperative_id')
                 ->constrained()
