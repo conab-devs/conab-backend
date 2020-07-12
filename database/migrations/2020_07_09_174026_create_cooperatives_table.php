@@ -16,7 +16,7 @@ class CreateCooperativesTable extends Migration
         Schema::create('cooperatives', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable(false);
-            $table->string('dap')->unique()->nullable(false);
+            $table->string('dap_path')->unique()->nullable(false);
             $table->foreignId('addresses_id')
                 ->constrained();
             $table->timestamps();
