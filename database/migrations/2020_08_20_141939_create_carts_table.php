@@ -15,10 +15,10 @@ class CreateCartsTable extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
-            $table->decimal('total_price', 8, 2)->nullable()->default(0.0);
+            $table->decimal('total_price', 8, 2)->default(0.0);
             $table->dateTime('closure')->nullable();
-            $table->boolean('is_closed')->nullable()->default(false);
-            $table->foreignId('user_id')->constrained()->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->boolean('closed_at')->default(false);
+            $table->foreignId('user_id')->constrained()->onDelete('CASCADE');
             $table->timestamps();
         });
     }

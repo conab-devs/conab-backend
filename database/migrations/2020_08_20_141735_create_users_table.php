@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('cpf')->unique();
             $table->enum('user_type', ['CUSTOMER', 'ADMIN_CONAB', 'ADMIN_COOP'])->default('CUSTOMER');
-            $table->foreignId('cooperative_id')->constrained()->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreignId('cooperative_id')->nullable()->constrained()->onDelete('CASCADE');
             $table->timestamps();
         });
     }

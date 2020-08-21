@@ -15,12 +15,12 @@ class CreateProductCartsTable extends Migration
     {
         Schema::create('product_carts', function (Blueprint $table) {
             $table->id();
-            $table->decimal('amount', 8, 2)->nullable()->default(0.0);
-            $table->decimal('price', 8, 2)->nullable()->default(0.0);
+            $table->decimal('amount', 8, 2)->default(0.0);
+            $table->decimal('price', 8, 2);
             $table->dateTime('delivered_at');
             $table->enum('unit_of_measure', ['kg', 'unit']);
-            $table->foreignId('product_id')->constrained()->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->foreignId('cart_id')->constrained()->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreignId('product_id')->constrained()->onDelete('CASCADE');
+            $table->foreignId('cart_id')->constrained()->onDelete('CASCADE');
             $table->timestamps();
         });
     }

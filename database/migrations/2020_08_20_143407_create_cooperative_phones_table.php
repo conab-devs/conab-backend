@@ -15,8 +15,8 @@ class CreateCooperativePhonesTable extends Migration
     {
         Schema::create('cooperative_phones', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cooperative_id')->constrained()->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->foreignId('phone_id')->constrained()->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreignId('cooperative_id')->constrained()->onDelete('CASCADE');
+            $table->foreignId('phone_id')->constrained()->onDelete('CASCADE');
             $table->timestamps();
         });
     }

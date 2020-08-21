@@ -18,7 +18,7 @@ class CreateAddressesTable extends Migration
             $table->string('street', 100);
             $table->string('neighborhood', 100);
             $table->string('city', 100);
-            $table->integer('number');
+            $table->string('number', 10);
             $table->timestamps();
         });
     }
