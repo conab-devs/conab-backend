@@ -41,8 +41,12 @@ class User extends Authenticatable
 
     public function login(string $password)
     {
-        if ($this->email === null || $this->password === null) {
-            throw new InvalidFieldException;
+        $fields = ['email', 'password'];
+        
+        foreach ($fields as $field) {
+            if ($this[$field] === null) {
+                throw new InvalidFieldException;
+            }
         }
 
         if (!Hash::check($password, $this->password)) {
