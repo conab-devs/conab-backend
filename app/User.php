@@ -39,7 +39,7 @@ class User extends Authenticatable
 
     public function login()
     {
-        if ($this->email === null) {
+        if ($this->email === null || $this->password === null) {
             throw new InvalidFieldException;
         }
     }
