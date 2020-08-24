@@ -51,7 +51,7 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function should_throw_error_if_user_not_is_authorized()
+    public function should_throw_error_if_user_not_is_authorized_to_web()
     {
         $this->expectException(UnauthorizedException::class);      
         $this->sut->login('valid_password', 'WEB');
