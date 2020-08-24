@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\User;
 use App\Components\Errors\InvalidFieldException;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -19,7 +20,7 @@ class LoginTest extends TestCase
         
         $sut = new User();
 
-        $sut->login();
+        $sut->login('request_password');
     }
 
     /** @test */
@@ -30,6 +31,18 @@ class LoginTest extends TestCase
         $sut = new User();
         $sut->email = 'valid@valid.com';
 
-        $sut->login();
+        $sut->login('request_password');
+    }
+
+    /** @test */
+    public function should_throw_error_if_credentials_not_match()
+    {
+        $this->expectException(ValidationException::class);
+        
+        $sut = new User();
+        $sut->email = 'valid@valid.com';
+        $sut->password = 'valid_password';
+
+        $sut->login('invalid_password');
     }
 }
