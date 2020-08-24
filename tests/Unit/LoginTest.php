@@ -13,13 +13,23 @@ class LoginTest extends TestCase
 {
     use MockeryPHPUnitIntegration, RefreshDatabase;
 
+    private $sut;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->sut = new User;
+        $this->sut->fill([
+            'email' => 'valid@valid.com', 'password' => 'valid_password'
+        ]);
+    }
+
     /** @test */
     public function should_throw_error_if_email_field_is_invalid()
     {
         $this->expectException(InvalidFieldException::class);
-        
         $sut = new User();
-
         $sut->login('request_password');
     }
 
@@ -27,22 +37,14 @@ class LoginTest extends TestCase
     public function should_throw_error_if_password_field_is_invalid()
     {
         $this->expectException(InvalidFieldException::class);
-        
-        $sut = new User();
-        $sut->email = 'valid@valid.com';
-
-        $sut->login('request_password');
+        $this->sut->password = null;
+        $this->sut->login('request_password');
     }
 
     /** @test */
     public function should_throw_error_if_credentials_not_match()
     {
-        $this->expectException(ValidationException::class);
-        
-        $sut = new User();
-        $sut->email = 'valid@valid.com';
-        $sut->password = 'valid_password';
-
-        $sut->login('invalid_password');
+        $this->expectException(ValidationException::class);      
+        $this->sut->login('invalid_password');
     }
 }
