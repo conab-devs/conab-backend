@@ -32,7 +32,7 @@ class LoginTest extends TestCase
     {
         $this->expectException(InvalidFieldException::class);
         $sut = new User();
-        $sut->login('request_password', 'WEB');
+        $sut->login('request_password', 'MOBILE');
     }
 
     /** @test */
@@ -40,14 +40,14 @@ class LoginTest extends TestCase
     {
         $this->expectException(InvalidFieldException::class);
         $this->sut->password = null;
-        $this->sut->login('request_password', 'WEB');
+        $this->sut->login('request_password', 'MOBILE');
     }
 
     /** @test */
     public function should_throw_error_if_credentials_not_match()
     {
         $this->expectException(ValidationException::class);      
-        $this->sut->login('invalid_password', 'WEB');
+        $this->sut->login('invalid_password', 'MOBILE');
     }
 
     /** @test */

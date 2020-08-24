@@ -65,14 +65,14 @@ class User extends Authenticatable
             }
         }
 
+        if ($device_name === 'WEB' && $this->user_type !== 'ADMIN_CONAB') {
+            throw new UnauthorizedException;
+        }
+
         if (!Hash::check($password, $this->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
-        }
-
-        if ($device_name === 'WEB' && $this->user_type !== 'ADMIN_CONAB') {
-            throw new UnauthorizedException;
         }
     }
 }
