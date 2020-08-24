@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Components\Errors\UnauthorizedException;
+
 
 class User extends Authenticatable
 {
@@ -18,7 +20,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'user_type'
     ];
 
     /**
@@ -39,7 +41,21 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function login(string $password)
+    public function setPasswordAttribute($value)
+    {
+        if ($value !== null) {
+            $this->attributes['password'] = Hash::make($value);
+        } else {
+            $this->attributes['password'] = null;
+        }
+    }
+
+    public function getPasswordAttribute()
+    {
+        return $this->attributes['password'];
+    }
+
+    public function login(string $password, string $device_name)
     {
         $fields = ['email', 'password'];
         
@@ -53,6 +69,10 @@ class User extends Authenticatable
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
+        }
+
+        if ($device_name === 'WEB' && $this->user_type !== 'ADMIN_CONAB') {
+            throw new UnauthorizedException;
         }
     }
 }
