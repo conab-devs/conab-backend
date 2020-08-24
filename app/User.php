@@ -5,6 +5,8 @@ namespace App;
 use App\Components\Errors\InvalidFieldException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class User extends Authenticatable
 {
@@ -37,10 +39,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function login()
+    public function login(string $password)
     {
         if ($this->email === null || $this->password === null) {
             throw new InvalidFieldException;
+        }
+
+        if (!Hash::check($password, $this->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
         }
     }
 }
