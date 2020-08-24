@@ -21,4 +21,15 @@ class LoginTest extends TestCase
 
         $sut->login();
     }
+
+    /** @test */
+    public function should_throw_error_if_password_field_is_invalid()
+    {
+        $this->expectException(InvalidFieldException::class);
+        
+        $sut = new User();
+        $sut->email = 'valid@valid.com';
+
+        $sut->login();
+    }
 }
