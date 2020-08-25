@@ -8,10 +8,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Components\Errors\UnauthorizedException;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -68,5 +69,7 @@ class User extends Authenticatable
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
+        
+        return $this->createToken($device_name);
     }
 }
