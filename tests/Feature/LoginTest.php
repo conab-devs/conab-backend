@@ -31,4 +31,24 @@ class LoginTest extends TestCase
         $response->assertStatus(200);
         $this->assertArrayHasKey('token', $response);
     }
+
+    /** @test */
+    public function should_return_unauthorized()
+    {
+        $faker = $this->faker();
+
+        $userCredentials = [
+            'email' => $faker->unique()->safeEmail,
+            'password' => 'valid_password'
+        ];
+        
+        factory(User::class)->create($userCredentials);
+
+        $userCredentials['device_name'] = 'WEB';
+
+        $response = $this->postJson('/api/login', $userCredentials);
+        
+        $response->assertStatus(401);
+        $this->assertEquals($response['message'], "You don't have authorization to this resource");
+    }
 }
