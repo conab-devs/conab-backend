@@ -3,11 +3,11 @@
 namespace App;
 
 use App\Components\Errors\InvalidFieldException;
+use App\Components\Errors\UnauthorizedException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use App\Components\Errors\UnauthorizedException;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -20,7 +20,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'user_type'
+        'name', 'email', 'password', 'user_type',
     ];
 
     /**
@@ -29,7 +29,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password'
+        'password',
     ];
 
     public function setPasswordAttribute($value)
@@ -49,18 +49,15 @@ class User extends Authenticatable
     public function login(string $password, string $device_name)
     {
         $fields = ['email', 'password'];
-        
+
         foreach ($fields as $field) {
             if ($this[$field] === null) {
                 throw new InvalidFieldException;
             }
         }
 
-        if ($device_name === 'WEB' && $this->user_type !== 'ADMIN_CONAB') {
-            throw new UnauthorizedException;
-        }
-
-        if ($device_name === 'MOBILE' && $this->user_type === 'ADMIN_CONAB') {
+        if ($device_name === 'WEB' && $this->user_type !== 'ADMIN_CONAB' 
+            || $device_name === 'MOBILE' && $this->user_type === 'ADMIN_CONAB') {
             throw new UnauthorizedException;
         }
 
@@ -69,7 +66,7 @@ class User extends Authenticatable
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
-        
+
         return $this->createToken($device_name);
     }
 }
