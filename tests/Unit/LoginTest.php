@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery;
 
 class LoginTest extends TestCase
 {
@@ -63,5 +64,25 @@ class LoginTest extends TestCase
         $this->expectException(UnauthorizedException::class); 
         $this->sut->user_type = 'ADMIN_CONAB';     
         $this->sut->login('valid_password', 'MOBILE');
+    }
+
+    /** @test */
+    public function should_pass_all_validations_and_return_a_token()
+    {
+        $sut = Mockery::mock(User::class)->makePartial();
+        $sut->fill([
+            'email' => 'valid@valid.com',
+            'password' => 'valid_password',
+        ]);
+
+        $device_name = 'MOBILE';
+        
+        $sut->shouldReceive('createToken')
+            ->with($device_name)
+            ->andReturn('valid_token');
+        
+        $token = $sut->login('valid_password', $device_name);
+        
+        $this->assertEquals('valid_token', $token);
     }
 }
