@@ -56,4 +56,12 @@ class LoginTest extends TestCase
         $this->expectException(UnauthorizedException::class);      
         $this->sut->login('valid_password', 'WEB');
     }
+
+    /** @test */
+    public function should_throw_error_if_user_not_is_authorized_to_mobile()
+    {
+        $this->expectException(UnauthorizedException::class); 
+        $this->sut->user_type = 'ADMIN_CONAB';     
+        $this->sut->login('valid_password', 'MOBILE');
+    }
 }
