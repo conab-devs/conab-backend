@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Components\Errors\UnauthorizedException;
 
-
 class User extends Authenticatable
 {
     use Notifiable;
@@ -57,6 +56,10 @@ class User extends Authenticatable
         }
 
         if ($device_name === 'WEB' && $this->user_type !== 'ADMIN_CONAB') {
+            throw new UnauthorizedException;
+        }
+
+        if ($device_name === 'MOBILE' && $this->user_type === 'ADMIN_CONAB') {
             throw new UnauthorizedException;
         }
 
