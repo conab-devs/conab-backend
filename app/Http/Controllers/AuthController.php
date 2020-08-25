@@ -22,9 +22,14 @@ class AuthController extends Controller
                 'message' => 'Theres no user with that email'
             ]);
         }
-        
+        try {   
         $token = $user->login($request->password, $request->device_name)->plainTextToken;
 
         return response()->json(['token' => $token]);
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => $error->__toString()
+            ], $error->status);
+        }
     }
 }
