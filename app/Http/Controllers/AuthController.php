@@ -15,17 +15,19 @@ class AuthController extends Controller
             'device_name' => 'required',
         ]);
 
+        
         $user = User::where('email', $request->email)->first();
-
+        
         if (!$user) {
-            return response()->json(404, [
+            return response()->json([
                 'message' => 'Theres no user with that email',
-            ]);
+            ], 404);
         }
+            
         try {
 
             $token = $user->login($request->password, $request->device_name)->plainTextToken;
-
+            
             return response()->json(['token' => $token]);
         } catch (\Exception $error) {
             return response()->json([
