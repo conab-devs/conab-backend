@@ -34,7 +34,7 @@ class AdminConabControllerTest extends TestCase
     {
         // Create fake admins
         factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        factory(User::class)->create(['user_type' => 'COSTUMER']);
+        factory(User::class)->create(['user_type' => 'CUSTOMER']);
         factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
 
         $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
