@@ -82,6 +82,7 @@ class LoginTest extends TestCase
         $sut->fill([
             'email' => 'valid@valid.com',
             'password' => 'valid_password',
+            'user_type' => 'CUSTOMER'
         ]);
 
         $device_name = 'MOBILE';
