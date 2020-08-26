@@ -74,4 +74,9 @@ class User extends Authenticatable
 
         return $this->createToken($device_name);
     }
+
+    public function logout()
+    {
+        return $this->tokens()->delete();
+    }
 }
