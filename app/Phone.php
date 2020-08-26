@@ -12,6 +12,6 @@ class Phone extends Model
 
     public function cooperative()
     {
-        return $this->belongsToMany(Cooperative::class);
+        return $this->belongsToMany(Cooperative::class, 'cooperative_phones');
     }
 }
