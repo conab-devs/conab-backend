@@ -13,16 +13,10 @@ class AdminConabControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /*
-     * LIST
-     * List only conab's admin users
-     * Returns name, email, phone[0] and cpf
-     * */
-
     /** @test */
     public function should_return_admins()
     {
-        // Create fake admins
+        // Create fake users
         factory(User::class, 3)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $response = $this->actingAs($authenticatedUser, 'api')->getJson('/api/conab/admins');
@@ -32,7 +26,7 @@ class AdminConabControllerTest extends TestCase
     /** @test */
     public function should_return_only_admins()
     {
-        // Create fake admins
+        // Create fake users
         factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         factory(User::class)->create(['user_type' => 'CUSTOMER']);
         factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
@@ -61,11 +55,25 @@ class AdminConabControllerTest extends TestCase
     /** @test */
     public function should_create_an_admin()
     {
+        /* TODO: update php to php ^7.3
+            https://www.cloudbooklet.com/upgrade-php-version-to-php-7-4-on-ubuntu/,
+            then install doctrine. */
         // Only user authenticated
-        // Request router POST /api/conab/admins with data
-        // Return an admin
-        // Assert status 201 and admin data
-        $this->doesNotPerformAssertions();
+        $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $data = [
+            'name' => 'any_name',
+            'email' => 'any@email.com',
+            'cpf' => '999.999.999-99',
+            'phones' => [
+                '(99) 99999-9999',
+                '(88) 88888-8888'
+            ]
+        ];
+        $response = $this->actingAs($authenticatedUser, 'api')
+            ->postJson('/api/conab/admins', $data);
+        $response->dump();
+        $response->assertStatus(201)
+            ->assertJsonFragment($data);
     }
 
     /** @test */
