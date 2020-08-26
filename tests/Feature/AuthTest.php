@@ -36,6 +36,21 @@ class AuthTest extends TestCase
     }
 
     /** @test */
+    public function should_try_make_login_and_return_not_found()
+    {
+        $userCredentials = [
+            'email' => 'unexistent@mail.com',
+            'password' => 'valid_password',
+        ];
+
+        $userCredentials['device_name'] = 'MOBILE';
+
+        $response = $this->postJson('/api/login', $userCredentials);
+
+        $response->assertStatus(404);
+    }
+
+    /** @test */
     public function should_return_unauthorized()
     {
         $userCredentials = $this->makeUser();
