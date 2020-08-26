@@ -25,6 +25,7 @@ class LoginTest extends TestCase
         $this->sut->fill([
             'email' => 'valid@valid.com',
             'password' => 'valid_password',
+            'user_type' => 'CUSTOMER'
         ]);
     }
 
@@ -52,17 +53,25 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function should_throw_error_if_user_not_is_authorized_to_web()
+    public function should_throw_error_if_client_try_to_access_from_the_web()
     {
         $this->expectException(UnauthorizedException::class);      
         $this->sut->login('valid_password', 'WEB');
     }
 
     /** @test */
-    public function should_throw_error_if_user_not_is_authorized_to_mobile()
+    public function should_throw_error_if_admin_conab_try_to_access_from_the_mobile()
     {
         $this->expectException(UnauthorizedException::class); 
         $this->sut->user_type = 'ADMIN_CONAB';     
+        $this->sut->login('valid_password', 'MOBILE');
+    }
+
+    /** @test */
+    public function should_throw_error_if_super_admin_try_to_access_from_the_mobile()
+    {
+        $this->expectException(UnauthorizedException::class); 
+        $this->sut->user_type = 'SUPER_ADMIN';     
         $this->sut->login('valid_password', 'MOBILE');
     }
 
