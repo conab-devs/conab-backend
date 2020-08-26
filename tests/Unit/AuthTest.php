@@ -11,7 +11,7 @@ use Tests\TestCase;
 use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery;
 
-class LoginTest extends TestCase
+class AuthTest extends TestCase
 {
     use MockeryPHPUnitIntegration, RefreshDatabase;
 
@@ -94,5 +94,16 @@ class LoginTest extends TestCase
         $token = $sut->login('valid_password', $device_name);
         
         $this->assertEquals('valid_token', $token);
+    }
+
+    /** @test */
+    public function should_make_logout_and_return_true()
+    {
+        $sut = Mockery::mock(User::class)->makePartial();
+        $sut->shouldReceive('tokens->delete')->andReturn(true);
+
+        $isDeleted = $sut->logout();
+
+        $this->assertTrue($isDeleted);
     }
 }
