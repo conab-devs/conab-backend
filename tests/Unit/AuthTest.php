@@ -106,4 +106,15 @@ class AuthTest extends TestCase
 
         $this->assertTrue($isDeleted);
     }
+
+    /** @test */
+    public function should_make_logout_and_return_false()
+    {
+        $sut = Mockery::mock(User::class)->makePartial();
+        $sut->shouldReceive('tokens->delete')->andReturn(false);
+
+        $isDeleted = $sut->logout();
+
+        $this->assertFalse($isDeleted);
+    }
 }
