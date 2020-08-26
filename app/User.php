@@ -49,17 +49,20 @@ class User extends Authenticatable
     public function login(string $password, string $device_name)
     {
         $fields = ['email', 'password'];
-        
+        $permissions = [
+            'CUSTOMER' => 'MOBILE', 
+            'ADMIN_COOP' => 'MOBILE', 
+            'ADMIN_CONAB' => 'WEB', 
+            'SUPER_ADMIN' => 'WEB'
+        ];
+
         foreach ($fields as $field) {
             if ($this[$field] === null) {
                 throw new InvalidFieldException;
             }
         }
-
-        if ($device_name === 'WEB' && $this->user_type === 'CUSTOMER'
-            || $device_name === 'WEB' && $this->user_type === 'ADMIN_COOP' 
-            || $device_name === 'MOBILE' && $this->user_type === 'ADMIN_CONAB'
-            || $device_name === 'MOBILE' && $this->user_type === 'SUPER_ADMIN') {
+        
+        if ($device_name !== $permissions[$this->user_type]) {
             throw new UnauthorizedException;
         }
 
