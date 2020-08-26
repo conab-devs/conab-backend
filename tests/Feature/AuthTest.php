@@ -12,21 +12,24 @@ class AuthTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
-    /** @test */
-    public function should_make_login_and_return_token()
+    public function makeUser(): array
     {
-        $faker = $this->faker();
-
         $userCredentials = [
-            'email' => $faker->unique()->safeEmail,
+            'email' =>  $this->faker()->unique()->safeEmail,
             'password' => 'valid_password',
         ];
 
         factory(User::class)->create($userCredentials);
 
         $userCredentials['device_name'] = 'MOBILE';
+        
+        return $userCredentials;
+    }
 
-        $response = $this->postJson('/api/login', $userCredentials);
+    /** @test */
+    public function should_make_login_and_return_token()
+    {
+        $response = $this->postJson('/api/login', $this->makeUser());
 
         $response->assertStatus(200);
         $this->assertArrayHasKey('token', $response);
@@ -35,14 +38,7 @@ class AuthTest extends TestCase
     /** @test */
     public function should_return_unauthorized()
     {
-        $faker = $this->faker();
-
-        $userCredentials = [
-            'email' => $faker->unique()->safeEmail,
-            'password' => 'valid_password',
-        ];
-
-        factory(User::class)->create($userCredentials);
+        $userCredentials = $this->makeUser();
 
         $userCredentials['device_name'] = 'WEB';
 
