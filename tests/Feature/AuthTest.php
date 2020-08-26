@@ -64,5 +64,16 @@ class AuthTest extends TestCase
         $response->assertStatus(200);
     }
 
-    
+    /** @test */
+    public function should_make_logout()
+    {
+        Sanctum::actingAs(
+            factory(User::class)->create(),
+            ['*']
+        );
+
+        $response = $this->getJson('/api/logout');
+
+        $response->assertStatus(200);
+    }
 }
