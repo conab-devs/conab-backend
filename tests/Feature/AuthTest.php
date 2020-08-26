@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Hash;
-use App\User;
+use Laravel\Sanctum\Sanctum;
+use Tests\TestCase;
 
-class LoginTest extends TestCase
+class AuthTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
@@ -19,15 +19,15 @@ class LoginTest extends TestCase
 
         $userCredentials = [
             'email' => $faker->unique()->safeEmail,
-            'password' => 'valid_password'
+            'password' => 'valid_password',
         ];
-        
+
         factory(User::class)->create($userCredentials);
 
         $userCredentials['device_name'] = 'MOBILE';
 
         $response = $this->postJson('/api/login', $userCredentials);
-        
+
         $response->assertStatus(200);
         $this->assertArrayHasKey('token', $response);
     }
@@ -39,16 +39,30 @@ class LoginTest extends TestCase
 
         $userCredentials = [
             'email' => $faker->unique()->safeEmail,
-            'password' => 'valid_password'
+            'password' => 'valid_password',
         ];
-        
+
         factory(User::class)->create($userCredentials);
 
         $userCredentials['device_name'] = 'WEB';
 
         $response = $this->postJson('/api/login', $userCredentials);
-        
+
         $response->assertStatus(401);
         $this->assertEquals($response['message'], "You don't have authorization to this resource");
     }
+
+    /** @test */
+    public function should_make_login_and_access_get_route_with_success()
+    {
+        Sanctum::actingAs(
+            factory(User::class)->create(),
+            ['*']
+        );
+
+        $response = $this->getJson('/api/hello');
+        $response->assertStatus(200);
+    }
+
+    
 }
