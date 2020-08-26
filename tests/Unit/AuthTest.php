@@ -6,14 +6,13 @@ use App\User;
 use App\Components\Errors\InvalidFieldException;
 use App\Components\Errors\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery;
 
 class AuthTest extends TestCase
 {
-    use MockeryPHPUnitIntegration, RefreshDatabase;
+    use MockeryPHPUnitIntegration;
 
     private $sut;
 
