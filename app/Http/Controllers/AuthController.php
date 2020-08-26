@@ -35,4 +35,11 @@ class AuthController extends Controller
             ], $error->status);
         }
     }
+
+    public function logout(Request $request)
+    {
+        if (! $request->user()->logout()) {
+            return response()->json(['message' => 'Server error']);
+        }        
+    }
 }

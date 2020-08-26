@@ -77,6 +77,6 @@ class User extends Authenticatable
 
     public function logout()
     {
-        return ($this->tokens()->delete() === true) ? true : false;
+        return ($this->tokens()->delete()) ? true : false;
     }
 }
