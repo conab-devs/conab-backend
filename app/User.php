@@ -29,6 +29,10 @@ class User extends Authenticatable
 
     public function cooperative()
     {
-        return $this->hasOne('App/Cooperative', 'cooperative_id');
+        return $this->hasOne('App\Cooperative', 'cooperative_id');
+    }
+
+    public function phones() {
+        return $this->belongsToMany('App\Phone', 'user_phones');
     }
 }
