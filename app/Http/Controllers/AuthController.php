@@ -24,7 +24,7 @@ class AuthController extends Controller
         }
 
         try {
-            $token = $user->login($request->password, $request->device_name)->plainTextToken;
+            $token = $user->login($request->password, $request->device_name);
 
             return response()->json(['token' => $token]);
         } catch (\Exception $error) {
@@ -34,10 +34,8 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
-        if (!$request->user()->logout()) {
-            return response()->json(['message' => 'Server error']);
-        }
+        auth()->logout();
     }
 }

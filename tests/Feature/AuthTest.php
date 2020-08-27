@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -66,24 +65,27 @@ class AuthTest extends TestCase
     /** @test */
     public function should_make_login_and_access_get_route_with_success()
     {
-        Sanctum::actingAs(
-            factory(User::class)->create(),
-            ['*']
-        );
+        $credentials = $this->makeUser();
+        array_pop($credentials);
+        $token = auth()->attempt($credentials);
 
-        $response = $this->getJson('/api/hello');
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer $token"
+        ])->getJson('/api/hello');
+        
         $response->assertStatus(200);
     }
 
     /** @test */
     public function should_make_logout()
     {
-        Sanctum::actingAs(
-            factory(User::class)->create(),
-            ['*']
-        );
+        $credentials = $this->makeUser();
+        array_pop($credentials);
+        $token = auth()->attempt($credentials);
 
-        $response = $this->getJson('/api/logout');
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer $token"
+        ])->getJson('/api/logout');
 
         $response->assertStatus(200);
     }

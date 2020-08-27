@@ -5,14 +5,15 @@ namespace Tests\Unit;
 use App\User;
 use App\Components\Errors\InvalidFieldException;
 use App\Components\Errors\UnauthorizedException;
-use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
 
 class AuthTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
+    use MockeryPHPUnitIntegration, RefreshDatabase;
 
     private $sut;
 
@@ -66,4 +67,21 @@ class AuthTest extends TestCase
         $this->sut->user_type = 'SUPER_ADMIN';     
         $this->sut->login('valid_password', 'MOBILE');
     }
+
+    /** @test */
+    public function should_throw_error_if_login_fails()
+    {
+        $this->expectException(UnauthorizedException::class); 
+        $sut = Mockery::mock(User::class)->makePartial();
+
+        $sut->fill([
+            'email' => 'valid@valid.com',
+            'password' => 'valid_password',
+            'user_type' => 'CUSTOMER'
+        ]);
+
+        $sut->shouldReceive('auth->attempt')->andReturn(false);
+
+        $sut->login('invalid_password', 'MOBILE');
+    } 
 }

@@ -6,10 +6,9 @@ use App\Components\Errors\InvalidFieldException;
 use App\Components\Errors\UnauthorizedException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
@@ -34,7 +33,7 @@ class User extends Authenticatable
     public function setPasswordAttribute($value)
     {
         if ($value !== null) {
-            $this->attributes['password'] = Hash::make($value);
+            $this->attributes['password'] = bcrypt($value);
         } else {
             $this->attributes['password'] = null;
         }
@@ -65,17 +64,30 @@ class User extends Authenticatable
             throw new UnauthorizedException;
         }
 
-        if (!Hash::check($password, $this->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+        if (! $token = auth()->attempt(['email' => $this->email, 'password' => $password])) {
+            throw new UnauthorizedException;
         }
 
-        return $this->createToken($device_name);
+        return $token;
     }
 
-    public function logout()
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
     {
-        return ($this->tokens()->delete()) ? true : false;
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
