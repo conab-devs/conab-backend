@@ -55,10 +55,6 @@ class AdminConabControllerTest extends TestCase
     /** @test */
     public function should_create_an_admin()
     {
-        /* TODO: update php to php ^7.3
-            https://www.cloudbooklet.com/upgrade-php-version-to-php-7-4-on-ubuntu/,
-            then install doctrine. */
-        // Only user authenticated
         $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $data = [
             'name' => 'any_name',
