@@ -28,11 +28,17 @@ class AdminConabController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->except('phones');
-        $phonesData = $request->input('phones');
+//        $data = $request->except('phones');
+        $data = $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'cpf' => 'required|regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/',
+            'phones' => 'required|array'
+        ]);
+
         $formattedPhones = array_map(function ($value) {
             return [ 'number' => $value ];
-        }, $phonesData);
+        }, $data['phones']);
 
         $user = User::create([
             'name' => $data['name'],
