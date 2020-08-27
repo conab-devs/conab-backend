@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Cooperative;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CooperativeController extends Controller
 {
@@ -93,6 +94,29 @@ class CooperativeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $cooperative = Cooperative::with(['address', 'phones'])
+            ->where('id', $id)
+            ->first();
+
+        if (!$cooperative) {
+            return response()->json([
+                'message' => 'Cooperative not found.'
+            ], 404);
+        }
+
+        DB::beginTransaction();
+        $phones = $cooperative->phones()->delete();
+        $coop = $cooperative->delete();
+        $address = $cooperative->address()->delete();
+
+        if (!$coop || !$address || !$phones) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Failure to delete cooperative.'
+            ], 400);
+        }
+
+        DB::commit();
+        return response()->json(null, 204);
     }
 }
