@@ -67,19 +67,130 @@ class AdminConabControllerTest extends TestCase
         ];
         $response = $this->actingAs($authenticatedUser, 'api')
             ->postJson('/api/conab/admins', $data);
-        $response->dump();
         $response->assertStatus(201)
             ->assertJsonFragment($data);
     }
 
     /** @test */
-    public function on_the_creation_should_throw_an_error_if_pass_incorrect_data()
+    public function on_the_creation_should_throw_an_error_if_pass_invalid_name()
     {
-        // Only user authenticated
-        // Request router POST /api/conab/admins with each incorrect data
-        // Throw an error
-        // Assert status 400 and error name
-        $this->doesNotPerformAssertions();
+        $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $dataWithoutName = [
+            'email' => 'any@email.com',
+            'cpf' => '999.999.999-99',
+            'phones' => [
+                '(99) 99999-9999',
+                '(88) 88888-8888'
+            ]
+        ];
+        $response = $this->actingAs($authenticatedUser, 'api')
+            ->postJson('/api/conab/admins', $dataWithoutName);
+        $response->assertStatus(422);
+
+        $dataWithInvalidName = [
+            'name' => 123,
+            'email' => 'any@email.com',
+            'cpf' => '999.999.999-99',
+            'phones' => [
+                '(99) 99999-9999',
+                '(88) 88888-8888'
+            ]
+        ];
+
+        $response = $this->actingAs($authenticatedUser, 'api')
+            ->postJson('/api/conab/admins', $dataWithoutName);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function on_the_creation_should_throw_an_error_if_pass_invalid_email()
+    {
+        $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $dataWithoutEmail = [
+            'name' => 'any_name',
+            'cpf' => '999.999.999-99',
+            'phones' => [
+                '(99) 99999-9999',
+                '(88) 88888-8888'
+            ]
+        ];
+        $response = $this->actingAs($authenticatedUser, 'api')
+            ->postJson('/api/conab/admins', $dataWithoutEmail);
+        $response->assertStatus(422);
+
+        $dataWithInvalidEmail = [
+            'name' => 'any_name',
+            'email' => 'invalidemail.com',
+            'cpf' => '999.999.999-99',
+            'phones' => [
+                '(99) 99999-9999',
+                '(88) 88888-8888'
+            ]
+        ];
+
+        $response = $this->actingAs($authenticatedUser, 'api')
+            ->postJson('/api/conab/admins', $dataWithInvalidEmail);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function on_the_creation_should_throw_an_error_if_pass_invalid_cpf()
+    {
+        $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $dataWithoutCpf = [
+            'name' => 'any_name',
+            'email' => 'any@email.com',
+            'phones' => [
+                '(99) 99999-9999',
+                '(88) 88888-8888'
+            ]
+        ];
+        $response = $this->actingAs($authenticatedUser, 'api')
+            ->postJson('/api/conab/admins', $dataWithoutCpf);
+        $response->assertStatus(422);
+
+        $dataWithInvalidCpf = [
+            'name' => 'any_name',
+            'email' => 'any@email.com',
+            'cpf' => '999.999.999/99', // invalid cpf
+            'phones' => [
+                '(99) 99999-9999',
+                '(88) 88888-8888'
+            ]
+        ];
+
+        $response = $this->actingAs($authenticatedUser, 'api')
+            ->postJson('/api/conab/admins', $dataWithInvalidCpf);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function on_the_creation_should_throw_an_error_if_pass_invalid_phones()
+    {
+        $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $dataWithoutPhones = [
+            'name' => 'any_name',
+            'email' => 'any@email.com',
+            'phones' => []
+        ];
+        $response = $this->actingAs($authenticatedUser, 'api')
+            ->postJson('/api/conab/admins', $dataWithoutPhones);
+        $response->assertStatus(422);
+
+        $dataWithInvalidPhones = [
+            'name' => 'any_name',
+            'email' => 'any@email.com',
+            'cpf' => '999.999.999/99',
+            'phones' => '(99) 99999-9999' // must be an array
+        ];
+
+        $response = $this->actingAs($authenticatedUser, 'api')
+            ->postJson('/api/conab/admins', $dataWithInvalidPhones);
+        $response->assertStatus(422);
     }
 
     /*
