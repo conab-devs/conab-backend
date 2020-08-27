@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Address;
 use App\Cooperative;
 use App\Http\Controllers\Controller;
+use App\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class CooperativeController extends Controller
 {
@@ -39,7 +42,42 @@ class CooperativeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'bail|required|unique:cooperatives|max:100',
+            'dap_path' => 'required|unique:cooperatives|max:100',
+            'phone' => 'required|unique:phones,number|max:15',
+            'city' => 'required|max:100',
+            'street' => 'required|max:100',
+            'neighborhood' => 'required|max:100',
+            'number' => 'required|max:10',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->getMessageBag()->first()
+            ], 400);
+        }
+
+        DB::beginTransaction();
+
+        $address = Address::create($request->only(['city', 'street', 'neighborhood', 'number']));
+        $phone = Phone::create(['number' => $request['phone']]);
+
+        $cooperative = new Cooperative();
+        $cooperative->fill($request->only($cooperative->getFillable()));
+        $cooperative->address_id = $address->id;
+        $cooperative->save();
+        $cooperative->phones()->attach($phone->id);
+
+        if (!$address || !$phone || !$cooperative) {
+            DB::rollBack();
+            return response()->json([
+                    'message' => 'Failure create cooperative.'
+            ], 400);
+        }
+
+        DB::commit();
+        return response()->json(null, 204);
     }
 
     /**
