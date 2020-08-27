@@ -28,7 +28,33 @@ class AdminConabController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->except('phones');
+        $phonesData = $request->input('phones');
+        $formattedPhones = array_map(function ($value) {
+            return [ 'number' => $value ];
+        }, $phonesData);
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => $data['cpf'],
+            'cpf' => $data['cpf'],
+            'user_type' => 'ADMIN_CONAB'
+        ]);
+        $user->save();
+
+        $phones = $user->phones()->createMany($formattedPhones);
+        $onlyNumbers = array_map(function ($phone) {
+            return $phone->number;
+        }, $phones);
+
+        return response([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'cpf' => $user->cpf,
+            'phones' => $onlyNumbers
+        ], 201);
     }
 
     /**
