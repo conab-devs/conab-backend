@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AdminConabController extends Controller
 {
@@ -29,12 +30,13 @@ class AdminConabController extends Controller
     public function store(Request $request)
     {
 //        $data = $request->except('phones');
-        $data = $request->validate([
+        $data = Validator::make($request->all(), [
             'name' => 'required|string',
             'email' => 'required|email',
             'cpf' => 'required|regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/',
-            'phones' => 'required|array'
-        ]);
+            'phones' => 'required|array',
+            'phones.*' => 'regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/'
+        ])->validate();
 
         $formattedPhones = array_map(function ($value) {
             return [ 'number' => $value ];
