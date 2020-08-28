@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 use App\User;
-use App\Cooperative;
+use App\Phone;
 
 /*Integration Tests For Routes Related with AdminConabController*/
 class AdminConabControllerTest extends TestCase
@@ -198,34 +198,55 @@ class AdminConabControllerTest extends TestCase
     /** @test */
     public function should_update_an_admin()
     {
-        // Only user authenticated
-//        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-//        $authenticatedRoute =  $this->actingAs($user, 'api');
+        // TODO: Solve the problem with phone numbers
+//        // Only user authenticated
+//        $user = factory(User::class)
+//            ->create(['user_type' => 'ADMIN_CONAB']);
+//
+//        $authenticatedRoute = $this->actingAs($user, 'api');
 //
 //        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
 //
-//        $dataWithName = ['name' => 'updated_name'];
-//        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithName);
-//        $response->assertOk()->assertJsonFragment(['name' => $dataWithName['name']]);
+//        $dataWithOnlyName = ['name' => 'updated_name'];
+//        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyName);
+//        $response->dump();
+//        $response->assertOk()->assertJsonFragment(['name' => $dataWithOnlyName['name']]);
 //
-//        $dataWithEmail = ['email' => 'updated@email.com'];
-//        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithEmail);
-//        $response->assertOk()->assertJsonFragment(['name' => $dataWithName['email']]);
+//        $dataWithOnlyEmail = ['email' => 'updated@email.com'];
+//        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyEmail);
+//        $response->dump();
+//        $response->assertOk()->assertJsonFragment(['email' => $dataWithOnlyEmail['email']]);
 //
-//        $dataWithCpf = ['cpf' => '111.111.111-11'];
-//        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithCpf);
-//        $response->assertOk()->assertJsonFragment(['name' => $dataWithName['cpf']]);
+//        $dataWithOnlyCpf = ['cpf' => '111.111.111-11'];
+//        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyCpf);
+//        $response->dump();
+//        $response->assertOk()->assertJsonFragment(['cpf' => $dataWithOnlyCpf['cpf']]);
 //
-//        $dataWithEmail = ['phones' => [
-//            '('
-//        ]];
-//        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithEmail);
-//        $response->assertOk()->assertJsonFragment(['name' => $dataWithName['email']]);
+//        $dataWithOnlyPhones = [
+//            'phones' => [
+//                '(88) 88888-8888',
+//                '(22) 22222-2222'
+//            ]
+//        ];
+//        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyPhones);
+//        $response->dump();
+//        $response->assertOk()->assertJsonFragment(['phones' => $dataWithOnlyPhones['phones']]);
+        $this->doesNotPerformAssertions();
+    }
+
+     /** @test */
+    public function on_the_update_should_throw_an_error_if_pass_incorrect_id()
+    {
+        // Only user authenticated
+        // Create a fake admin
+        // Request router PUT /api/conab/admins/:id with each data
+        // Throw an error
+        // Assert status 400 and error name
         $this->doesNotPerformAssertions();
     }
 
     /** @test */
-    public function on_the_update_should_throw_an_error_if_pass_incorrect_data()
+    public function on_the_update_should_throw_an_error_if_pass_invalid_data()
     {
         // Only user authenticated
         // Create a fake admin

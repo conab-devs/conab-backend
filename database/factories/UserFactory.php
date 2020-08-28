@@ -27,3 +27,12 @@ $factory->define(User::class, function (Faker $faker) {
         'user_type' => 'CUSTOMER',
     ];
 });
+
+$factory->afterCreating(User::class, function (User $user, Faker $faker) {
+    if ($user->user_type === 'ADMIN_CONAB') {
+        $user->phones()->saveMany([
+            factory(\App\Phone::class)->make(),
+            factory(\App\Phone::class)->make(),
+        ]);
+    }
+});
