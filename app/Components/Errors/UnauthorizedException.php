@@ -10,9 +10,4 @@ class UnauthorizedException extends \Exception
     {
         parent::__construct("You don't have authorization to this resource", $code, $previous);
     }
-
-    public function __toString()
-    {
-        return $this->message;
-    }
 }

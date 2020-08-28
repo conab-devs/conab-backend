@@ -25,10 +25,10 @@ class AuthController extends Controller
 
             $token = $user->login($request->password, $request->device_name);
 
-            return response()->json(['token' => $token]);
+            return response()->json(['token' => $token, 'user' => $user]);
         } catch (\Exception $error) {
             return response()->json([
-                'message' => $error->__toString(),
+                'message' => $error->getMessage(),
             ], $error->status);
         }
     }

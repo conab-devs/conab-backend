@@ -32,6 +32,7 @@ class AuthTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertArrayHasKey('token', $response);
+        $this->assertArrayHasKey('user', $response);
     }
 
     /** @test */

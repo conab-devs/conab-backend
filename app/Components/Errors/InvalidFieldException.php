@@ -10,9 +10,4 @@ class InvalidFieldException extends \Exception
     {
         parent::__construct('Server Error', $code, $previous);
     }
-
-    public function __toString()
-    {
-        return $this->message;
-    }
 }
