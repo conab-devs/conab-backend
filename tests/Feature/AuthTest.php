@@ -67,8 +67,8 @@ class AuthTest extends TestCase
     /** @test */
     public function should_make_login_and_access_get_route_with_success()
     {
-        $this->makeUser('MOBILE');
-        array_pop($this->credentials);
+        $this->makeUser();
+        
         $token = auth()->attempt($this->credentials);
 
         $response = $this->withHeaders([
@@ -82,8 +82,8 @@ class AuthTest extends TestCase
     public function should_make_logout()
     {
         $this->makeUser();
-        $user = User::first();
-        $token = \JWTAuth::fromUser($user);
+        
+        $token = auth()->attempt($this->credentials);
 
         $this->post('api/logout?token=' . $token)
             ->assertStatus(200);
