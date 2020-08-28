@@ -51,7 +51,6 @@ class User extends Authenticatable implements JWTSubject
             'CUSTOMER' => 'MOBILE', 
             'ADMIN_COOP' => 'MOBILE', 
             'ADMIN_CONAB' => 'WEB', 
-            'SUPER_ADMIN' => 'WEB'
         ];
 
         foreach ($fields as $field) {
@@ -64,7 +63,9 @@ class User extends Authenticatable implements JWTSubject
             throw new UnauthorizedException;
         }
 
-        if (! $token = auth()->attempt(['email' => $this->email, 'password' => $password])) {
+        if (! $token = auth()->attempt([
+            'email' => $this->email, 'password' => $password
+        ])) {
             throw new UnauthorizedException;
         }
 

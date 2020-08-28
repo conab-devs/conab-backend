@@ -61,14 +61,6 @@ class AuthTest extends TestCase
     }
 
     /** @test */
-    public function should_throw_error_if_super_admin_try_to_access_from_the_mobile()
-    {
-        $this->expectException(UnauthorizedException::class); 
-        $this->sut->user_type = 'SUPER_ADMIN';     
-        $this->sut->login('valid_password', 'MOBILE');
-    }
-
-    /** @test */
     public function should_throw_error_if_login_fails()
     {
         $this->expectException(UnauthorizedException::class); 
