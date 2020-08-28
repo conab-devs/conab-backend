@@ -42,7 +42,7 @@ class CooperativeController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => 'bail|required|unique:cooperatives|max:100',
             'dap_path' => 'required|unique:cooperatives|max:100',
             'phone' => 'required|unique:phones,number|max:15',
@@ -51,12 +51,6 @@ class CooperativeController extends Controller
             'neighborhood' => 'required|max:100',
             'number' => 'required|max:10',
         ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => $validator->getMessageBag()->first()
-            ], 400);
-        }
 
         DB::beginTransaction();
 
