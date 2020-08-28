@@ -11,24 +11,33 @@ class AuthTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
-    public function makeUser(): array
+    private $credentials;
+
+    public function setUp(): void
     {
-        $userCredentials = [
+        parent::setUp();
+
+        $this->credentials = [
             'email' =>  $this->faker()->unique()->safeEmail,
             'password' => 'valid_password',
         ];
+    }
 
-        factory(User::class)->create($userCredentials);
+    public function makeUser($device_name = null): void
+    {
+        factory(User::class)->create($this->credentials);
 
-        $userCredentials['device_name'] = 'MOBILE';
-        
-        return $userCredentials;
+        if ($device_name !== null) {
+            $this->credentials['device_name'] = $device_name;
+        }
     }
 
     /** @test */
     public function should_make_login_and_return_token()
     {
-        $response = $this->postJson('/api/login', $this->makeUser());
+        $this->makeUser('MOBILE');
+     
+        $response = $this->postJson('/api/login', $this->credentials);
 
         $response->assertStatus(200);
         $this->assertArrayHasKey('token', $response);
@@ -38,14 +47,8 @@ class AuthTest extends TestCase
     /** @test */
     public function should_try_make_login_and_return_Unauthorized()
     {
-        $userCredentials = [
-            'email' => 'unexistent@mail.com',
-            'password' => 'valid_password',
-        ];
-
-        $userCredentials['device_name'] = 'MOBILE';
-
-        $response = $this->postJson('/api/login', $userCredentials);
+        $this->credentials['device_name'] = 'MOBILE';
+        $response = $this->postJson('/api/login', $this->credentials);
 
         $response->assertStatus(401);
     }
@@ -53,11 +56,9 @@ class AuthTest extends TestCase
     /** @test */
     public function should_return_unauthorized()
     {
-        $userCredentials = $this->makeUser();
+        $this->makeUser('WEB');
 
-        $userCredentials['device_name'] = 'WEB';
-
-        $response = $this->postJson('/api/login', $userCredentials);
+        $response = $this->postJson('/api/login', $this->credentials);
 
         $response->assertStatus(401);
         $this->assertEquals($response['message'], "You don't have authorization to this resource");
@@ -66,9 +67,9 @@ class AuthTest extends TestCase
     /** @test */
     public function should_make_login_and_access_get_route_with_success()
     {
-        $credentials = $this->makeUser();
-        array_pop($credentials);
-        $token = auth()->attempt($credentials);
+        $this->makeUser('MOBILE');
+        array_pop($this->credentials);
+        $token = auth()->attempt($this->credentials);
 
         $response = $this->withHeaders([
             'Authorization' => "Bearer $token"
@@ -80,9 +81,9 @@ class AuthTest extends TestCase
     /** @test */
     public function should_make_logout()
     {
-        $credentials = $this->makeUser();
-        array_pop($credentials);
-        $token = auth()->attempt($credentials);
+        $this->makeUser();
+      
+        $token = auth()->attempt($this->credentials);
 
         $response = $this->withHeaders([
             'Authorization' => "Bearer $token"
