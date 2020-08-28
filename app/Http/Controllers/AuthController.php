@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Components\Errors\UnauthorizedException;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -17,13 +18,11 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
-            return response()->json([
-                'message' => 'Theres no user with that email',
-            ], 404);
-        }
-
         try {
+            if (!$user) {
+                throw new UnauthorizedException();
+            }
+
             $token = $user->login($request->password, $request->device_name);
 
             return response()->json(['token' => $token]);

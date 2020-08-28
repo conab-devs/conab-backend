@@ -35,7 +35,7 @@ class AuthTest extends TestCase
     }
 
     /** @test */
-    public function should_try_make_login_and_return_not_found()
+    public function should_try_make_login_and_return_Unauthorized()
     {
         $userCredentials = [
             'email' => 'unexistent@mail.com',
@@ -46,7 +46,7 @@ class AuthTest extends TestCase
 
         $response = $this->postJson('/api/login', $userCredentials);
 
-        $response->assertStatus(404);
+        $response->assertStatus(401);
     }
 
     /** @test */
