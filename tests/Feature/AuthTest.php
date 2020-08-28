@@ -18,7 +18,7 @@ class AuthTest extends TestCase
         parent::setUp();
 
         $this->credentials = [
-            'email' =>  $this->faker()->unique()->safeEmail,
+            'email' => $this->faker()->unique()->safeEmail,
             'password' => 'valid_password',
         ];
     }
@@ -36,7 +36,7 @@ class AuthTest extends TestCase
     public function should_make_login_and_return_token()
     {
         $this->makeUser('MOBILE');
-     
+
         $response = $this->postJson('/api/login', $this->credentials);
 
         $response->assertStatus(200);
@@ -72,9 +72,9 @@ class AuthTest extends TestCase
         $token = auth()->attempt($this->credentials);
 
         $response = $this->withHeaders([
-            'Authorization' => "Bearer $token"
+            'Authorization' => "Bearer $token",
         ])->getJson('/api/hello');
-        
+
         $response->assertStatus(200);
     }
 
@@ -82,13 +82,13 @@ class AuthTest extends TestCase
     public function should_make_logout()
     {
         $this->makeUser();
-      
-        $token = auth()->attempt($this->credentials);
+        $user = User::first();
+        $token = \JWTAuth::fromUser($user);
 
-        $response = $this->withHeaders([
-            'Authorization' => "Bearer $token"
-        ])->getJson('/api/logout');
+        $this->post('api/logout?token=' . $token)
+            ->assertStatus(200);
 
-        $response->assertStatus(200);
+        $this->assertGuest('api');
+
     }
 }
