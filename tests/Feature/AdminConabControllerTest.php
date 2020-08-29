@@ -250,14 +250,85 @@ class AdminConabControllerTest extends TestCase
     }
 
     /** @test */
-    public function on_the_update_should_throw_an_error_if_pass_invalid_data()
+    public function on_the_update_should_throw_an_error_if_pass_invalid_name()
     {
-        // Only user authenticated
-        // Create a fake admin
-        // Request router PUT /api/conab/admins/:id with each data
-        // Throw an error
-        // Assert status 400 and error name
-        $this->doesNotPerformAssertions();
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+
+        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $dataWithInvalidName = ['name' => 123];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidName);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function on_the_update_should_throw_an_error_if_pass_invalid_email()
+    {
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+
+        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $dataWithInvalidEmailAsANumber = ['email' => 123];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidEmailAsANumber);
+        $response->assertStatus(422);
+
+        $dataWithInvalidEmail = ['email' => 'invalidemail.com'];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidEmail);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function on_the_update_should_throw_an_error_if_pass_invalid_cpf()
+    {
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+
+        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $dataWithInvalidCpfAsANumber = ['cpf' => 123];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidCpfAsANumber);
+        $response->assertStatus(422);
+
+        $dataWithInvalidCpf = ['cpf' => '99A.999.999/60'];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidCpf);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function on_the_update_should_throw_an_error_if_pass_invalid_password()
+    {
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+
+        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $dataWithInvalidPasswordAsANumber = ['password' => 123, 'new_password' => 'any_password'];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidPasswordAsANumber);
+        $response->assertStatus(422);
+
+        $dataWithInvalidNewPasswordAsANumber = ['password' => 'any_password', 'new_password' => 123];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidNewPasswordAsANumber);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function on_the_update_should_throw_an_error_if_pass_invalid_phones()
+    {
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+
+        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $dataWithInvalidPhoneNumbers = [
+            'phones' => [
+                [ 'number' => '9999A99999' ],
+                [ 'number' => '(84) 99999999' ]
+            ]
+        ];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidPhoneNumbers);
+        $response->assertStatus(422);
     }
 
     /** @test */
