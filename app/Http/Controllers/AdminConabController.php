@@ -69,7 +69,15 @@ class AdminConabController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->all();
+        $data = Validator::make($request->all(), [
+            'name' => 'string',
+            'email' => 'string|email',
+            'cpf' => 'regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/',
+            'password' => 'string',
+            'new_password' => 'string',
+            'phones.*.number' => 'string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/'
+        ])->validate();
+
         $admin = User::with('phones')->findOrFail($id)->makeVisible(['password']);
         $admin->name = $data['name'] ?? $admin->name;
         $admin->email = $data['email'] ?? $admin->email;
