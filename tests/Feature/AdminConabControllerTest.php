@@ -75,8 +75,8 @@ class AdminConabControllerTest extends TestCase
             'email' => 'any@email.com',
             'cpf' => '999.999.999-99',
             'phones' => [
-                '(99) 99999-9999',
-                '(88) 88888-8888'
+                [ 'number' => '(99) 99999-9999' ],
+                [ 'number' => '(88) 88888-8888' ]
             ]
         ];
         $response = $authenticatedRoute->postJson('/api/conab/admins', $dataWithoutName);
@@ -87,8 +87,8 @@ class AdminConabControllerTest extends TestCase
             'email' => 'any@email.com',
             'cpf' => '999.999.999-99',
             'phones' => [
-                '(99) 99999-9999',
-                '(88) 88888-8888'
+                [ 'number' => '(99) 99999-9999' ],
+                [ 'number' => '(88) 88888-8888' ]
             ]
         ];
 
@@ -106,8 +106,8 @@ class AdminConabControllerTest extends TestCase
             'name' => 'any_name',
             'cpf' => '999.999.999-99',
             'phones' => [
-                '(99) 99999-9999',
-                '(88) 88888-8888'
+                [ 'number' => '(99) 99999-9999' ],
+                [ 'number' => '(88) 88888-8888' ]
             ]
         ];
         $response = $authenticatedRoute->postJson('/api/conab/admins', $dataWithoutEmail);
@@ -118,8 +118,8 @@ class AdminConabControllerTest extends TestCase
             'email' => 'invalidemail.com',
             'cpf' => '999.999.999-99',
             'phones' => [
-                '(99) 99999-9999',
-                '(88) 88888-8888'
+                [ 'number' => '(99) 99999-9999' ],
+                [ 'number' => '(88) 88888-8888' ]
             ]
         ];
 
@@ -137,8 +137,8 @@ class AdminConabControllerTest extends TestCase
             'name' => 'any_name',
             'email' => 'any@email.com',
             'phones' => [
-                '(99) 99999-9999',
-                '(88) 88888-8888'
+                [ 'number' => '(99) 99999-9999' ],
+                [ 'number' => '(88) 88888-8888' ]
             ]
         ];
         $response = $authenticatedRoute->postJson('/api/conab/admins', $dataWithoutCpf);
@@ -149,8 +149,8 @@ class AdminConabControllerTest extends TestCase
             'email' => 'any@email.com',
             'cpf' => '999.999.999/99', // invalid cpf
             'phones' => [
-                '(99) 99999-9999',
-                '(88) 88888-8888'
+                [ 'number' => '(99) 99999-9999' ],
+                [ 'number' => '(88) 88888-8888' ]
             ]
         ];
 
@@ -187,8 +187,8 @@ class AdminConabControllerTest extends TestCase
             'email' => 'any@email.com',
             'cpf' => '999.999.999/99',
             'phones' => [
-                '9999A99999',
-                '(84) 99999999'
+                [ 'number' => '9999A99999' ],
+                [ 'number' => '(84) 99999999' ]
             ]
         ];
 
