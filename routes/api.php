@@ -21,3 +21,4 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/conab/admins/{id}', 'AdminConabController@destroy');
 });
 
+

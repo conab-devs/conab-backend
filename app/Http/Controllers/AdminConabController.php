@@ -49,17 +49,6 @@ class AdminConabController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -77,7 +66,7 @@ class AdminConabController extends Controller
             'phones.*.number' => 'string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/'
         ])->validate();
 
-        $admin = User::with('phones')->findOrFail($id)->makeVisible(['password']);
+        $admin = User::with('phones')->findOrFail($id);
         $admin->name = $data['name'] ?? $admin->name;
         $admin->email = $data['email'] ?? $admin->email;
         $admin->cpf = $data['cpf'] ?? $admin->cpf;
@@ -105,6 +94,7 @@ class AdminConabController extends Controller
     public function destroy($id)
     {
         $admin = User::findOrFail($id);
+        $admin->phones()->delete();
         $admin->delete();
     }
 }
