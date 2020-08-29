@@ -349,11 +349,10 @@ class AdminConabControllerTest extends TestCase
     /** @test */
     public function on_the_delete_should_throw_an_error_if_admin_does_not_exist()
     {
-        // Only user authenticated
-        // Don't create a fake admin
-        // Request router DELETE /api/conab/admins/:incorrect_id
-        // Throw an error
-        // Assert status 400 and error name
-        $this->doesNotPerformAssertions();
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+        $fakeId = 10;
+        $response = $authenticatedRoute->deleteJson("/api/conab/admins/$fakeId");
+        $response->assertStatus(404);
     }
 }
