@@ -60,7 +60,6 @@ class AdminConabControllerTest extends TestCase
         ];
         $response = $this->actingAs($authenticatedUser, 'api')
             ->postJson('/api/conab/admins', $data);
-        $response->dump();
         $response->assertStatus(201)
             ->assertJsonFragment($data);
     }
@@ -339,12 +338,12 @@ class AdminConabControllerTest extends TestCase
     /** @test */
     public function should_delete_an_admin()
     {
-        // Only user authenticated
-        // Create a fake admin
-        // Request router DELETE /api/conab/admins/:id
-        // Returns no content
-        // Assert status 204 and database
-        $this->doesNotPerformAssertions();
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $authenticatedRoute->deleteJson("/api/conab/admins/$fakeAdmin->id");
+        $response->assertOk();
+        $this->assertDatabaseMissing('users', ['id' => $fakeAdmin->id]);
     }
 
     /** @test */
