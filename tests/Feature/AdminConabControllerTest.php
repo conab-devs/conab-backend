@@ -239,16 +239,6 @@ class AdminConabControllerTest extends TestCase
 
     }
 
-     /** @test */
-    public function on_the_update_should_throw_an_error_if_pass_incorrect_id()
-    {
-        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $authenticatedRoute = $this->actingAs($user, 'api');
-        $fakeId = 10;
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeId", []);
-        $response->assertStatus(404);
-    }
-
     /** @test */
     public function on_the_update_should_throw_an_error_if_pass_invalid_name()
     {
@@ -334,12 +324,11 @@ class AdminConabControllerTest extends TestCase
     /** @test */
     public function on_the_update_should_throw_an_error_if_admin_does_not_exist()
     {
-        // Only user authenticated
-        // Don't create a fake admin
-        // Request router PUT /api/conab/admins/:incorrect_id
-        // Throw an error
-        // Assert status 400 and error name
-        $this->doesNotPerformAssertions();
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+        $fakeId = 10;
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeId", []);
+        $response->assertStatus(404);
     }
 
     /*

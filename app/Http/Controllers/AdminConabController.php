@@ -29,7 +29,6 @@ class AdminConabController extends Controller
      */
     public function store(Request $request)
     {
-
         $data = Validator::make($request->all(), [
             'name' => 'required|string',
             'email' => 'required|email',
