@@ -223,7 +223,7 @@ class AdminConabControllerTest extends TestCase
         ];
 
         $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyPassword);
-        $response->assertOk()->assertJsonStructure(['password']);
+        $response->assertOk();
 
         $dataWithOnlyPhones = [
             'phones' => [
@@ -342,6 +342,7 @@ class AdminConabControllerTest extends TestCase
         $authenticatedRoute = $this->actingAs($user, 'api');
         $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $response = $authenticatedRoute->deleteJson("/api/conab/admins/$fakeAdmin->id");
+        $response->dump();
         $response->assertOk();
         $this->assertDatabaseMissing('users', ['id' => $fakeAdmin->id]);
     }
