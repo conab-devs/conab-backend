@@ -69,43 +69,24 @@ class AdminConabController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // TODO: Think in way of save multiple phones
-//        $data = $request->except('phones');
-//        $admin = User::with('phones')->find($id);
-//        $admin->update($data);
-//
-//        foreach($admin->phones as $key => $phone) {
-//            $admin->phones()->detach($phone->id);
-//            $newPhone = new Phone()
-//            $admin->phones()->attach()
-//        }
-//
-//        $dataPhones = $request->input('phones');
-//        $dataPhonesLength = (!empty($phone)) ? count($dataPhones) : 0;
-//        $newPhones = [];
-//        for($i = 0; $i < $dataPhonesLength; $i++) {
-//            array_push($newPhones, ['number' => $dataPhones[$i]]);
-//        }
-//
-//        if (!empty($newPhones)) {
-//            $admin->phones()->delete();
-//            $admin->phones()->createMany($newPhones);
-//        }
-//
-//        $admin->phones()->refresh();
-//
-//        $phonesArray = array($admin->phones);
-//        $onlyNumbers = array_map(function ($phone, $key) {
-//            return $phone[$key]['number'];
-//        }, $phonesArray, array_keys($phonesArray));
-//
-//        return response([
-//            'id' => $admin->id,
-//            'name' => $admin->name,
-//            'email' => $admin->email,
-//            'cpf' => $admin->cpf,
-//            'phones' => $onlyNumbers
-//        ], 200);
+        $data = $request->all();
+        $admin = User::with('phones')->find($id)->makeVisible(['password']);
+        $admin->name = $data['name'] ?? $admin->name;
+        $admin->email = $data['email'] ?? $admin->email;
+        $admin->cpf = $data['cpf'] ?? $admin->cpf;
+
+        if (!empty($data['password']) && !empty($data['new_password'])) {
+            $admin->password = $data['new_password'];
+        }
+
+        $admin->save();
+
+        if (!empty($data['phones'])) {
+            $admin->phones()->delete();
+            $admin->phones()->createMany($data['phones']);
+        }
+
+        return response($admin->refresh(), 200);
     }
 
     /**
