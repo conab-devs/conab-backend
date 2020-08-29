@@ -54,12 +54,13 @@ class AdminConabControllerTest extends TestCase
             'email' => 'any@email.com',
             'cpf' => '999.999.999-99',
             'phones' => [
-                '(99) 99999-9999',
-                '(88) 88888-8888'
+                [ 'number' => '(99) 99999-9999' ],
+                [ 'number' => '(88) 88888-8888' ]
             ]
         ];
         $response = $this->actingAs($authenticatedUser, 'api')
             ->postJson('/api/conab/admins', $data);
+        $response->dump();
         $response->assertStatus(201)
             ->assertJsonFragment($data);
     }
