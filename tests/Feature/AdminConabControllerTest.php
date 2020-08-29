@@ -92,7 +92,7 @@ class AdminConabControllerTest extends TestCase
             ]
         ];
 
-        $response = $authenticatedRoute->postJson('/api/conab/admins', $dataWithoutName);
+        $response = $authenticatedRoute->postJson('/api/conab/admins', $dataWithInvalidName);
         $response->assertStatus(422);
     }
 
@@ -199,51 +199,54 @@ class AdminConabControllerTest extends TestCase
     /** @test */
     public function should_update_an_admin()
     {
-        // TODO: Solve the problem with phone numbers
-//        // Only user authenticated
-//        $user = factory(User::class)
-//            ->create(['user_type' => 'ADMIN_CONAB']);
-//
-//        $authenticatedRoute = $this->actingAs($user, 'api');
-//
-//        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-//
-//        $dataWithOnlyName = ['name' => 'updated_name'];
-//        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyName);
-//        $response->dump();
-//        $response->assertOk()->assertJsonFragment(['name' => $dataWithOnlyName['name']]);
-//
-//        $dataWithOnlyEmail = ['email' => 'updated@email.com'];
-//        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyEmail);
-//        $response->dump();
-//        $response->assertOk()->assertJsonFragment(['email' => $dataWithOnlyEmail['email']]);
-//
-//        $dataWithOnlyCpf = ['cpf' => '111.111.111-11'];
-//        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyCpf);
-//        $response->dump();
-//        $response->assertOk()->assertJsonFragment(['cpf' => $dataWithOnlyCpf['cpf']]);
-//
-//        $dataWithOnlyPhones = [
-//            'phones' => [
-//                '(88) 88888-8888',
-//                '(22) 22222-2222'
-//            ]
-//        ];
-//        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyPhones);
-//        $response->dump();
-//        $response->assertOk()->assertJsonFragment(['phones' => $dataWithOnlyPhones['phones']]);
-        $this->doesNotPerformAssertions();
+        $user = factory(User::class)
+            ->create(['password' => '123456', 'user_type' => 'ADMIN_CONAB']);
+
+        $authenticatedRoute = $this->actingAs($user, 'api');
+
+        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $dataWithOnlyName = ['name' => 'updated_name'];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyName);
+        $response->assertOk()->assertJsonFragment(['name' => $dataWithOnlyName['name']]);
+
+        $dataWithOnlyEmail = ['email' => 'updated@email.com'];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyEmail);
+        $response->assertOk()->assertJsonFragment(['email' => $dataWithOnlyEmail['email']]);
+
+        $dataWithOnlyCpf = ['cpf' => '111.111.111-11'];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyCpf);
+        $response->assertOk()->assertJsonFragment(['cpf' => $dataWithOnlyCpf['cpf']]);
+
+        $dataWithOnlyPassword = [
+            'password' => '123456', // current password
+            'new_password' => '654321'
+        ];
+
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyPassword);
+        $response->assertOk()->assertJsonStructure(['password']);
+
+        $dataWithOnlyPhones = [
+            'phones' => [
+                [ 'number' => '(11) 11111-1111' ],
+                [ 'number' => '(22) 22222-2222' ]
+            ]
+        ];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyPhones);
+        $response->assertOk();
+        $this->assertDatabaseHas('phones', ['number' => '(11) 11111-1111']);
+        $this->assertDatabaseHas('phones', ['number' => '(22) 22222-2222']);
+
     }
 
      /** @test */
     public function on_the_update_should_throw_an_error_if_pass_incorrect_id()
     {
-        // Only user authenticated
-        // Create a fake admin
-        // Request router PUT /api/conab/admins/:id with each data
-        // Throw an error
-        // Assert status 400 and error name
-        $this->doesNotPerformAssertions();
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+        $fakeId = 10;
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeId", []);
+        $response->assertStatus(404);
     }
 
     /** @test */
