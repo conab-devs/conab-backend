@@ -30,14 +30,12 @@ class AdminConabController extends Controller
     public function store(Request $request)
     {
 
-        $data = Validator::make($request->except(['phones']), [
+        $data = Validator::make($request->all(), [
             'name' => 'required|string',
             'email' => 'required|email',
             'cpf' => 'required|regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/',
-        ])->validate();
-        // Some bug happens when pass 'phones' directly with $request->all().
-        $phones = Validator::make($request->input('phones'), [
-            '*.number' => 'string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/'
+            'phones' => 'required',
+            'phones.*.number' => 'required|string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/'
         ])->validate();
 
         $user = new User();
@@ -45,7 +43,7 @@ class AdminConabController extends Controller
         $user->password = $data['cpf'];
         $user->user_type = 'ADMIN_CONAB';
         $user->save();
-        $phones = $user->phones()->createMany($phones);
+        $phones = $user->phones()->createMany($data['phones']);
         $userAndPhones = array_merge($user->toArray(), [ 'phones' => $phones ]);
 
         return response($userAndPhones, 201);
