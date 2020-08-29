@@ -70,7 +70,7 @@ class AdminConabController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        $admin = User::with('phones')->find($id)->makeVisible(['password']);
+        $admin = User::with('phones')->findOrFail($id)->makeVisible(['password']);
         $admin->name = $data['name'] ?? $admin->name;
         $admin->email = $data['email'] ?? $admin->email;
         $admin->cpf = $data['cpf'] ?? $admin->cpf;
