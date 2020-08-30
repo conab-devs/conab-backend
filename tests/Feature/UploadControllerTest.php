@@ -22,7 +22,7 @@ class UploadControllerTest extends TestCase
         Storage::fake('public');
 
         $authenticatedRoute->postJson('/api/uploads', [
-            'avatar' => UploadedFile::fake()->image('photo.png')
+            'avatar' => UploadedFile::fake()->image('photo.jpg')
         ])->assertOk();
 
         Storage::disk('public')->assertExists($user->profile_picture);
@@ -37,14 +37,14 @@ class UploadControllerTest extends TestCase
         Storage::fake('public');
         // upload first file
         $authenticatedRoute->postJson('/api/uploads', [
-            'avatar' => UploadedFile::fake()->image('photo.png')
+            'avatar' => UploadedFile::fake()->image('photo.jpg')
         ])->assertOk();
         $oldPath = $user->profile_picture;
         Storage::disk('public')->assertExists($oldPath);
 
         // upload first second
         $authenticatedRoute->postJson('/api/uploads', [
-            'avatar' => UploadedFile::fake()->image('photo.png')
+            'avatar' => UploadedFile::fake()->image('photo.jpg')
         ])->assertOk();
         Storage::disk('public')->assertMissing($oldPath);
     }
