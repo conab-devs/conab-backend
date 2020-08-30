@@ -8,8 +8,6 @@ jobs:
     runs-on: ubuntu-18.04
     name: A job for laravel test
     steps:
-      - run: $GITHUB_ACTION_PATH/script.sh
-        shell: bash
       - name: Github checkout
         uses: actions/checkout@v1
       - name: Laravel tests
