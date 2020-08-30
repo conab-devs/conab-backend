@@ -19,6 +19,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/conab/admins', 'AdminConabController@store');
     Route::put('/conab/admins/{id}', 'AdminConabController@update');
     Route::delete('/conab/admins/{id}', 'AdminConabController@destroy');
+
+    Route::post('/uploads', 'UploadController@store');
 });
 
 
