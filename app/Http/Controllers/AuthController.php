@@ -32,9 +32,4 @@ class AuthController extends Controller
             ], $error->status);
         }
     }
-
-    public function logout()
-    {
-        auth()->logout();
-    }
 }

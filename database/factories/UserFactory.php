@@ -25,6 +25,7 @@ $factory->define(User::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
+        'password' => 'valid_password',
         'profile_picture' => $faker->imageUrl(),
         'cpf' => $faker->cpf,
         'user_type' => $roles[rand(0, 1)],

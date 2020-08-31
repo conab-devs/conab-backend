@@ -77,18 +77,4 @@ class AuthTest extends TestCase
 
         $response->assertStatus(200);
     }
-
-    /** @test */
-    public function should_make_logout()
-    {
-        $this->makeUser();
-        
-        $token = auth()->attempt($this->credentials);
-
-        $this->post('api/logout?token=' . $token)
-            ->assertStatus(200);
-
-        $this->assertGuest('api');
-
-    }
 }
