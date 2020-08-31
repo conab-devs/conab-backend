@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 //});
 
 Route::get('cooperatives', 'Api\\CooperativeController@index');
-Route::get('cooperative/{id}', 'Api\\CooperativeController@show');
-Route::delete('cooperative/{id}', 'Api\\CooperativeController@destroy');
-Route::post('cooperative', 'Api\\CooperativeController@store');
-Route::put('cooperative/{id}', 'Api\\CooperativeController@update');
+Route::get('cooperatives/{id}', 'Api\\CooperativeController@show');
+Route::post('cooperatives', 'Api\\CooperativeController@store');
+Route::delete('cooperatives/{id}', 'Api\\CooperativeController@destroy');
+Route::put('cooperatives/{id}', 'Api\\CooperativeController@update');
