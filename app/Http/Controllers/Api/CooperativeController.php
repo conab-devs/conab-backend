@@ -121,7 +121,7 @@ class CooperativeController extends Controller
         Validator::make($request->all(), [
             'name' => ['bail', 'max:100', Rule::unique('cooperatives')->ignore($cooperative->id)],
             'dap_path' => [Rule::unique('cooperatives')->ignore($cooperative->id), 'max:100'],
-            'phones.*.number' => [Rule::unique('phones')->whereNotIn('id', $cooperative->phones->modelKeys()), 'max:15'],
+            'phones.*.number' => ['distinct', Rule::unique('phones')->whereNotIn('id', $cooperative->phones->modelKeys()), 'max:15'],
             'city' => 'max:100',
             'street' => 'max:100',
             'neighborhood' => 'max:100',
