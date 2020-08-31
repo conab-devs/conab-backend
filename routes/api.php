@@ -22,3 +22,4 @@ Route::get('cooperatives', 'Api\\CooperativeController@index');
 Route::get('cooperative/{id}', 'Api\\CooperativeController@show');
 Route::delete('cooperative/{id}', 'Api\\CooperativeController@destroy');
 Route::post('cooperative', 'Api\\CooperativeController@store');
+Route::put('cooperative/{id}', 'Api\\CooperativeController@update');
