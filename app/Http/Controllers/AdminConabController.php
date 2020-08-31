@@ -6,6 +6,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class AdminConabController extends Controller
 {
@@ -57,21 +58,25 @@ class AdminConabController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $admin = User::with('phones')->findOrFail($id);
+
         $data = Validator::make($request->all(), [
             'name' => 'string',
             'email' => 'string|email',
             'cpf' => 'regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/',
             'password' => 'string',
-            'new_password' => 'string',
+            'new_password' => 'string|required_with:password',
             'phones.*.number' => 'string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/'
         ])->validate();
 
-        $admin = User::with('phones')->findOrFail($id);
         $admin->name = $data['name'] ?? $admin->name;
         $admin->email = $data['email'] ?? $admin->email;
         $admin->cpf = $data['cpf'] ?? $admin->cpf;
 
         if (!empty($data['password']) && !empty($data['new_password'])) {
+            if (!Hash::check($data['password'], $admin->password)) {
+                return response('', 400);
+            }
             $admin->password = $data['new_password'];
         }
 
