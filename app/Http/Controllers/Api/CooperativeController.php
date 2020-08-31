@@ -9,6 +9,7 @@ use App\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class CooperativeController extends Controller
 {
@@ -115,7 +116,38 @@ class CooperativeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $cooperative = Cooperative::findOrFail($id);
+
+        Validator::make($request->all(), [
+            'name' => ['bail', 'max:100', Rule::unique('cooperatives')->ignore($cooperative->id)],
+            'dap_path' => [Rule::unique('cooperatives')->ignore($cooperative->id), 'max:100'],
+            'phones.*.number' => [Rule::unique('phones')->whereNotIn('id', $cooperative->phones->modelKeys()), 'max:15'],
+            'city' => 'max:100',
+            'street' => 'max:100',
+            'neighborhood' => 'max:100',
+            'number' => 'max:10',
+        ])->validate();
+
+        $cooperative->fill($request->only($cooperative->getFillable()));
+
+        if (!empty($phones = $request->input('phones'))) {
+            $cooperative->phones()->delete();
+            $cooperative->phones()->createMany($phones);
+        }
+
+        if (!empty($addressData = $request->only($cooperative->address->getFillable())))  {
+            $address = Address::findOrFail($cooperative->address_id);
+            $address->fill($addressData);
+            $address->update();
+        }
+
+        if (!$cooperative->update()) {
+            return response()->json([
+                'message' => 'Failure to update cooperative.'
+            ], 400);
+        }
+
+        return response()->json(null, 204);
     }
 
     /**
