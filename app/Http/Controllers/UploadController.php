@@ -18,11 +18,11 @@ class UploadController extends Controller
     {
         $user = Auth::user();
 
-        if (Storage::exists($user->profile_picture)) {
-            Storage::delete($user->profile_picture);
-        }
-
         if ($request->hasFile('avatar')) {
+            if (Storage::exists($user->profile_picture)) {
+                Storage::delete($user->profile_picture);
+            }
+
             $avatar = $request->file('avatar');
             if ($avatar->isValid()) {
                 $path = $avatar->store('uploads');
