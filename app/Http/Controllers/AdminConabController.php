@@ -73,7 +73,7 @@ class AdminConabController extends Controller
         $admin->email = $data['email'] ?? $admin->email;
         $admin->cpf = $data['cpf'] ?? $admin->cpf;
 
-        if (!empty($data['password']) && !empty($data['new_password'])) {
+        if (!empty($data['password'])) {
             if (!Hash::check($data['password'], $admin->password)) {
                 return response('', 400);
             }
