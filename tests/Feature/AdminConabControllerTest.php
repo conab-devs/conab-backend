@@ -203,18 +203,16 @@ class AdminConabControllerTest extends TestCase
 
         $authenticatedRoute = $this->actingAs($user, 'api');
 
-        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-
         $dataWithOnlyName = ['name' => 'updated_name'];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyName);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithOnlyName);
         $response->assertOk()->assertJsonFragment(['name' => $dataWithOnlyName['name']]);
 
         $dataWithOnlyEmail = ['email' => 'updated@email.com'];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyEmail);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithOnlyEmail);
         $response->assertOk()->assertJsonFragment(['email' => $dataWithOnlyEmail['email']]);
 
         $dataWithOnlyCpf = ['cpf' => '111.111.111-11'];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyCpf);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithOnlyCpf);
         $response->assertOk()->assertJsonFragment(['cpf' => $dataWithOnlyCpf['cpf']]);
 
         $dataWithOnlyPassword = [
@@ -222,7 +220,7 @@ class AdminConabControllerTest extends TestCase
             'new_password' => '654321'
         ];
 
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyPassword);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithOnlyPassword);
         $response->assertOk();
 
         $dataWithOnlyPhones = [
@@ -231,7 +229,7 @@ class AdminConabControllerTest extends TestCase
                 [ 'number' => '(22) 22222-2222' ]
             ]
         ];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithOnlyPhones);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithOnlyPhones);
         $response->assertOk();
         $this->assertDatabaseHas('phones', ['number' => '(11) 11111-1111']);
         $this->assertDatabaseHas('phones', ['number' => '(22) 22222-2222']);
