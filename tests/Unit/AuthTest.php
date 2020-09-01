@@ -41,8 +41,8 @@ class AuthTest extends TestCase
     public function should_throw_error_if_password_field_is_invalid()
     {
         $this->expectException(InvalidFieldException::class);
-        $this->sut->password = null;
-        $this->sut->login('request_password', 'MOBILE');
+        $sut = new User();
+        $sut->login('request_password', 'MOBILE');
     }
 
     /** @test */
