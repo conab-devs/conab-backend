@@ -196,6 +196,45 @@ class AdminConabControllerTest extends TestCase
     }
 
     /** @test */
+    public function on_the_creation_should_throw_an_error_if_pass_an_existing_cpf()
+    {
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+
+        factory(User::class)->create(['cpf' => '111.111.111-11', 'user_type' => 'ADMIN_CONAB']);
+        $data = [
+            'name' => 'any_name',
+            'email' => 'any@email.com',
+            'cpf' => '111.111.111-11', // same cpf
+            'phones' => [
+                [ 'number' => '(99) 99999-9999' ],
+                [ 'number' => '(88) 88888-8888' ]
+            ]
+        ];
+        $response = $authenticatedRoute->postJson('/api/conab/admins', $data);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function on_the_creation_should_throw_an_error_if_pass_an_existing_phone()
+    {
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+
+        $admin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $data = [
+            'name' => 'any_name',
+            'email' => 'any@email.com',
+            'cpf' => '111.111.111-11',
+            'phones' => [
+                [ 'number' => $admin->phones[0]->number ], // existing phone
+            ]
+        ];
+        $response = $authenticatedRoute->postJson('/api/conab/admins', $data);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
     public function should_update_an_admin()
     {
         $user = factory(User::class)
