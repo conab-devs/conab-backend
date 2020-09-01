@@ -256,15 +256,15 @@ class AdminConabControllerTest extends TestCase
         $authenticatedRoute = $this->actingAs($user, 'api');
 
         $dataWithOnlyName = ['name' => 'updated_name'];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithOnlyName);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithOnlyName);
         $response->assertOk()->assertJsonFragment(['name' => $dataWithOnlyName['name']]);
 
         $dataWithOnlyEmail = ['email' => 'updated@email.com'];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithOnlyEmail);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithOnlyEmail);
         $response->assertOk()->assertJsonFragment(['email' => $dataWithOnlyEmail['email']]);
 
         $dataWithOnlyCpf = ['cpf' => '111.111.111-11'];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithOnlyCpf);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithOnlyCpf);
         $response->assertOk()->assertJsonFragment(['cpf' => $dataWithOnlyCpf['cpf']]);
 
         $dataWithOnlyPassword = [
@@ -272,7 +272,7 @@ class AdminConabControllerTest extends TestCase
             'new_password' => '654321'
         ];
 
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithOnlyPassword);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithOnlyPassword);
         $response->assertOk();
 
         $dataWithOnlyPhones = [
@@ -281,7 +281,7 @@ class AdminConabControllerTest extends TestCase
                 [ 'number' => '(22) 22222-2222' ]
             ]
         ];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithOnlyPhones);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithOnlyPhones);
         $response->assertOk();
         $this->assertDatabaseHas('phones', ['number' => '(11) 11111-1111']);
         $this->assertDatabaseHas('phones', ['number' => '(22) 22222-2222']);
@@ -295,7 +295,7 @@ class AdminConabControllerTest extends TestCase
         $authenticatedRoute = $this->actingAs($user, 'api');
 
         $dataWithInvalidName = ['name' => 123];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidName);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithInvalidName);
         $response->assertStatus(422);
     }
 
@@ -306,11 +306,11 @@ class AdminConabControllerTest extends TestCase
         $authenticatedRoute = $this->actingAs($user, 'api');
 
         $dataWithInvalidEmailAsANumber = ['email' => 123];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidEmailAsANumber);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithInvalidEmailAsANumber);
         $response->assertStatus(422);
 
         $dataWithInvalidEmail = ['email' => 'invalidemail.com'];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidEmail);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithInvalidEmail);
         $response->assertStatus(422);
     }
 
@@ -321,11 +321,11 @@ class AdminConabControllerTest extends TestCase
         $authenticatedRoute = $this->actingAs($user, 'api');
 
         $dataWithInvalidCpfAsANumber = ['cpf' => 123];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidCpfAsANumber);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithInvalidCpfAsANumber);
         $response->assertStatus(422);
 
         $dataWithInvalidCpf = ['cpf' => '99A.999.999/60'];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidCpf);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithInvalidCpf);
         $response->assertStatus(422);
     }
 
@@ -336,11 +336,11 @@ class AdminConabControllerTest extends TestCase
         $authenticatedRoute = $this->actingAs($user, 'api');
 
         $dataWithInvalidPasswordAsANumber = ['password' => 123, 'new_password' => 'any_password'];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidPasswordAsANumber);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithInvalidPasswordAsANumber);
         $response->assertStatus(422);
 
         $dataWithInvalidNewPasswordAsANumber = ['password' => 'any_password', 'new_password' => 123];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidNewPasswordAsANumber);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithInvalidNewPasswordAsANumber);
         $response->assertStatus(422);
     }
 
@@ -356,7 +356,7 @@ class AdminConabControllerTest extends TestCase
                 [ 'number' => '(84) 99999999' ]
             ]
         ];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidPhoneNumbers);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithInvalidPhoneNumbers);
         $response->assertStatus(422);
 
         $dataWithSamePhoneNumbers = [
@@ -365,18 +365,8 @@ class AdminConabControllerTest extends TestCase
                 [ 'number' => '(99) 99999-9999' ]
             ]
         ];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithSamePhoneNumbers);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithSamePhoneNumbers);
         $response->assertStatus(422);
-    }
-
-    /** @test */
-    public function on_the_update_should_throw_an_error_if_admin_does_not_exist()
-    {
-        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $authenticatedRoute = $this->actingAs($user, 'api');
-        $fakeId = 10;
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeId", []);
-        $response->assertStatus(404);
     }
 
     /** @test */
@@ -395,7 +385,7 @@ class AdminConabControllerTest extends TestCase
                 [ 'number' => '(88) 88888-8888' ]
             ]
         ];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $data);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $data);
         $response->assertStatus(422);
     }
 
@@ -413,7 +403,7 @@ class AdminConabControllerTest extends TestCase
                 [ 'number' => $user->phones[0]->number ], // existing phone
             ]
         ];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $data);
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $data);
         $response->assertStatus(422);
     }
 
