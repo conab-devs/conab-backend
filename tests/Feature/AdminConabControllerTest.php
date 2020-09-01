@@ -367,10 +367,6 @@ class AdminConabControllerTest extends TestCase
         $response->assertStatus(404);
     }
 
-    /*
-     * DETELE
-     * Only conab's admins
-     * */
 
     /** @test */
     public function should_delete_an_admin()
