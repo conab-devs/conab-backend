@@ -25,9 +25,18 @@ $factory->define(User::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
-        'password' => 'valid_password',
-        'profile_picture' => $faker->imageUrl(),
+        'profile_picture' => $faker->file(base_path('tmp')),
+        'password' => $faker->password(),
         'cpf' => $faker->cpf,
-        'user_type' => $roles[rand(0, 1)],
+        'user_type' => $roles[rand(0, 1)]
     ];
+});
+
+$factory->afterCreating(User::class, function (User $user, Faker $faker) {
+    if ($user->user_type === 'ADMIN_CONAB') {
+        $user->phones()->saveMany([
+            factory(\App\Phone::class)->make(),
+            factory(\App\Phone::class)->make(),
+        ]);
+    }
 });

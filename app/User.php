@@ -6,6 +6,7 @@ use App\Components\Errors\InvalidFieldException;
 use App\Components\Errors\UnauthorizedException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Facades\Gate;
 
@@ -19,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'user_type',
+        'name', 'email', 'password', 'cpf', 'user_type'
     ];
 
     /**
@@ -34,13 +35,22 @@ class User extends Authenticatable implements JWTSubject
     public function setPasswordAttribute($value)
     {
         if ($value !== null) {
-            $this->attributes['password'] = bcrypt($value);
+            $this->attributes['password'] = Hash::make($value);
         }
     }
 
     public function getPasswordAttribute()
     {
         return $this->attributes['password'];
+    }
+  
+    public function cooperative()
+    {
+        return $this->hasOne('App\Cooperative', 'cooperative_id');
+    }
+
+    public function phones() {
+        return $this->belongsToMany('App\Phone', 'user_phones');
     }
 
     public function login(string $password, string $device_name)
