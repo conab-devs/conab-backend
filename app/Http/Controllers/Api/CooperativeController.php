@@ -36,33 +36,22 @@ class CooperativeController extends Controller
         $request->validate([
             'name' => 'bail|required|unique:cooperatives|max:100',
             'dap_path' => 'required|unique:cooperatives|max:100',
-            'phone' => 'required|unique:phones,number|max:15',
+            'phones.*.number' => 'required|distinct|unique:phones,number|max:15',
             'city' => 'required|max:100',
             'street' => 'required|max:100',
             'neighborhood' => 'required|max:100',
             'number' => 'required|max:10',
         ]);
 
-        DB::beginTransaction();
-
         $address = Address::create($request->only(['city', 'street', 'neighborhood', 'number']));
-        $phone = Phone::create(['number' => $request['phone']]);
 
         $cooperative = new Cooperative();
-        $cooperative->fill($request->only($cooperative->getFillable()));
+        $cooperative->fill($request->all());
         $cooperative->address_id = $address->id;
         $cooperative->save();
-        $cooperative->phones()->attach($phone->id);
+        $cooperative->phones()->createMany($request->input('phones'));
 
-        if (!$address || !$phone || !$cooperative) {
-            DB::rollBack();
-            return response()->json([
-                    'message' => 'Failure create cooperative.'
-            ], 400);
-        }
-
-        DB::commit();
-        return response()->json(null, 204);
+        return response()->json(null, 201);
     }
 
     /**
@@ -73,15 +62,7 @@ class CooperativeController extends Controller
      */
     public function show($id)
     {
-        $cooperative = Cooperative::with(['address', 'phones'])
-            ->where('id', $id)
-            ->first();
-
-        if (!$cooperative) {
-            return response()->json([
-                'message' => 'Cooperative not found.'
-            ], 404);
-        }
+        $cooperative = Cooperative::with(['address', 'phones'])->findOrFail($id);
 
         return response()->json($cooperative);
     }
@@ -107,24 +88,16 @@ class CooperativeController extends Controller
             'number' => 'max:10',
         ])->validate();
 
-        $cooperative->fill($request->only($cooperative->getFillable()));
+        $cooperative->fill($request->all());
 
         if (!empty($phones = $request->input('phones'))) {
             $cooperative->phones()->delete();
             $cooperative->phones()->createMany($phones);
         }
 
-        if (!empty($addressData = $request->only($cooperative->address->getFillable())))  {
-            $address = Address::findOrFail($cooperative->address_id);
-            $address->fill($addressData);
-            $address->update();
-        }
-
-        if (!$cooperative->update()) {
-            return response()->json([
-                'message' => 'Failure to update cooperative.'
-            ], 400);
-        }
+        $address = Address::findOrFail($cooperative->address_id);
+        $address->fill($request->all());
+        $address->update();
 
         return response()->json(null, 204);
     }
@@ -137,29 +110,12 @@ class CooperativeController extends Controller
      */
     public function destroy($id)
     {
-        $cooperative = Cooperative::with(['address', 'phones'])
-            ->where('id', $id)
-            ->first();
+        $cooperative = Cooperative::findOrFail($id);
 
-        if (!$cooperative) {
-            return response()->json([
-                'message' => 'Cooperative not found.'
-            ], 404);
-        }
+        $cooperative->phones()->delete();
+        $cooperative->delete();
+        $cooperative->address()->delete();
 
-        DB::beginTransaction();
-        $phones = $cooperative->phones()->delete();
-        $coop = $cooperative->delete();
-        $address = $cooperative->address()->delete();
-
-        if (!$coop || !$address || !$phones) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Failure to delete cooperative.'
-            ], 400);
-        }
-
-        DB::commit();
         return response()->json(null, 204);
     }
 }
