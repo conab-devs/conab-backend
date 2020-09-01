@@ -4,7 +4,7 @@
 
 use App\User;
 use Faker\Generator as Faker;
-use Illuminate\Support\Str;
+use Faker\Provider\pt_BR\Person;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,13 +18,17 @@ use Illuminate\Support\Str;
 */
 
 $factory->define(User::class, function (Faker $faker) {
+    $roles = ['CUSTOMER', 'ADMIN_COOP'];
+    
+    $faker->addProvider(new Person($faker));
+
     return [
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
         'profile_picture' => $faker->file(base_path('tmp')),
         'password' => $faker->password(),
-        'cpf' => $faker->numerify('###.###.###-##'),
-        'user_type' => 'CUSTOMER',
+        'cpf' => $faker->cpf,
+        'user_type' => $roles[rand(0, 1)]
     ];
 });
 
