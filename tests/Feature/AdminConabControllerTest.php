@@ -174,7 +174,7 @@ class AdminConabControllerTest extends TestCase
         $dataWithInvalidPhones = [
             'name' => 'any_name',
             'email' => 'any@email.com',
-            'cpf' => '999.999.999/99',
+            'cpf' => '999.999.999-99',
             'phones' => '(99) 99999-9999' // must be an array
         ];
 
@@ -184,7 +184,7 @@ class AdminConabControllerTest extends TestCase
         $dataWithInvalidPhoneNumbers = [
             'name' => 'any_name',
             'email' => 'any@email.com',
-            'cpf' => '999.999.999/99',
+            'cpf' => '999.999.999-99',
             'phones' => [
                 [ 'number' => '9999A99999' ],
                 [ 'number' => '(84) 99999999' ]
@@ -192,6 +192,19 @@ class AdminConabControllerTest extends TestCase
         ];
 
         $response = $authenticatedRoute->postJson('/api/conab/admins', $dataWithInvalidPhoneNumbers);
+        $response->assertStatus(422);
+
+        $dataWithSamePhoneNumbers = [
+            'name' => 'any_name',
+            'email' => 'any@email.com',
+            'cpf' => '999.999.999-99',
+            'phones' => [
+                [ 'number' => '(99) 99999-9999' ],
+                [ 'number' => '(99) 99999-9999' ]
+            ]
+        ];
+
+        $response = $authenticatedRoute->postJson('/api/conab/admins', $dataWithSamePhoneNumbers);
         $response->assertStatus(422);
     }
 
@@ -281,10 +294,8 @@ class AdminConabControllerTest extends TestCase
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
 
-        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-
         $dataWithInvalidName = ['name' => 123];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidName);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidName);
         $response->assertStatus(422);
     }
 
@@ -294,14 +305,12 @@ class AdminConabControllerTest extends TestCase
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
 
-        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-
         $dataWithInvalidEmailAsANumber = ['email' => 123];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidEmailAsANumber);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidEmailAsANumber);
         $response->assertStatus(422);
 
         $dataWithInvalidEmail = ['email' => 'invalidemail.com'];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidEmail);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidEmail);
         $response->assertStatus(422);
     }
 
@@ -311,14 +320,12 @@ class AdminConabControllerTest extends TestCase
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
 
-        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-
         $dataWithInvalidCpfAsANumber = ['cpf' => 123];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidCpfAsANumber);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidCpfAsANumber);
         $response->assertStatus(422);
 
         $dataWithInvalidCpf = ['cpf' => '99A.999.999/60'];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidCpf);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidCpf);
         $response->assertStatus(422);
     }
 
@@ -328,14 +335,12 @@ class AdminConabControllerTest extends TestCase
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
 
-        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-
         $dataWithInvalidPasswordAsANumber = ['password' => 123, 'new_password' => 'any_password'];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidPasswordAsANumber);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidPasswordAsANumber);
         $response->assertStatus(422);
 
         $dataWithInvalidNewPasswordAsANumber = ['password' => 'any_password', 'new_password' => 123];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidNewPasswordAsANumber);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidNewPasswordAsANumber);
         $response->assertStatus(422);
     }
 
@@ -345,15 +350,23 @@ class AdminConabControllerTest extends TestCase
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
 
-        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-
         $dataWithInvalidPhoneNumbers = [
             'phones' => [
                 [ 'number' => '9999A99999' ],
                 [ 'number' => '(84) 99999999' ]
             ]
         ];
-        $response = $authenticatedRoute->putJson("/api/conab/admins/$fakeAdmin->id", $dataWithInvalidPhoneNumbers);
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithInvalidPhoneNumbers);
+        $response->assertStatus(422);
+
+        $dataWithSamePhoneNumbers = [
+            'phones' => [
+                [ 'number' => '(11) 11111-1111' ],
+                [ 'number' => '(11) 11111-1111' ]
+            ]
+        ];
+        $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithSamePhoneNumbers);
+        $response->dump();
         $response->assertStatus(422);
     }
 
