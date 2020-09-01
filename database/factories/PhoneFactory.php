@@ -7,6 +7,6 @@ use Faker\Generator as Faker;
 
 $factory->define(Phone::class, function (Faker $faker) {
     return [
-        'number' => $faker->e164PhoneNumber
+        'number' => $faker->numerify('(##) #####-####')
     ];
 });
