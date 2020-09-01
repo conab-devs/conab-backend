@@ -2,10 +2,14 @@
 
 namespace App;
 
+use App\Components\Errors\InvalidFieldException;
+use App\Components\Errors\UnauthorizedException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Facades\Gate;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
@@ -15,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'user_type',
     ];
 
     /**
@@ -24,15 +28,61 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
     ];
 
+    public function setPasswordAttribute($value)
+    {
+        if ($value !== null) {
+            $this->attributes['password'] = bcrypt($value);
+        }
+    }
+
+    public function getPasswordAttribute()
+    {
+        return $this->attributes['password'];
+    }
+
+    public function login(string $password, string $device_name)
+    {
+        $fields = ['email', 'password'];
+        
+        foreach ($fields as $field) {
+            if ($this[$field] === null) {
+                throw new InvalidFieldException;
+            }
+        }
+        
+        if (Gate::forUser($this)->denies('login', $device_name)) {
+            throw new UnauthorizedException;
+        }
+
+        if (! $token = auth()->attempt([
+            'email' => $this->email, 'password' => $password
+        ])) {
+            throw new UnauthorizedException;
+        }
+
+        return $token;
+    }
+
     /**
-     * The attributes that should be cast to native types.
+     * Get the identifier that will be stored in the subject claim of the JWT.
      *
-     * @var array
+     * @return mixed
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 }
