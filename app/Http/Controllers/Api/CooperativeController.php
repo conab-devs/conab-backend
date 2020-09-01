@@ -36,7 +36,7 @@ class CooperativeController extends Controller
         $request->validate([
             'name' => 'bail|required|unique:cooperatives|max:100',
             'dap_path' => 'required|unique:cooperatives|max:100',
-            'phones.*.number' => 'required|distinct|unique:phones,number|max:15',
+            'phones.*.number' => 'required|distinct|regex:/(\(\d{2}\)\ \d{4,5}\-\d{4})/|unique:phones,number|max:15',
             'city' => 'required|max:100',
             'street' => 'required|max:100',
             'neighborhood' => 'required|max:100',
@@ -79,9 +79,14 @@ class CooperativeController extends Controller
         $cooperative = Cooperative::findOrFail($id);
 
         Validator::make($request->all(), [
-            'name' => ['bail', 'max:100', Rule::unique('cooperatives')->ignore($cooperative->id)],
+            'name' => ['bail', Rule::unique('cooperatives')->ignore($cooperative->id), 'max:100'],
             'dap_path' => [Rule::unique('cooperatives')->ignore($cooperative->id), 'max:100'],
-            'phones.*.number' => ['distinct', Rule::unique('phones')->whereNotIn('id', $cooperative->phones->modelKeys()), 'max:15'],
+            'phones.*.number' => [
+                'distinct',
+                Rule::unique('phones')->whereNotIn('id', $cooperative->phones->modelKeys()),
+                'regex:/(\(\d{2}\)\ \d{4,5}\-\d{4})/',
+                'max:15'
+            ],
             'city' => 'max:100',
             'street' => 'max:100',
             'neighborhood' => 'max:100',
