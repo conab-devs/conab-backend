@@ -7,6 +7,7 @@ use App\Components\Errors\UnauthorizedException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Facades\Gate;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -47,19 +48,14 @@ class User extends Authenticatable implements JWTSubject
     public function login(string $password, string $device_name)
     {
         $fields = ['email', 'password'];
-        $permissions = [
-            'CUSTOMER' => 'MOBILE', 
-            'ADMIN_COOP' => 'MOBILE', 
-            'ADMIN_CONAB' => 'WEB', 
-        ];
-
+        
         foreach ($fields as $field) {
             if ($this[$field] === null) {
                 throw new InvalidFieldException;
             }
         }
         
-        if ($device_name !== $permissions[$this->user_type]) {
+        if (Gate::forUser($this)->denies('login', $device_name)) {
             throw new UnauthorizedException;
         }
 
