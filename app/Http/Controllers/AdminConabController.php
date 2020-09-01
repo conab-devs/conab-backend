@@ -57,9 +57,9 @@ class AdminConabController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $admin = User::with('phones')->findOrFail($id);
+        $admin = User::with('phones')->findOrFail(Auth::id());
 
         $data = Validator::make($request->all(), [
             'name' => 'string',

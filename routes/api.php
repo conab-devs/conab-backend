@@ -17,8 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->group(function () {
     Route::get('/conab/admins', 'AdminConabController@index');
     Route::post('/conab/admins', 'AdminConabController@store');
+    Route::put('/conab/admins', 'AdminConabController@update');
     Route::delete('/conab/admins/{id}', 'AdminConabController@destroy');
-    Route::put('/conab/admins/{id}', 'AdminConabController@update');
 
     Route::post('/uploads', 'UploadController@store');
 });
