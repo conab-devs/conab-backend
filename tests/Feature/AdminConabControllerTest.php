@@ -361,12 +361,11 @@ class AdminConabControllerTest extends TestCase
 
         $dataWithSamePhoneNumbers = [
             'phones' => [
-                [ 'number' => '(11) 11111-1111' ],
-                [ 'number' => '(11) 11111-1111' ]
+                [ 'number' => '(99) 99999-9999' ],
+                [ 'number' => '(99) 99999-9999' ]
             ]
         ];
         $response = $authenticatedRoute->putJson("/api/conab/admins/$user->id", $dataWithSamePhoneNumbers);
-        $response->dump();
         $response->assertStatus(422);
     }
 
