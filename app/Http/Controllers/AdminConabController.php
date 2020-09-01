@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -63,10 +64,19 @@ class AdminConabController extends Controller
         $data = Validator::make($request->all(), [
             'name' => 'string',
             'email' => 'string|email',
-            'cpf' => 'regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/',
+            'cpf' => [
+                'regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/',
+                Rule::unique('users')->ignore($admin->id)
+            ],
             'password' => 'string',
             'new_password' => 'string|required_with:password',
-            'phones.*.number' => 'string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/'
+            'phones.*.number' => [
+                'string',
+                'regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/',
+                Rule::unique('phones')->where(function ($query) {
+                    return $query->get('number');
+                })
+            ]
         ])->validate();
 
         $admin->name = $data['name'] ?? $admin->name;
