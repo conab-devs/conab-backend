@@ -36,6 +36,7 @@ class CooperativeController extends Controller
         $request->validate([
             'name' => 'bail|required|unique:cooperatives|max:100',
             'dap_path' => 'required|mimetypes:application/pdf|max:100',
+            'phones' => 'required|array',
             'phones.*.number' => 'required|distinct|regex:/(\(\d{2}\)\ \d{4,5}\-\d{4})/|unique:phones,number|max:15',
             'city' => 'required|max:100',
             'street' => 'required|max:100',
@@ -89,6 +90,7 @@ class CooperativeController extends Controller
         Validator::make($request->all(), [
             'name' => ['bail', Rule::unique('cooperatives')->ignore($cooperative->id), 'max:100'],
             'dap_path' => [Rule::unique('cooperatives')->ignore($cooperative->id), 'max:100'],
+            'phones' => 'array',
             'phones.*.number' => [
                 'distinct',
                 Rule::unique('phones')->whereNotIn('id', $cooperative->phones->modelKeys()),
