@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Address;
 use App\Cooperative;
 use App\Http\Controllers\Controller;
-use App\Phone;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -35,7 +34,7 @@ class CooperativeController extends Controller
     {
         $request->validate([
             'name' => 'bail|required|unique:cooperatives|max:100',
-            'dap_path' => 'required|mimetypes:application/pdf|max:100',
+            'dap_path' => 'required|mimetypes:application/pdf',
             'phones' => 'required|array',
             'phones.*.number' => 'required|distinct|regex:/(\(\d{2}\)\ \d{4,5}\-\d{4})/|unique:phones,number|max:15',
             'city' => 'required|max:100',
@@ -89,7 +88,6 @@ class CooperativeController extends Controller
 
         Validator::make($request->all(), [
             'name' => ['bail', Rule::unique('cooperatives')->ignore($cooperative->id), 'max:100'],
-            'dap_path' => [Rule::unique('cooperatives')->ignore($cooperative->id), 'max:100'],
             'phones' => 'array',
             'phones.*.number' => [
                 'distinct',
@@ -103,7 +101,8 @@ class CooperativeController extends Controller
             'number' => 'max:10',
         ])->validate();
 
-        $cooperative->fill($request->all());
+        $cooperative->name = $request->input('name');
+        $cooperative->update();
 
         if (!empty($phones = $request->input('phones'))) {
             $cooperative->phones()->delete();
@@ -113,6 +112,27 @@ class CooperativeController extends Controller
         $address = Address::findOrFail($cooperative->address_id);
         $address->fill($request->all());
         $address->update();
+
+        return response()->json(null, 204);
+    }
+
+    public function updateDap(Request $request, $id)
+    {
+        $cooperative = Cooperative::findOrFail($id);
+
+        $request->validate([
+            'dap_path' => 'required|mimetypes:application/pdf',
+        ]);
+
+        if ($request->hasFile('dap_path') && ($request->file('dap_path')->isValid())) {
+            $path = $request->file('dap_path')->store('uploads');
+            Storage::delete($cooperative->dap_path);
+            $cooperative->dap_path = $path;
+        } else {
+            return response()->json('Failed to send DAP.', 400);
+        }
+
+        $cooperative->update();
 
         return response()->json(null, 204);
     }
