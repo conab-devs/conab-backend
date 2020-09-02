@@ -35,7 +35,7 @@ class CooperativeController extends Controller
     {
         $request->validate([
             'name' => 'bail|required|unique:cooperatives|max:100',
-            'dap_path' => 'required|unique:cooperatives|max:100',
+            'dap_path' => 'required|mimetypes:application/pdf|max:100',
             'phones.*.number' => 'required|distinct|regex:/(\(\d{2}\)\ \d{4,5}\-\d{4})/|unique:phones,number|max:15',
             'city' => 'required|max:100',
             'street' => 'required|max:100',
@@ -43,10 +43,18 @@ class CooperativeController extends Controller
             'number' => 'required|max:10',
         ]);
 
+        $cooperative = new Cooperative();
+
+        if ($request->hasFile('dap_path') && ($request->file('dap_path')->isValid())) {
+            $path = $request->file('dap_path')->store('uploads');
+            $cooperative->dap_path = $path;
+        } else {
+            return response()->json('Failed to send DAP.', 400);
+        }
+
         $address = Address::create($request->only(['city', 'street', 'neighborhood', 'number']));
 
-        $cooperative = new Cooperative();
-        $cooperative->fill($request->all());
+        $cooperative->fill($request->except(['dap_path']));
         $cooperative->address_id = $address->id;
         $cooperative->save();
         $cooperative->phones()->createMany($request->input('phones'));
