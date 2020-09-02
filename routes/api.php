@@ -18,9 +18,9 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-Route::get('cooperatives', 'Api\\CooperativeController@index');
-Route::get('cooperatives/{id}', 'Api\\CooperativeController@show');
-Route::post('cooperatives', 'Api\\CooperativeController@store');
-Route::delete('cooperatives/{id}', 'Api\\CooperativeController@destroy');
-Route::put('cooperatives/{id}', 'Api\\CooperativeController@update');
-Route::patch('cooperatives/{id}', 'Api\\CooperativeController@updateDap');
+Route::get('cooperatives', 'CooperativeController@index');
+Route::get('cooperatives/{id}', 'CooperativeController@show');
+Route::post('cooperatives', 'CooperativeController@store');
+Route::delete('cooperatives/{id}', 'CooperativeController@destroy');
+Route::put('cooperatives/{id}', 'CooperativeController@update');
+Route::patch('cooperatives/{id}', 'CooperativeController@updateDap');
