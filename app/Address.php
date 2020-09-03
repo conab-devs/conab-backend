@@ -6,5 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Address extends Model
 {
-    //
+    protected $fillable = [
+        'street', 'neighborhood', 'city', 'number'
+    ];
+
+    public function cooperative()
+    {
+        return $this->hasOne(Cooperative::class);
+    }
 }

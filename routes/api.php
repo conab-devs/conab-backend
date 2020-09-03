@@ -27,3 +27,9 @@ Route::middleware('auth:api')->group(function () {
 
 Route::post('/login', 'AuthController@login');
 
+Route::get('cooperatives', 'CooperativeController@index');
+Route::get('cooperatives/{id}', 'CooperativeController@show');
+Route::post('cooperatives', 'CooperativeController@store');
+Route::delete('cooperatives/{id}', 'CooperativeController@destroy');
+Route::put('cooperatives/{id}', 'CooperativeController@update');
+Route::patch('cooperatives/{id}', 'CooperativeController@updateDap');
