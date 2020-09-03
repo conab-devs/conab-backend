@@ -16,12 +16,7 @@ class UserService
 
     public function findByEmail(string $email)
     {
-        $user = $this->model->where('email', $email)->first();
-    
-        if (! $user) {
-            throw new UnprocessableEntityException();
-        }
+        return $this->model->where('email', $email)->first();
 
-        return $user;
     }
 }
