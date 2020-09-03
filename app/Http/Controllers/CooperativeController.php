@@ -58,7 +58,7 @@ class CooperativeController extends Controller
         $cooperative->save();
         $cooperative->phones()->createMany($request->input('phones'));
 
-        return response()->json(null, 201);
+        return response()->json($cooperative->load(['address', 'phones']), 201);
     }
 
     /**
