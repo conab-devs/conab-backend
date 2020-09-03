@@ -6,17 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cooperative extends Model
 {
-    protected $fillable = [
-        'name', 'dap_path'
-    ];
-
-    public function address()
-    {
-        return $this->belongsTo(Address::class);
-    }
+    protected $fillable = ['name', 'dap_path'];
 
     public function phones()
     {
-        return $this->belongsToMany(Phone::class, 'cooperative_phones');
+        return $this->belongsToMany('App\Phone', 'cooperative_phones');
+    }
+  
+    public function address()
+    {
+        return $this->hasOne('App\Address', 'address_id');
     }
 }
