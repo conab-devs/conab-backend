@@ -7,7 +7,7 @@ use \Mockery;
 use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use App\PasswordReset;
 use App\Components\Services\PasswordResetService;
-use App\User;
+use App\Components\TokenGenerator;
 
 /** @group Franklyn */
 class PasswordResetServiceTest extends TestCase
@@ -20,7 +20,7 @@ class PasswordResetServiceTest extends TestCase
         $model = Mockery::mock(PasswordReset::class);
         $model->shouldReceive('where->count')->andReturn(1);
         
-        $service = new PasswordResetService($model);
+        $service = new PasswordResetService($model, new TokenGenerator);
         $queryBuilder = $service->queryByEmail('valid_email');
         
         $this->assertGreaterThan(0, $queryBuilder->count());
@@ -32,7 +32,7 @@ class PasswordResetServiceTest extends TestCase
         $model = Mockery::mock(PasswordReset::class);
         $model->shouldReceive('where->first')->andReturn(null);
         
-        $service = new PasswordResetService($model);
+        $service = new PasswordResetService($model, new TokenGenerator);
         $passwordReset = $service->findByEmail('invalid_email');
         
         $this->assertEquals(null, $passwordReset);
@@ -48,11 +48,27 @@ class PasswordResetServiceTest extends TestCase
         $model = Mockery::mock(PasswordReset::class);
         $model->shouldReceive('where->first')->andReturn($reset);
         
-        $service = new PasswordResetService($model);
+        $service = new PasswordResetService($model, new TokenGenerator);
         $passwordReset = $service->findByEmail($reset->email);
         
         $this->assertEquals($reset->email, $passwordReset->email);
         $this->assertEquals($reset->token, $passwordReset->token);
+    }
 
+    /** @test */
+    public function password_reset_service_should_store_reset_request()
+    {
+        $fields = ['email' => 'valid_mail@mail.com', 'token' => 'valid_token'];
+ 
+        $tokenGenerator = Mockery::mock(TokenGenerator::class);
+        $tokenGenerator->shouldReceive('generate')->andReturn($fields['token']);
+
+        $model = Mockery::mock(PasswordReset::class);
+        $model->shouldReceive('fill')->with($fields);
+        $model->shouldReceive('save')->andReturn(true);
+
+        $sut = new PasswordResetService($model, $tokenGenerator);
+
+        $this->assertTrue($sut->storePasswordResetRequest($fields['email']));
     }
 }
