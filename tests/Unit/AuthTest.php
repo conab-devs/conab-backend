@@ -12,6 +12,7 @@ use App\Components\AuthHandler;
 use App\Components\TokenGenerator;
 use App\Components\Services\UserService;
 
+/** @auhor Franklyn */
 class AuthTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
