@@ -4,7 +4,7 @@ namespace App\Components\Errors;
 
 class UnprocessableEntityException extends \Exception
 {
-    public $status = 423;
+    public $status = 422;
 
     public function __construct($message = '', $code = 0, \Exception $previous = null)
     {
