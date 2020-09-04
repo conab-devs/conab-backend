@@ -3,7 +3,7 @@
 namespace App\Components;
 
 use Illuminate\Support\Str;
-use Illuminate\Support\Facade\Auth;
+use Illuminate\Support\Facades\Auth;
 
 class TokenGenerator
 {
@@ -14,6 +14,6 @@ class TokenGenerator
 
     public function generateJwt($credentials)
     {
-        Auth::attempt($credentials);
+        return Auth::attempt($credentials);
     }
 }

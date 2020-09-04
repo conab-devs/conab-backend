@@ -127,8 +127,9 @@ class AuthTest extends TestCase
 
         $sut = new AuthHandler($userService, $tokenGenerator);
 
-        $token = $sut->authenticate('valid@valid.com', 'valid_password', 'MOBILE');
+        $response = $sut->authenticate('valid@valid.com', 'valid_password', 'MOBILE');
 
-        $this->assertEquals('valid_token', $token);
+        $this->assertEquals('valid_token', $response['token']);
+        $this->assertTrue($response['user'] instanceof $user);
     } 
 }

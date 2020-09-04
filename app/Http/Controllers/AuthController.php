@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Components\Errors\UnauthorizedException;
+use App\Components\AuthHandler;
+use App\Components\Services\UserService;
+use App\Components\TokenGenerator;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,16 +19,13 @@ class AuthController extends Controller
             'device_name' => 'required',
         ])->validate();
 
-        $user = User::where('email', $validated['email'])->first();
-
         try {
-            if (!$user) {
-                throw new UnauthorizedException();
-            }
+            $service = new UserService(new User());
+            $authHandler = new AuthHandler($service, new TokenGenerator());
+            
+            $responseContent = $authHandler->authenticate($validated);
 
-            $token = $user->login($validated['password'], $validated['device_name']);
-
-            return response()->json(['token' => $token, 'user' => $user]);
+            return response()->json($responseContent);
         } catch (\Exception $error) {
             return response()->json([
                 'message' => $error->getMessage(),

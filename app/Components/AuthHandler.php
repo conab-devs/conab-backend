@@ -7,7 +7,6 @@ use App\Components\Errors\InvalidArgumentException;
 use App\Components\Errors\UnauthorizedException;
 use App\Components\TokenGenerator;
 use App\Components\Services\UserService;
-use App\User;
 
 class AuthHandler
 {
@@ -41,7 +40,7 @@ class AuthHandler
 
     private function attemptCredentials($request)
     {
-        $this->checkIfUserHasAccessToPlatform(
+        $user = $this->findUserIfHeIsAuthorized(
             $request['email'], $request['device_name']
         );
 
@@ -53,15 +52,17 @@ class AuthHandler
             throw new UnauthorizedException();
         }
 
-        return $token;
+        return ['token' => $token, 'user' => $user];
     }
 
-    private function checkIfUserHasAccessToPlatform($email, $device_name)
+    private function findUserIfHeIsAuthorized($email, $device_name)
     {
         $user = $this->service->findByEmail($email);
 
         if (Gate::forUser($user)->denies('login', $device_name)) {
             throw new UnauthorizedException;
         }
+
+        return $user;
     }
 }
