@@ -53,28 +53,6 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany('App\Phone', 'user_phones');
     }
 
-    public function login(string $password, string $device_name)
-    {
-        $fields = ['email', 'password'];
-        
-        foreach ($fields as $field) {
-            if ($this[$field] === null) {
-                throw new InvalidFieldException;
-            }
-        }
-        
-        if (Gate::forUser($this)->denies('login', $device_name)) {
-            throw new UnauthorizedException;
-        }
-
-        if (! $token = auth()->attempt([
-            'email' => $this->email, 'password' => $password
-        ])) {
-            throw new UnauthorizedException;
-        }
-
-        return $token;
-    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

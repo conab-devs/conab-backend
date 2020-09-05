@@ -2,7 +2,7 @@
 
 namespace App\Components\Errors;
 
-class InvalidFieldException extends \Exception
+class InvalidArgumentException extends \Exception
 {
     public $status = 500;
 
