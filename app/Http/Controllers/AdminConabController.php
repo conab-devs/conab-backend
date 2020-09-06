@@ -24,6 +24,16 @@ class AdminConabController extends Controller
     }
 
     /**
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+     public function show($id)
+     {
+         $admin = User::with('phones')->findOrFail($id);
+        return response($admin, 200);
+     }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -54,7 +64,6 @@ class AdminConabController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
