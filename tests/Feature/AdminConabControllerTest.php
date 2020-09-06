@@ -19,9 +19,18 @@ class AdminConabControllerTest extends TestCase
     {
         // Create fake users
         factory(User::class, 3)->create(['user_type' => 'ADMIN_CONAB']);
-        $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $response = $this->actingAs($authenticatedUser, 'api')->getJson('/api/conab/admins');
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $this->actingAs($user, 'api')->getJson('/api/conab/admins');
         $response->assertOK()->assertJsonCount(3);
+    }
+
+     /** @test */
+    public function should_return_one_admin()
+    {
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $admin = factory(User::class)->create(['name' => 'admin', 'user_type' => 'ADMIN_CONAB']);
+        $response = $this->actingAs($user, 'api')->getJson("/api/conab/admins/$admin->id");
+        $response->assertOK()->assertJsonFragment(['name' => 'admin']);
     }
 
     /** @test */
@@ -32,16 +41,16 @@ class AdminConabControllerTest extends TestCase
         factory(User::class)->create(['user_type' => 'CUSTOMER']);
         factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
 
-        $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $response = $this->actingAs($authenticatedUser, 'api')->getJson('/api/conab/admins');
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $this->actingAs($user, 'api')->getJson('/api/conab/admins');
         $response->assertOK()->assertJsonCount(1);
     }
 
     /** @test */
     public function should_return_an_empty_list_of_admins()
     {
-        $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $response = $this->actingAs($authenticatedUser, 'api')->getJson('/api/conab/admins');
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $this->actingAs($user, 'api')->getJson('/api/conab/admins');
         $response->assertOK()->assertJsonCount(0);
     }
 
