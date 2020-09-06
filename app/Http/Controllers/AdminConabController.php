@@ -19,8 +19,11 @@ class AdminConabController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $users = User::where('user_type', 'ADMIN_CONAB')->where('id', '<>', $user->id)->get();
-        return $users;
+        $admins = User::with('phones')->where([
+            ['user_type', '=', 'ADMIN_CONAB'],
+            ['id', '<>', $user->id]
+        ])->paginate(5);
+        return response($admins, 200);
     }
 
     /**
