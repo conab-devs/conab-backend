@@ -8,6 +8,9 @@ use App\Components\TokenGenerator;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Components\ForgotPasswordHandler;
+use App\Components\Services\PasswordResetService;
+use App\PasswordReset;
 
 class AuthController extends Controller
 {
@@ -30,6 +33,30 @@ class AuthController extends Controller
             return response()->json([
                 'message' => $error->getMessage(),
             ], $error->status);
+        }
+    }
+
+    public function sendResetPasswordRequest(Request $request)
+    {
+        $validated = Validator::make($request->all(), [
+            'email' => 'required|email'
+        ])->validate();
+
+        $service = new PasswordResetService(new PasswordReset());
+        $handler = new ForgotPasswordHandler($service, new TokenGenerator());
+        
+        try {
+            $handler->sendResetRequest($validated['email']);
+            return response()->json('The reset token was sent to your email');
+        } catch (\Exception $error) {
+            $status = 500;
+            
+            if ($error instanceof \App\Components\Errors\CustomException) {
+                $status = $error->status;
+            }
+            return response()->json([
+                'message' => $error->getMessage()
+            ], $status);
         }
     }
 }

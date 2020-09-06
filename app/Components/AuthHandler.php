@@ -3,7 +3,7 @@
 namespace App\Components;
 
 use Illuminate\Support\Facades\Gate;
-use App\Components\Errors\InvalidArgumentException;
+use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
 use App\Components\TokenGenerator;
 use App\Components\Services\UserService;
@@ -31,7 +31,7 @@ class AuthHandler
 
         foreach ($keysInArgumentOrder as $argumentKey) {
             if (!array_key_exists($argumentKey, $request)) {
-                throw new InvalidArgumentException();
+                throw new ServerError();
             }
         }
 

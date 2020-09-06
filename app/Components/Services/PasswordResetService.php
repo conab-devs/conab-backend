@@ -9,10 +9,9 @@ class PasswordResetService
 {
     private $model;
 
-    public function __construct(PasswordReset $reset, TokenGenerator $tokenGenerator)
+    public function __construct(PasswordReset $reset)
     {
         $this->model = $reset;
-        $this->generator = $tokenGenerator;
     }
 
     public function queryByEmail(string $email)
@@ -25,10 +24,8 @@ class PasswordResetService
         return $this->queryByEmail($email)->first();
     }
 
-    public function storePasswordResetRequest(string $email)
+    public function storePasswordResetRequest(string $email, string $token)
     {
-        $token = $this->generator->generate();
-
         $this->model->fill(['email' => $email, 'token' => $token]);
         return $this->model->save();
     }

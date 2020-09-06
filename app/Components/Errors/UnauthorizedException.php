@@ -2,7 +2,7 @@
 
 namespace App\Components\Errors;
 
-class UnauthorizedException extends \Exception
+class UnauthorizedException extends CustomException
 {
     public $status = 401;
 

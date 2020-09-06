@@ -76,6 +76,6 @@ class PasswordResetServiceTest extends TestCase
 
         $sut = $this->makePasswordResetService($model, $tokenGenerator);
 
-        $this->assertTrue($sut->storePasswordResetRequest($fields['email']));
+        $this->assertTrue($sut->storePasswordResetRequest($fields['email'], $fields['token']));
     }
 }

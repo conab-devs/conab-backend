@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Components\Errors;
+namespace App\Components\Errors\CustomException;
 
-class UnprocessableEntityException extends \Exception
+class UnprocessableEntityException extends CustomException
 {
     public $status = 422;
 

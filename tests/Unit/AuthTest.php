@@ -6,13 +6,13 @@ use Tests\TestCase;
 use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery;
 use App\User;
-use App\Components\Errors\InvalidArgumentException;
+use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
 use App\Components\AuthHandler;
 use App\Components\TokenGenerator;
 use App\Components\Services\UserService;
 
-/** @auhor Franklyn */
+/** @author Franklyn */
 class AuthTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
@@ -45,7 +45,7 @@ class AuthTest extends TestCase
     /** @test */
     public function should_throw_error_if_email_not_passed()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(ServerError::class);
         $this->sut->authenticate([
             'password' => 'valid_password',
             'device_name'> 'valid_device_name' 
@@ -55,7 +55,7 @@ class AuthTest extends TestCase
     /** @test */
     public function should_throw_error_if_password_not_passed()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(ServerError::class);
         $this->sut->authenticate([
             'email' => 'valid@valid.com',
             'device_name'> 'valid_device_name' 
@@ -65,7 +65,7 @@ class AuthTest extends TestCase
     /** @test */
     public function should_throw_error_if_device_name_not_passed()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(ServerError::class);
         $this->sut->authenticate([
             'email' => 'valid@valid.com',
             'password' => 'valid_password',
@@ -132,5 +132,5 @@ class AuthTest extends TestCase
 
         $this->assertEquals('valid_token', $response['token']);
         $this->assertTrue($response['user'] instanceof $user);
-    } 
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Components\Errors;
 
-class InvalidArgumentException extends \Exception
+class ServerError extends CustomException
 {
     public $status = 500;
 
