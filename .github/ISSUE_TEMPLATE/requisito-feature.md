@@ -1,9 +1,9 @@
 ---
 name: Requisito/Feature
-about: Crie uma nova issue para adicionar uma novo requisito/feature.
+about: Crie uma nova issue para adicionar um novo requisito/feature.
 title: "[FEAT] - Título do Requisito/Feature"
 labels: enhancement
-assignees: ''
+assignees: hdev14
 
 ---
 
