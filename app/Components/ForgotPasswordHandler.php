@@ -4,7 +4,7 @@ namespace App\Components;
 
 use App\Components\Services\PasswordResetService;
 use App\Components\Errors\ServerError;
-use App\Mail\SendMail;
+use App\Mail\ResetMail;
 use TokenGenerator;
 use Illuminate\Support\Facades\Mail;
 
@@ -22,7 +22,7 @@ class ForgotPasswordHandler
     public function sendResetRequest(string $email)
     {
         $token = $this->generateToken($email);
-        Mail::to($email)->send(new SendMail($token));
+        Mail::to($email)->send(new ResetMail($token));
     }
     
     public function generateToken(string $email)

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Components\AuthHandler;
-use App\Components\Services\UserService;
-use App\Components\TokenGenerator;
-use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Components\ForgotPasswordHandler;
 use App\Components\Services\PasswordResetService;
+use App\Components\AuthHandler;
+use App\Components\Services\UserService;
+use App\Components\TokenGenerator;
 use App\PasswordReset;
+use App\User;
 
 class AuthController extends Controller
 {
