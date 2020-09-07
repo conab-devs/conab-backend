@@ -26,5 +26,7 @@ Route::middleware('auth:api')->group(function () {
 });
 
 Route::post('/login', 'AuthController@login');
-Route::post('/password/reset', 'AuthController@sendResetPasswordRequest');
+Route::post('/password/reset/request', 'AuthController@sendResetPasswordRequest');
+Route::post('/password/reset', 'AuthController@resetPassword');
+
 

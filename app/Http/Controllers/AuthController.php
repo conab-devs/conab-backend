@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Components\ForgotPasswordHandler;
 use App\Components\Services\PasswordResetService;
+use App\Components\Errors\UnauthorizedException;
 use App\Components\AuthHandler;
 use App\Components\Services\UserService;
 use App\Components\TokenGenerator;
@@ -30,9 +31,14 @@ class AuthController extends Controller
 
             return response()->json($responseContent);
         } catch (\Exception $error) {
+            $status = 500;
+            
+            if ($error instanceof \App\Components\Errors\CustomException) {
+                $status = $error->status;
+            }
             return response()->json([
-                'message' => $error->getMessage(),
-            ], $error->status);
+                'message' => $error->getMessage()
+            ], $status);
         }
     }
 
@@ -42,11 +48,16 @@ class AuthController extends Controller
             'email' => 'required|email'
         ])->validate();
 
-        $service = new PasswordResetService(new PasswordReset());
-        $handler = new ForgotPasswordHandler($service, new TokenGenerator());
+        $user = User::where('email', $validated['email'])->first();
         
         try {
+            if (! $user) {
+                throw new UnauthorizedException();
+            }
+    
+            $handler = $this->makeForgotPasswordHandler();
             $handler->sendResetRequest($validated['email']);
+
             return response()->json('The reset token was sent to your email');
         } catch (\Exception $error) {
             $status = 500;
@@ -58,5 +69,40 @@ class AuthController extends Controller
                 'message' => $error->getMessage()
             ], $status);
         }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validated = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+            'token' => 'required'
+        ])->validate();
+
+        try {
+            $handler = $this->makeForgotPasswordHandler();
+            $handler->resetPassword($validated);
+
+            return response()->json('The password was reset sucessfully');
+        } catch (\Exception $error) {
+            $status = 500;
+            
+            if ($error instanceof \App\Components\Errors\CustomException) {
+                $status = $error->status;
+            }
+            return response()->json([
+                'message' => $error->getMessage()
+            ], $status);
+        }
+    }
+
+    private function makeForgotPasswordHandler()
+    {
+        $passwordService = new PasswordResetService(new PasswordReset());
+        $userService = new UserService(new User());
+        
+        return new ForgotPasswordHandler(
+            $passwordService, new TokenGenerator(), $userService
+        );
     }
 }

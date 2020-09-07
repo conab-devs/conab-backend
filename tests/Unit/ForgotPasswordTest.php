@@ -2,13 +2,16 @@
 
 namespace Tests\Unit;
 
-use App\Components\ForgotPasswordHandler;
-use App\Components\Services\PasswordResetService;
-use App\PasswordReset;
-use App\Components\Errors\ServerError;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tests\TestCase;
+use App\Components\ForgotPasswordHandler;
+use App\Components\Services\PasswordResetService;
+use App\Components\Services\UserService;
+use App\Components\Errors\ServerError;
+use App\Components\Errors\UnauthorizedException;
+use App\PasswordReset;
+use App\User;
 
 /** @author Franklyn */
 class ForgotPasswordTest extends TestCase
@@ -16,7 +19,7 @@ class ForgotPasswordTest extends TestCase
     use MockeryPHPUnitIntegration;
 
     /** @test */
-    public function should_return_password_reset_token_if_it_already_exists()
+    public function reset_request_should_return_password_reset_token_if_it_already_exists()
     {
         $passwordReset = Mockery::mock(PasswordReset::class);
         $passwordReset->shouldReceive('getAttribute')
@@ -34,7 +37,9 @@ class ForgotPasswordTest extends TestCase
         $generator = Mockery::mock(TokenGenerator::class);
         $generator->shouldReceive('generate')->andReturn('valid_token');
 
-        $sut = new ForgotPasswordHandler($service, $generator);
+        $userService = Mockery::mock(UserService::class);
+
+        $sut = new ForgotPasswordHandler($service, $generator, $userService);
 
         $token = $sut->generateToken($passwordReset->email);
 
@@ -42,7 +47,7 @@ class ForgotPasswordTest extends TestCase
     }
 
     /** @test */
-    public function should_save_new_password_reset()
+    public function reset_request_should_save_new_password_reset()
     {
         $this->expectException(ServerError::class);
         
@@ -58,13 +63,15 @@ class ForgotPasswordTest extends TestCase
         $generator = Mockery::mock(TokenGenerator::class);
         $generator->shouldReceive('generate')->andReturn('valid_token');
 
-        $sut = new ForgotPasswordHandler($service, $generator);
+        $userService = Mockery::mock(UserService::class);
+
+        $sut = new ForgotPasswordHandler($service, $generator, $userService);
 
         $sut->generateToken('existent_mail@mail.com');
     }
 
     /** @test */
-    public function should_return_token()
+    public function reset_request_should_return_token()
     {
         $service = Mockery::mock(PasswordResetService::class);
         $service->shouldReceive('findByEmail')
@@ -78,10 +85,29 @@ class ForgotPasswordTest extends TestCase
         $generator = Mockery::mock(TokenGenerator::class);
         $generator->shouldReceive('generate')->andReturn('valid_token');
 
-        $sut = new ForgotPasswordHandler($service, $generator);
+        $userService = Mockery::mock(UserService::class);
+
+        $sut = new ForgotPasswordHandler($service, $generator, $userService);
 
         $token = $sut->generateToken('existent_mail@mail.com');
 
         $this->assertEquals('valid_token', $token);
+    }
+
+    /** @test */
+    public function reset_password_should_return_unauthorized()
+    {
+        $this->expectException(UnauthorizedException::class);
+
+        $userService = Mockery::mock(UserService::class);
+
+        $passwordService = Mockery::mock(PasswordResetService::class);
+        $passwordService->shouldReceive('find->count')->andReturn(0);
+
+        $generator = Mockery::mock(TokenGenerator::class);
+
+        (new ForgotPasswordHandler($passwordService, $generator, $userService))->resetPassword(
+            'invalid_email', 'new_password', 'valid_token'
+        );
     }
 }

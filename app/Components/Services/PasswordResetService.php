@@ -19,6 +19,11 @@ class PasswordResetService
         return $this->model->where('email', $email);
     }
 
+    public function find(array $params)
+    {
+        return $this->model->where($params)->first();
+    }
+
     public function findByEmail(string $email)
     {
         return $this->queryByEmail($email)->first();
