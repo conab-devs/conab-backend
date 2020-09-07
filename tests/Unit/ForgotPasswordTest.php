@@ -106,8 +106,9 @@ class ForgotPasswordTest extends TestCase
 
         $generator = Mockery::mock(TokenGenerator::class);
 
-        (new ForgotPasswordHandler($passwordService, $generator, $userService))->resetPassword(
-            'invalid_email', 'new_password', 'valid_token'
-        );
+        (new ForgotPasswordHandler($passwordService, $generator, $userService))
+            ->resetPassword(
+                'invalid_email', 'new_password', 'valid_token'
+            );
     }
 }

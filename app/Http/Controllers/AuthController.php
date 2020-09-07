@@ -10,14 +10,19 @@ use App\Components\Errors\UnauthorizedException;
 use App\Components\AuthHandler;
 use App\Components\Services\UserService;
 use App\Components\TokenGenerator;
+use App\Components\Traits\HttpResponse;
 use App\PasswordReset;
 use App\User;
 
 class AuthController extends Controller
 {
+    use HttpResponse;
+
+    private $status = 500;
+
     public function login(Request $request)
     {
-        $validated = Validator::make($request->all(), [
+        $requestContent = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|min:6',
             'device_name' => 'required',
@@ -25,30 +30,23 @@ class AuthController extends Controller
 
         try {
             $service = new UserService(new User());
-            $authHandler = new AuthHandler($service, new TokenGenerator());
+            $handler = new AuthHandler($service, new TokenGenerator());
             
-            $responseContent = $authHandler->authenticate($validated);
+            $responseContent = $handler->authenticate($requestContent);
 
             return response()->json($responseContent);
         } catch (\Exception $error) {
-            $status = 500;
-            
-            if ($error instanceof \App\Components\Errors\CustomException) {
-                $status = $error->status;
-            }
-            return response()->json([
-                'message' => $error->getMessage()
-            ], $status);
+            return $this->respondWithError($error);
         }
     }
 
     public function sendResetPasswordRequest(Request $request)
     {
-        $validated = Validator::make($request->all(), [
+        $requestContent = Validator::make($request->all(), [
             'email' => 'required|email'
         ])->validate();
 
-        $user = User::where('email', $validated['email'])->first();
+        $user = User::where('email', $requestContent['email'])->first();
         
         try {
             if (! $user) {
@@ -56,26 +54,19 @@ class AuthController extends Controller
             }
     
             $handler = $this->makeForgotPasswordHandler();
-            $handler->sendResetRequest($validated['email']);
+            $handler->sendResetRequest($requestContent['email']);
 
             return response()->json([
                 'message' => 'The reset token was sent to your email'
             ]);
-        } catch (\Exception $error) {
-            $status = 500;
-            
-            if ($error instanceof \App\Components\Errors\CustomException) {
-                $status = $error->status;
-            }
-            return response()->json([
-                'message' => $error->getMessage()
-            ], $status);
+        } catch (\Exception $error) {            
+            return $this->respondWithError($error);
         }
     }
 
     public function resetPassword(Request $request)
     {
-        $validated = Validator::make($request->all(), [
+        $requestContent = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|min:6',
             'token' => 'required'
@@ -83,18 +74,11 @@ class AuthController extends Controller
 
         try {
             $handler = $this->makeForgotPasswordHandler();
-            $handler->resetPassword($validated);
+            $handler->resetPassword($requestContent);
 
             return response()->json(['message' => 'The password was reset sucessfully']);
         } catch (\Exception $error) {
-            $status = 500;
-            
-            if ($error instanceof \App\Components\Errors\CustomException) {
-                $status = $error->status;
-            }
-            return response()->json([
-                'message' => $error->getMessage()
-            ], $status);
+            return $this->respondWithError($error);
         }
     }
 
