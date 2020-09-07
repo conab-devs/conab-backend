@@ -58,7 +58,9 @@ class AuthController extends Controller
             $handler = $this->makeForgotPasswordHandler();
             $handler->sendResetRequest($validated['email']);
 
-            return response()->json('The reset token was sent to your email');
+            return response()->json([
+                'message' => 'The reset token was sent to your email'
+            ]);
         } catch (\Exception $error) {
             $status = 500;
             
@@ -83,7 +85,7 @@ class AuthController extends Controller
             $handler = $this->makeForgotPasswordHandler();
             $handler->resetPassword($validated);
 
-            return response()->json('The password was reset sucessfully');
+            return response()->json(['message' => 'The password was reset sucessfully']);
         } catch (\Exception $error) {
             $status = 500;
             
