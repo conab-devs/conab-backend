@@ -18,6 +18,7 @@ Route::middleware('auth:api')->group(function () {
         return 'hello';
     });
     Route::get('/conab/admins', 'AdminConabController@index');
+    Route::get('/conab/admins/{id}', 'AdminConabController@show');
     Route::post('/conab/admins', 'AdminConabController@store');
     Route::put('/conab/admins', 'AdminConabController@update');
     Route::delete('/conab/admins/{id}', 'AdminConabController@destroy');

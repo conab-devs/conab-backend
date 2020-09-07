@@ -19,9 +19,22 @@ class AdminConabController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $users = User::where('user_type', 'ADMIN_CONAB')->where('id', '<>', $user->id)->get();
-        return $users;
+        $admins = User::with('phones')->where([
+            ['user_type', '=', 'ADMIN_CONAB'],
+            ['id', '<>', $user->id]
+        ])->paginate(5);
+        return response($admins, 200);
     }
+
+    /**
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+     public function show($id)
+     {
+         $admin = User::with('phones')->findOrFail($id);
+        return response($admin, 200);
+     }
 
     /**
      * Store a newly created resource in storage.
@@ -41,6 +54,7 @@ class AdminConabController extends Controller
 
         $user = new User();
         $user->fill($data);
+        $user->profile_picture = "https://ui-avatars.com/api/?name=" . $data['name'];
         $user->password = $data['cpf'];
         $user->user_type = 'ADMIN_CONAB';
         $user->save();
@@ -54,7 +68,6 @@ class AdminConabController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
