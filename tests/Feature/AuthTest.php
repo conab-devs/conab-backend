@@ -93,7 +93,7 @@ class AuthTest extends TestCase
         );
         $requestResponse->assertStatus(200);
 
-        $token = (PasswordReset::where('email', $this->credentials)->first())->token;
+        $token = (PasswordReset::where('email', $this->user->email)->first())->token;
 
         $resetResponse = $this->postJson(
             '/api/password/reset',
