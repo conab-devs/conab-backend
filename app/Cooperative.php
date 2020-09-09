@@ -12,9 +12,9 @@ class Cooperative extends Model
     {
         return $this->belongsToMany('App\Phone', 'cooperative_phones');
     }
-  
+
     public function address()
     {
-        return $this->hasOne('App\Address', 'address_id');
+        return $this->belongsTo('App\Address', 'address_id');
     }
 }
