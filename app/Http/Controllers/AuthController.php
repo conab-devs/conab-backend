@@ -45,13 +45,9 @@ class AuthController extends Controller
         $requestContent = Validator::make($request->all(), [
             'email' => 'required|email'
         ])->validate();
-
-        $user = User::where('email', $requestContent['email'])->first();
         
         try {
-            if (! $user) {
-                throw new UnauthorizedException();
-            }
+            User::where('email', $requestContent['email'])->firstOrFail();
     
             $handler = $this->makeForgotPasswordHandler();
             $handler->sendResetRequest($requestContent['email']);
