@@ -48,7 +48,7 @@ class AuthTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->sut->authenticate([
             'password' => 'valid_password',
-            'device_name'> 'valid_device_name' 
+            'device_name'> 'valid_device_name'
         ]);
     }
 
@@ -58,7 +58,7 @@ class AuthTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->sut->authenticate([
             'email' => 'valid@valid.com',
-            'device_name'> 'valid_device_name' 
+            'device_name'> 'valid_device_name'
         ]);
     }
 
@@ -75,22 +75,22 @@ class AuthTest extends TestCase
     /** @test */
     public function should_throw_error_if_client_try_to_access_from_the_web()
     {
-        $this->expectException(UnauthorizedException::class);      
+        $this->expectException(UnauthorizedException::class);
         $this->sut->authenticate('valid@valid.com', 'valid_password', 'WEB');
     }
 
     /** @test */
     public function should_throw_error_if_admin_conab_try_to_access_from_the_mobile()
     {
-        $this->expectException(UnauthorizedException::class); 
-        $sut = $this->makeAuthHandler('ADMIN_CONAB');   
+        $this->expectException(UnauthorizedException::class);
+        $sut = $this->makeAuthHandler('ADMIN_CONAB');
         $sut->authenticate('valid@valid.com', 'valid_password', 'MOBILE');
     }
 
     /** @test */
     public function should_throw_error_if_login_fails()
     {
-        $this->expectException(UnauthorizedException::class); 
+        $this->expectException(UnauthorizedException::class);
 
         $user = Mockery::mock(User::class);
         $user->shouldReceive('getAttribute')->with('email')->andReturn('valid@valid.com');
@@ -131,6 +131,6 @@ class AuthTest extends TestCase
         $response = $sut->authenticate('valid@valid.com', 'valid_password', 'MOBILE');
 
         $this->assertEquals('valid_token', $response['token']);
-        $this->assertTrue($response['user'] instanceof $user);
-    } 
+        $this->assertTrue($response['user'] instanceof User);
+    }
 }

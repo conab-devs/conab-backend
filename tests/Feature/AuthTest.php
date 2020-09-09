@@ -39,7 +39,6 @@ class AuthTest extends TestCase
         $this->makeUser('MOBILE');
 
         $response = $this->postJson('/api/login', $this->credentials);
-
         $response->assertStatus(200);
         $this->assertArrayHasKey('token', $response);
         $this->assertArrayHasKey('user', $response);
@@ -69,7 +68,7 @@ class AuthTest extends TestCase
     public function should_make_login_and_access_get_route_with_success()
     {
         $this->makeUser();
-        
+
         $token = auth()->attempt($this->credentials);
 
         $response = $this->withHeaders([
