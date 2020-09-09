@@ -31,12 +31,6 @@ class ForgotPasswordHandler
 
     public function resetPassword($info)
     {
-        $params = ['email', 'password', 'token'];
-
-        if (func_num_args() === 3) {
-            $info = array_combine($params, func_get_args());
-        }
-
         $query = $this->service->find([
             'email' => $info['email'], 
             'token' => $info['token']

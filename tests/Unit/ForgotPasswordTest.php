@@ -2,16 +2,15 @@
 
 namespace Tests\Unit;
 
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Tests\TestCase;
+use App\Components\Errors\ServerError;
+use App\Components\Errors\UnauthorizedException;
 use App\Components\ForgotPasswordHandler;
 use App\Components\Services\PasswordResetService;
 use App\Components\Services\UserService;
-use App\Components\Errors\ServerError;
-use App\Components\Errors\UnauthorizedException;
 use App\PasswordReset;
-use App\User;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Tests\TestCase;
 
 /** @author Franklyn */
 class ForgotPasswordTest extends TestCase
@@ -50,7 +49,7 @@ class ForgotPasswordTest extends TestCase
     public function reset_request_should_save_new_password_reset()
     {
         $this->expectException(ServerError::class);
-        
+
         $service = Mockery::mock(PasswordResetService::class);
         $service->shouldReceive('findByEmail')
             ->with('existent_mail@mail.com')
@@ -107,8 +106,10 @@ class ForgotPasswordTest extends TestCase
         $generator = Mockery::mock(TokenGenerator::class);
 
         (new ForgotPasswordHandler($passwordService, $generator, $userService))
-            ->resetPassword(
-                'invalid_email', 'new_password', 'valid_token'
-            );
+            ->resetPassword([
+                'email' => 'invalid_email', 
+                'password' => 'new_password', 
+                'token' => 'valid_token'
+            ]);
     }
 }
