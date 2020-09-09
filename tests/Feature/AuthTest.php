@@ -91,6 +91,7 @@ class AuthTest extends TestCase
             '/api/password/reset/request',
             ['email' => $this->user->email]
         );
+
         $requestResponse->assertStatus(200);
 
         $token = (PasswordReset::where('email', $this->user->email)->first())->token;

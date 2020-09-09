@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
 use App\Components\ForgotPasswordHandler;
+use App\Components\TokenGenerator;
 use App\Components\Repositorys\PasswordResetRepository;
 use App\Components\Repositorys\UserRepository;
 use App\PasswordReset;
@@ -32,7 +33,7 @@ class ForgotPasswordTest extends TestCase
         $service->shouldReceive('findByEmail')
             ->with($passwordReset->email)
             ->andReturn($passwordReset);
-
+        
         $generator = Mockery::mock(TokenGenerator::class);
         $generator->shouldReceive('generate')->andReturn('valid_token');
 

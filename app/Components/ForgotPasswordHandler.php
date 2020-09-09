@@ -7,7 +7,7 @@ use App\Components\Repositorys\UserRepository;
 use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
 use App\Mail\ResetMail;
-use TokenGenerator;
+use App\Components\TokenGenerator;
 use Illuminate\Support\Facades\Mail;
 
 class ForgotPasswordHandler
@@ -16,7 +16,7 @@ class ForgotPasswordHandler
     private $generator;
     private $userService;
 
-    public function __construct(PasswordResetRepository $service, $generator, UserRepository $userService)
+    public function __construct(PasswordResetRepository $service, TokenGenerator $generator, UserRepository $userService)
     {
         $this->service = $service;
         $this->generator = $generator;

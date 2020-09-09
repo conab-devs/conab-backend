@@ -5,13 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Components\ForgotPasswordHandler;
-use App\Components\Repositorys\PasswordResetRepository;
-use App\Components\Errors\UnauthorizedException;
 use App\Components\AuthHandler;
-use App\Components\Repositorys\UserRepository;
-use App\Components\TokenGenerator;
 use App\Components\Traits\HttpResponse;
-use App\PasswordReset;
 use App\User;
 
 class AuthController extends Controller
@@ -20,7 +15,7 @@ class AuthController extends Controller
 
     private $status = 500;
 
-    public function login(Request $request)
+    public function login(Request $request, AuthHandler $handler)
     {
         $requestContent = Validator::make($request->all(), [
             'email' => 'required|email',
@@ -28,10 +23,7 @@ class AuthController extends Controller
             'device_name' => 'required',
         ])->validate();
 
-        try {
-            $service = new UserRepository(new User());
-            $handler = new AuthHandler($service, new TokenGenerator());
-            
+        try {    
             $responseContent = $handler->authenticate($requestContent);
 
             return response()->json($responseContent);
@@ -40,16 +32,15 @@ class AuthController extends Controller
         }
     }
 
-    public function sendResetPasswordRequest(Request $request)
+    public function sendResetPasswordRequest(Request $request, ForgotPasswordHandler $handler)
     {
         $requestContent = Validator::make($request->all(), [
             'email' => 'required|email'
         ])->validate();
-        
+
         try {
             User::where('email', $requestContent['email'])->firstOrFail();
     
-            $handler = $this->makeForgotPasswordHandler();
             $handler->sendResetRequest($requestContent['email']);
 
             return response()->json([
@@ -60,7 +51,7 @@ class AuthController extends Controller
         }
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(Request $request, ForgotPasswordHandler $handler)
     {
         $requestContent = Validator::make($request->all(), [
             'email' => 'required|email',
@@ -69,22 +60,12 @@ class AuthController extends Controller
         ])->validate();
 
         try {
-            $handler = $this->makeForgotPasswordHandler();
+
             $handler->resetPassword($requestContent);
 
             return response()->json(['message' => 'The password was reset sucessfully']);
         } catch (\Exception $error) {
             return $this->respondWithError($error);
         }
-    }
-
-    private function makeForgotPasswordHandler()
-    {
-        $passwordService = new PasswordResetRepository(new PasswordReset());
-        $userService = new UserRepository(new User());
-        
-        return new ForgotPasswordHandler(
-            $passwordService, new TokenGenerator(), $userService
-        );
     }
 }
