@@ -6,14 +6,14 @@ use Illuminate\Support\Facades\Gate;
 use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
 use App\Components\TokenGenerator;
-use App\Components\Services\UserService;
+use App\Components\Repositorys\UserRepository;
 
 class AuthHandler
 {
     private $service;
     private $generator;
 
-    public function __construct(UserService $service, TokenGenerator $tokenGenerator)
+    public function __construct(UserRepository $service, TokenGenerator $tokenGenerator)
     {
         $this->service = $service;
         $this->generator = $tokenGenerator;

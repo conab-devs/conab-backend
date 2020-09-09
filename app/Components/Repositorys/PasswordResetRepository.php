@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Components\Services;
+namespace App\Components\Repositorys;
 
 use App\PasswordReset;
 use App\Components\TokenGenerator;
 
-class PasswordResetService
+class PasswordResetRepository
 {
     private $model;
 

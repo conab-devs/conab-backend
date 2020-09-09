@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Components\ForgotPasswordHandler;
-use App\Components\Services\PasswordResetService;
+use App\Components\Repositorys\PasswordResetRepository;
 use App\Components\Errors\UnauthorizedException;
 use App\Components\AuthHandler;
-use App\Components\Services\UserService;
+use App\Components\Repositorys\UserRepository;
 use App\Components\TokenGenerator;
 use App\Components\Traits\HttpResponse;
 use App\PasswordReset;
@@ -29,7 +29,7 @@ class AuthController extends Controller
         ])->validate();
 
         try {
-            $service = new UserService(new User());
+            $service = new UserRepository(new User());
             $handler = new AuthHandler($service, new TokenGenerator());
             
             $responseContent = $handler->authenticate($requestContent);
@@ -84,8 +84,8 @@ class AuthController extends Controller
 
     private function makeForgotPasswordHandler()
     {
-        $passwordService = new PasswordResetService(new PasswordReset());
-        $userService = new UserService(new User());
+        $passwordService = new PasswordResetRepository(new PasswordReset());
+        $userService = new UserRepository(new User());
         
         return new ForgotPasswordHandler(
             $passwordService, new TokenGenerator(), $userService

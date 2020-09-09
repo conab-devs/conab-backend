@@ -10,7 +10,7 @@ use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
 use App\Components\AuthHandler;
 use App\Components\TokenGenerator;
-use App\Components\Services\UserService;
+use App\Components\Repositorys\UserRepository;
 
 /** @author Franklyn */
 class AuthTest extends TestCase
@@ -33,7 +33,7 @@ class AuthTest extends TestCase
         $user->shouldReceive('getAttribute')->with('password')->andReturn('valid_password');
         $user->shouldReceive('getAttribute')->with('user_type')->andReturn($userType);
 
-        $userService = Mockery::mock(UserService::class);
+        $userService = Mockery::mock(UserRepository::class);
         $userService->shouldReceive('findByEmail')->with('valid@valid.com')->andReturn($user);
 
         $tokenGenerator = Mockery::mock(TokenGenerator::class);
@@ -97,7 +97,7 @@ class AuthTest extends TestCase
         $user->shouldReceive('getAttribute')->with('password')->andReturn('valid_password');
         $user->shouldReceive('getAttribute')->with('user_type')->andReturn('CUSTOMER');
 
-        $userService = Mockery::mock(UserService::class);
+        $userService = Mockery::mock(UserRepository::class);
         $userService->shouldReceive('findByEmail')->with('valid@valid.com')->andReturn($user);
 
         $tokenGenerator = Mockery::mock(TokenGenerator::class);
@@ -118,7 +118,7 @@ class AuthTest extends TestCase
         $user->shouldReceive('getAttribute')->with('password')->andReturn('valid_password');
         $user->shouldReceive('getAttribute')->with('user_type')->andReturn('CUSTOMER');
 
-        $userService = Mockery::mock(UserService::class);
+        $userService = Mockery::mock(UserRepository::class);
         $userService->shouldReceive('findByEmail')->with('valid@valid.com')->andReturn($user);
 
         $tokenGenerator = Mockery::mock(TokenGenerator::class);

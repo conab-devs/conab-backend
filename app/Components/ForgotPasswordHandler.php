@@ -2,8 +2,8 @@
 
 namespace App\Components;
 
-use App\Components\Services\PasswordResetService;
-use App\Components\Services\UserService;
+use App\Components\Repositorys\PasswordResetRepository;
+use App\Components\Repositorys\UserRepository;
 use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
 use App\Mail\ResetMail;
@@ -16,7 +16,7 @@ class ForgotPasswordHandler
     private $generator;
     private $userService;
 
-    public function __construct(PasswordResetService $service, $generator, UserService $userService)
+    public function __construct(PasswordResetRepository $service, $generator, UserRepository $userService)
     {
         $this->service = $service;
         $this->generator = $generator;

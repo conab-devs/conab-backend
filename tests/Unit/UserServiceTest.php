@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Components\Services\UserService;
+use App\Components\Repositorys\UserRepository;
 use App\User;
 use PHPUnit\Framework\TestCase;
 use \Mockery;
@@ -19,7 +19,7 @@ class UserServiceTest extends TestCase
         $model = Mockery::mock(User::class);
         $model->shouldReceive('where->first')->andReturn(null);
 
-        $service = new UserService($model);
+        $service = new UserRepository($model);
         
         $this->assertEmpty($service->findByEmail('valid_email@mail.com'));
     }
@@ -33,7 +33,7 @@ class UserServiceTest extends TestCase
         $model = Mockery::mock(User::class);
         $model->shouldReceive('where->first')->andReturn($user);
 
-        $service = new UserService($model);
+        $service = new UserRepository($model);
         $foundUser = $service->findByEmail($user->email);
 
         $this->assertEquals($user->email, $foundUser->email);

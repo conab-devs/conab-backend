@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Components\Services;
+namespace App\Components\Repositorys;
 
 use App\Components\Errors\UnprocessableEntityException;
 use App\User;
 
-class UserService
+class UserRepository
 {
     private $model;
 
