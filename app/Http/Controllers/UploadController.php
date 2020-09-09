@@ -31,5 +31,7 @@ class UploadController extends Controller
                 return response(['url' => $user->getProfilePictureUrl()], 200);
             }
         }
+
+        return response(['error' => 'Avatar is required and should be a valid file'], 400);
     }
 }
