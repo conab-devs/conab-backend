@@ -54,7 +54,6 @@ class AdminConabController extends Controller
 
         $user = new User();
         $user->fill($data);
-        $user->profile_picture = "https://ui-avatars.com/api/?name=" . $data['name'];
         $user->password = $data['cpf'];
         $user->user_type = 'ADMIN_CONAB';
         $user->save();
