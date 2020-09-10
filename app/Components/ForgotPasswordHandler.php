@@ -7,7 +7,7 @@ use App\Components\Repositorys\UserRepository;
 use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
 use App\Mail\ResetMail;
-use App\Components\TokenGenerator;
+use App\Components\TokenGenerator\TokenGenerator;
 use Illuminate\Support\Facades\Mail;
 
 class ForgotPasswordHandler

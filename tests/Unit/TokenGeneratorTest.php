@@ -3,15 +3,15 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use App\Components\TokenGenerator;
+use App\Components\TokenGenerator\StringGenerator;
 
-/** @author Franklyn */
+/** @author token */
 class TokenGeneratorTest extends TestCase
 {
     /** @test */
-    public function token_generator_should_return_token()
+    public function string_token_generator_should_return_token()
     {
-        $sut = new TokenGenerator();
+        $sut = new StringGenerator();
 
         $token = $sut->generate();
 

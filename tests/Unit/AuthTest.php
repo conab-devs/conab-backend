@@ -9,7 +9,7 @@ use App\User;
 use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
 use App\Components\AuthHandler;
-use App\Components\TokenGenerator;
+use App\Components\TokenGenerator\JwtGenerator;
 use App\Components\Repositorys\UserRepository;
 
 /** @author Franklyn */
@@ -36,8 +36,8 @@ class AuthTest extends TestCase
         $userService = Mockery::mock(UserRepository::class);
         $userService->shouldReceive('findByEmail')->with('valid@valid.com')->andReturn($user);
 
-        $tokenGenerator = Mockery::mock(TokenGenerator::class);
-        $tokenGenerator->shouldReceive('generateJwt')->andReturn($token);
+        $tokenGenerator = Mockery::mock(JwtGenerator::class);
+        $tokenGenerator->shouldReceive('generate')->andReturn($token);
 
         return new AuthHandler($userService, $tokenGenerator);
     }
@@ -100,8 +100,8 @@ class AuthTest extends TestCase
         $userService = Mockery::mock(UserRepository::class);
         $userService->shouldReceive('findByEmail')->with('valid@valid.com')->andReturn($user);
 
-        $tokenGenerator = Mockery::mock(TokenGenerator::class);
-        $tokenGenerator->shouldReceive('generateJwt')
+        $tokenGenerator = Mockery::mock(JwtGenerator::class);
+        $tokenGenerator->shouldReceive('generate')
             ->with(['email' => 'valid@valid.com', 'password' => 'invalid_password'])
             ->andReturn('');
 
@@ -121,8 +121,8 @@ class AuthTest extends TestCase
         $userService = Mockery::mock(UserRepository::class);
         $userService->shouldReceive('findByEmail')->with('valid@valid.com')->andReturn($user);
 
-        $tokenGenerator = Mockery::mock(TokenGenerator::class);
-        $tokenGenerator->shouldReceive('generateJwt')
+        $tokenGenerator = Mockery::mock(JwtGenerator::class);
+        $tokenGenerator->shouldReceive('generate')
             ->with(['email' => 'valid@valid.com', 'password' => 'valid_password'])
             ->andReturn('valid_token');
 

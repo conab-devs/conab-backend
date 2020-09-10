@@ -5,7 +5,7 @@ namespace App\Components;
 use Illuminate\Support\Facades\Gate;
 use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
-use App\Components\TokenGenerator;
+use App\Components\TokenGenerator\TokenGenerator;
 use App\Components\Repositorys\UserRepository;
 
 class AuthHandler
@@ -48,7 +48,7 @@ class AuthHandler
             $request, ['device_name' => $request['device_name']]
         );
 
-        if (! $token = $this->generator->generateJwt($credentials)) {
+        if (! $token = $this->generator->generate($credentials)) {
             throw new UnauthorizedException();
         }
 

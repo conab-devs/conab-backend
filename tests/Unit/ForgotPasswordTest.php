@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
 use App\Components\ForgotPasswordHandler;
-use App\Components\TokenGenerator;
+use App\Components\TokenGenerator\StringGenerator;
 use App\Components\Repositorys\PasswordResetRepository;
 use App\Components\Repositorys\UserRepository;
 use App\PasswordReset;
@@ -34,7 +34,7 @@ class ForgotPasswordTest extends TestCase
             ->with($passwordReset->email)
             ->andReturn($passwordReset);
         
-        $generator = Mockery::mock(TokenGenerator::class);
+        $generator = Mockery::mock(StringGenerator::class);
         $generator->shouldReceive('generate')->andReturn('valid_token');
 
         $userService = Mockery::mock(UserRepository::class);
@@ -60,7 +60,7 @@ class ForgotPasswordTest extends TestCase
             ->withArgs(['existent_mail@mail.com', 'valid_token'])
             ->andReturn(false);
 
-        $generator = Mockery::mock(TokenGenerator::class);
+        $generator = Mockery::mock(StringGenerator::class);
         $generator->shouldReceive('generate')->andReturn('valid_token');
 
         $userService = Mockery::mock(UserRepository::class);
@@ -82,7 +82,7 @@ class ForgotPasswordTest extends TestCase
             ->withArgs(['existent_mail@mail.com', 'valid_token'])
             ->andReturn(true);
 
-        $generator = Mockery::mock(TokenGenerator::class);
+        $generator = Mockery::mock(StringGenerator::class);
         $generator->shouldReceive('generate')->andReturn('valid_token');
 
         $userService = Mockery::mock(UserRepository::class);
@@ -104,7 +104,7 @@ class ForgotPasswordTest extends TestCase
         $passwordService = Mockery::mock(PasswordResetRepository::class);
         $passwordService->shouldReceive('find->count')->andReturn(0);
 
-        $generator = Mockery::mock(TokenGenerator::class);
+        $generator = Mockery::mock(StringGenerator::class);
 
         (new ForgotPasswordHandler($passwordService, $generator, $userService))
             ->resetPassword([

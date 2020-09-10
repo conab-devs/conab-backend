@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Components\Repositorys\PasswordResetRepository;
-use App\Components\TokenGenerator;
+use App\Components\TokenGenerator\StringGenerator;
 use App\PasswordReset;
 use PHPUnit\Framework\TestCase;
 use \Mockery;
@@ -16,8 +16,8 @@ class PasswordResetServiceTest extends TestCase
 
     public function makePasswordResetRepository($model = null, $tokenGenerator = null)
     {
-        $model = $model ? $model : new PasswordReset();
-        $tokenGenerator = $tokenGenerator ? $tokenGenerator : new TokenGenerator;
+        $model = $model ??= new PasswordReset();
+        $tokenGenerator ??= new StringGenerator;
         return new PasswordResetRepository($model, $tokenGenerator);
     }
 
@@ -67,7 +67,7 @@ class PasswordResetServiceTest extends TestCase
     {
         $fields = ['email' => 'valid_mail@mail.com', 'token' => 'valid_token'];
 
-        $tokenGenerator = Mockery::mock(TokenGenerator::class);
+        $tokenGenerator = Mockery::mock(StringGenerator::class);
         $tokenGenerator->shouldReceive('generate')->andReturn($fields['token']);
 
         $model = Mockery::mock(PasswordReset::class);
