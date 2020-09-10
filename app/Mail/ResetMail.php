@@ -31,7 +31,7 @@ class ResetMail extends Mailable
     public function build()
     {
         return $this->markdown('Email.resetPassword')->with([
-            'token' => $this->token
+            'url' => config('app.interface_url') . "/change-password?token=" . $this->token
         ]);
     }
 }
