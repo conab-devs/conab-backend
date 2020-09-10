@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use App\Components\TokenGenerator\StringGenerator;
 
-/** @author token */
+/** @author Franklyn */
 class TokenGeneratorTest extends TestCase
 {
     /** @test */
