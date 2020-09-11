@@ -54,7 +54,7 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
-    'interface_url' => env('INTERFACE_URL', 'http://localhost:3000'),
+    'interface_url' => env('INTERFACE_URL', 'http://localhost:3000/'),
 
     'asset_url' => env('ASSET_URL', null),
 
