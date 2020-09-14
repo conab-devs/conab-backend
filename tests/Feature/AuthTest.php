@@ -74,11 +74,11 @@ class AuthTest extends TestCase
         $this->makeUser();
 
         $token = auth()->attempt($this->credentials);
-
         $response = $this->withHeaders([
             'Authorization' => "Bearer $token",
-        ])->getJson('/api/hello');
-
+        ])->getJson('/api/conab/admins');
+        
+ 
         $response->assertStatus(200);
     }
 
