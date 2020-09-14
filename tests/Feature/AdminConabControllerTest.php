@@ -422,13 +422,13 @@ class AdminConabControllerTest extends TestCase
     {
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
-
+        $phone = factory(Phone::class)->create();
         $data = [
             'name' => 'any_name',
             'email' => 'any@email.com',
             'cpf' => '111.111.111-11',
             'phones' => [
-                [ 'number' => $user->phones[0]->number ], // existing phone
+                [ 'number' => $phone->number ], // existing phone
             ]
         ];
         $response = $authenticatedRoute->putJson("/api/conab/admins", $data);

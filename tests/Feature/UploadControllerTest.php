@@ -23,7 +23,7 @@ class UploadControllerTest extends TestCase
 
         $authenticatedRoute->postJson('/api/uploads', [
             'avatar' => UploadedFile::fake()->image('photo.png')
-        ])->assertOk();
+        ])->assertOk()->assertJsonStructure(['url']);
 
         Storage::disk('public')->assertExists($user->profile_picture);
     }
@@ -47,5 +47,25 @@ class UploadControllerTest extends TestCase
             'avatar' => UploadedFile::fake()->image('photo.png')
         ])->assertOk();
         Storage::disk('public')->assertMissing($oldPath);
+    }
+
+    /** @test */
+    public function on_upload_should_throw_an_error_if_no_avatar_is_send()
+    {
+        $user = factory(User::class)->create(['profile_picture' => '', 'user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+
+        Storage::fake('public');
+        $authenticatedRoute->postJson('/api/uploads', ['avatar' => null])
+            ->assertStatus(400)
+            ->assertJson(['error' => 'Avatar is required and should be a valid file']);
+
+        $authenticatedRoute->postJson('/api/uploads', ['avatar' => 'file'])
+            ->assertStatus(400)
+            ->assertJson(['error' => 'Avatar is required and should be a valid file']);
+
+        $authenticatedRoute->postJson('/api/uploads', ['avatar' => 1])
+            ->assertStatus(400)
+            ->assertJson(['error' => 'Avatar is required and should be a valid file']);
     }
 }

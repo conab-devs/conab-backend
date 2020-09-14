@@ -22,10 +22,13 @@ class AuthController extends Controller
         try {
             $service = new UserService(new User());
             $authHandler = new AuthHandler($service, new TokenGenerator());
-            
+
             $responseContent = $authHandler->authenticate($validated);
 
-            return response()->json($responseContent);
+            return response()->json([
+                'token' => $responseContent['token'],
+                'user' => $responseContent['user']->load('phones')
+            ]);
         } catch (\Exception $error) {
             return response()->json([
                 'message' => $error->getMessage(),

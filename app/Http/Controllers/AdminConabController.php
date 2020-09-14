@@ -54,7 +54,6 @@ class AdminConabController extends Controller
 
         $user = new User();
         $user->fill($data);
-        $user->profile_picture = "https://ui-avatars.com/api/?name=" . $data['name'];
         $user->password = $data['cpf'];
         $user->user_type = 'ADMIN_CONAB';
         $user->save();
@@ -87,8 +86,12 @@ class AdminConabController extends Controller
                 'string',
                 'distinct',
                 'regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/',
-                Rule::unique('phones')->where(function ($query) {
-                    return $query->get('number');
+                Rule::unique('phones')->where(function ($query) use ($admin) {
+                    $phonesId = [];
+                    foreach ($admin->phones as $phone) {
+                        array_push($phonesId, $phone->id);
+                    }
+                    return $query->whereNotIn('id', $phonesId)->get('number');
                 })
             ]
         ])->validate();
