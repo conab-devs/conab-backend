@@ -16,9 +16,13 @@ class AuthController extends Controller
 
     public function login(Login $request, AuthHandler $handler)
     {
-        try {    
+        try {
+            $user = User::where('email', $request->input('email'))->firstOrFail();
             $responseContent = $handler->authenticate($request->all());
-            return response()->json($responseContent);
+            return response()->json([
+                'token' => $responseContent['token'],
+                'user' => $user->load('phones')
+            ]);
         } catch (\Exception $error) {
             return $this->respondWithError($error);
         }

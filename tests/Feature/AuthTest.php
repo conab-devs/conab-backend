@@ -33,7 +33,6 @@ class AuthTest extends TestCase
     public function should_make_login_and_return_token()
     {
         $response = $this->postJson('/api/login', $this->credentials);
-
         $response->assertStatus(200);
         $this->assertArrayHasKey('token', $response);
     }

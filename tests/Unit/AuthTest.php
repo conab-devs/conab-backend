@@ -38,7 +38,7 @@ class AuthTest extends TestCase
         $this->expectException(ServerError::class);
         $this->sut->authenticate([
             'password' => 'valid_password',
-            'device_name'> 'valid_device_name' 
+            'device_name'> 'valid_device_name'
         ]);
     }
 
@@ -48,14 +48,13 @@ class AuthTest extends TestCase
         $this->expectException(ServerError::class);
         $this->sut->authenticate([
             'email' => 'valid@valid.com',
-            'device_name'> 'valid_device_name' 
+            'device_name'> 'valid_device_name'
         ]);
     }
 
-    /** @test */
     public function should_throw_error_if_login_fails()
     {
-        $this->expectException(UnauthorizedException::class); 
+        $this->expectException(UnauthorizedException::class);
 
         $tokenGenerator = Mockery::mock(JwtGenerator::class);
         $tokenGenerator->shouldReceive('generate')
@@ -80,5 +79,6 @@ class AuthTest extends TestCase
         $response = $sut->authenticate(['email' => 'valid@valid.com', 'password' => 'valid_password']);
 
         $this->assertEquals('valid_token', $response['token']);
+        $this->assertTrue($response['user'] instanceof User);
     }
 }

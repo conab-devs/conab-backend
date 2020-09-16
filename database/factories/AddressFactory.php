@@ -8,8 +8,8 @@ use Faker\Generator as Faker;
 $factory->define(Address::class, function (Faker $faker) {
     return [
         'street' => $faker->streetName,
-        'number' => $faker->randomNumber(),
+        'neighborhood' => $faker->streetName,
         'city' => $faker->city,
-        'neighborhood' => $faker->name(),
+        'number' => $faker->buildingNumber,
     ];
 });

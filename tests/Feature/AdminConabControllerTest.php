@@ -19,10 +19,12 @@ class AdminConabControllerTest extends TestCase
     {
         // Create fake users
         factory(User::class, 3)->create(['user_type' => 'ADMIN_CONAB']);
-        $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $response = $this->actingAs($authenticatedUser, 'api')->getJson('/api/conab/admins');
-        $response->assertOK()->assertJsonCount(3);
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $this->actingAs($user, 'api')->getJson('/api/conab/admins');
+        $response->assertOK();
+        $this->assertCount(3, $response['data']);
     }
+
 
     /** @test */
     public function should_return_only_admins()
@@ -32,17 +34,43 @@ class AdminConabControllerTest extends TestCase
         factory(User::class)->create(['user_type' => 'CUSTOMER']);
         factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
 
-        $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $response = $this->actingAs($authenticatedUser, 'api')->getJson('/api/conab/admins');
-        $response->assertOK()->assertJsonCount(1);
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $this->actingAs($user, 'api')->getJson('/api/conab/admins');
+        $response->assertOK();
+        $this->assertCount(1, $response['data']);
     }
 
     /** @test */
     public function should_return_an_empty_list_of_admins()
     {
-        $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $response = $this->actingAs($authenticatedUser, 'api')->getJson('/api/conab/admins');
-        $response->assertOK()->assertJsonCount(0);
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $this->actingAs($user, 'api')->getJson('/api/conab/admins');
+        $response->assertOK();
+        $this->assertCount(0, $response['data']);
+    }
+
+    /** @test */
+    public function should_paginate_each_5_admins()
+    {
+        // Create fake users
+        factory(User::class, 6)->create(['user_type' => 'ADMIN_CONAB']);
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $this->actingAs($user, 'api')->getJson('/api/conab/admins?page=1');
+        $response->assertOK();
+        $this->assertCount(5, $response['data']);
+
+        $response = $this->actingAs($user, 'api')->getJson('/api/conab/admins?page=2');
+        $response->assertOK();
+        $this->assertCount(1, $response['data']);
+    }
+
+    /** @test */
+    public function should_return_one_admin()
+    {
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $admin = factory(User::class)->create(['name' => 'admin', 'user_type' => 'ADMIN_CONAB']);
+        $response = $this->actingAs($user, 'api')->getJson("/api/conab/admins/$admin->id");
+        $response->assertOK()->assertJsonFragment(['name' => 'admin']);
     }
 
     /** @test */
@@ -394,13 +422,13 @@ class AdminConabControllerTest extends TestCase
     {
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
-
+        $phone = factory(Phone::class)->create();
         $data = [
             'name' => 'any_name',
             'email' => 'any@email.com',
             'cpf' => '111.111.111-11',
             'phones' => [
-                [ 'number' => $user->phones[0]->number ], // existing phone
+                [ 'number' => $phone->number ], // existing phone
             ]
         ];
         $response = $authenticatedRoute->putJson("/api/conab/admins", $data);

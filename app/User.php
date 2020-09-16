@@ -2,13 +2,11 @@
 
 namespace App;
 
-use App\Components\Errors\InvalidFieldException;
-use App\Components\Errors\UnauthorizedException;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -43,7 +41,11 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->attributes['password'];
     }
-  
+
+    public function getProfilePictureUrl() {
+        return asset(Storage::url($this->attributes['profile_picture']));
+    }
+
     public function cooperative()
     {
         return $this->hasOne('App\Cooperative', 'cooperative_id');
