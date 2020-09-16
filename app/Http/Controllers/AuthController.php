@@ -14,8 +14,6 @@ class AuthController extends Controller
 {
     use HttpResponse;
 
-    private $status = 500;
-
     public function login(Login $request, AuthHandler $handler)
     {
         try {    

@@ -2,25 +2,24 @@
 
 namespace App\Components;
 
-use App\Components\Repositorys\PasswordResetRepository;
-use App\Components\Repositorys\UserRepository;
-use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
 use App\Mail\ResetMail;
 use App\Components\TokenGenerator\TokenGenerator;
 use Illuminate\Support\Facades\Mail;
+use App\PasswordReset;
+use App\User;
 
 class ForgotPasswordHandler
 {
-    private $service;
+    private $reset;
     private $generator;
-    private $userService;
+    private $user;
 
-    public function __construct(PasswordResetRepository $service, TokenGenerator $generator, UserRepository $userService)
+    public function __construct(PasswordReset $reset, TokenGenerator $generator, User $user)
     {
-        $this->service = $service;
+        $this->reset = $reset;
         $this->generator = $generator;
-        $this->userService = $userService;
+        $this->user = $user;
     }
 
     public function sendResetRequest(string $email)
@@ -31,7 +30,7 @@ class ForgotPasswordHandler
 
     public function resetPassword($info)
     {
-        $query = $this->service->find([
+        $query = $this->reset->where([
             'email' => $info['email'], 
             'token' => $info['token']
         ]);
@@ -40,7 +39,7 @@ class ForgotPasswordHandler
             throw new UnauthorizedException();
         }
 
-        $user = $this->userService->findByEmail($info['email']);
+        $user = $this->user->firstWhere('email', $info['email']);
         $user->update(['password' => $info['password']]);
 
         $resetRequest = $query->first();
@@ -49,17 +48,16 @@ class ForgotPasswordHandler
     
     public function generateToken(string $email)
     {
-        $passwordRequest = $this->service->findByEmail($email);
-
+        $passwordRequest = $this->reset->firstWhere('email', $email);
+        
         if ($passwordRequest) {
             return $passwordRequest->token;
         }
 
         $token = $this->generator->generate();
 
-        if (! $this->service->storePasswordResetRequest($email, $token)) {
-            throw new ServerError();
-        }
+        $this->reset->fill(['email' => $email, 'token' => $token]);
+        $this->reset->save();
         
         return $token;
     }

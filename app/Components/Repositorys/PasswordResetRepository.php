@@ -29,9 +29,4 @@ class PasswordResetRepository
         return $this->queryByEmail($email)->first();
     }
 
-    public function storePasswordResetRequest(string $email, string $token)
-    {
-        $this->model->fill(['email' => $email, 'token' => $token]);
-        return $this->model->save();
-    }
 }

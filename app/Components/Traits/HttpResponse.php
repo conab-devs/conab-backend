@@ -5,6 +5,9 @@ namespace App\Components\Traits;
 use App\Components\Errors\CustomException;
 
 trait HttpResponse {
+    
+    private $status = 500;
+
     public function respondWithError($error)
     {
         if ($error instanceof CustomException) {
