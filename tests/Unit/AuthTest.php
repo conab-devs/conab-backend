@@ -79,6 +79,5 @@ class AuthTest extends TestCase
         $response = $sut->authenticate(['email' => 'valid@valid.com', 'password' => 'valid_password']);
 
         $this->assertEquals('valid_token', $response['token']);
-        $this->assertTrue($response['user'] instanceof User);
     }
 }
