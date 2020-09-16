@@ -35,6 +35,8 @@ class AuthTest extends TestCase
         $response = $this->postJson('/api/login', $this->credentials);
         $response->assertStatus(200);
         $this->assertArrayHasKey('token', $response);
+        $this->assertArrayHasKey('user', $response);
+        $this->assertGreaterThan(0, count($response['user']));
     }
 
     /** @test */
