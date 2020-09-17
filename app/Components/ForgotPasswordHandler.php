@@ -31,6 +31,14 @@ class ForgotPasswordHandler
 
     public function resetPassword($request)
     {
+        $arguments = ['email', 'token'];
+
+        foreach ($arguments as $argument) {
+            if (!array_key_exists($argument, $request)) {
+                throw new ServerError("Ops, ocorreu um erro no servidor.");
+            }
+        }
+
         $query = $this->reset->where([
             'email' => $request['email'],
             'token' => $request['token'],
