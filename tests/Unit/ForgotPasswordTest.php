@@ -7,6 +7,7 @@ use App\Components\ForgotPasswordHandler;
 use App\Components\TokenGenerator\StringGenerator;
 use App\PasswordReset;
 use App\User;
+use Illuminate\Support\Facades\Mail;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tests\TestCase;
@@ -37,7 +38,7 @@ class ForgotPasswordTest extends TestCase
     }
 
     /** @test */
-    public function reset_request_should_return_password_reset_token_if_it_already_exists()
+    public function generate_token_should_return_password_reset_token_if_it_already_exists()
     {
         $spy = Mockery::mock(PasswordReset::class);
         $spy->shouldReceive('getAttribute')
@@ -62,7 +63,7 @@ class ForgotPasswordTest extends TestCase
     }
 
     /** @test */
-    public function reset_request_should_return_token()
+    public function generate_token_should_return_token()
     {
         $this->passwordReset->shouldReceive('firstWhere')
             ->with('email', 'valid_mail@mail.com')
@@ -81,6 +82,32 @@ class ForgotPasswordTest extends TestCase
         $token = $sut->generateToken('valid_mail@mail.com');
 
         $this->assertEquals('valid_token', $token);
+    }
+
+    /** @test */
+    public function ensure_that_reset_request_is_sent_with_valid_token()
+    {
+        Mail::fake();
+
+        $this->passwordReset->shouldReceive('firstWhere')
+            ->with('email', 'valid_mail@mail.com')
+            ->andReturn(null);
+        $this->passwordReset->shouldReceive('fill')
+            ->with(['email' => 'valid_mail@mail.com', 'token' => 'valid_token'])
+            ->andReturn(null);
+        $this->passwordReset->shouldReceive('save')
+            ->andReturn(1);
+
+        $this->generator = Mockery::mock(StringGenerator::class);
+        $this->generator->shouldReceive('generate')->andReturn('valid_token');
+
+        $sut = new ForgotPasswordHandler($this->passwordReset, $this->generator, $this->user);
+
+        $sut->sendResetRequest('valid_mail@mail.com');
+
+        Mail::assertSent(function (\App\Mail\ResetMail $mail) {
+            return $mail->token === 'valid_token';
+        });
     }
 
     /** @test */
