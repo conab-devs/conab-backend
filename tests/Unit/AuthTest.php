@@ -77,7 +77,10 @@ class AuthTest extends TestCase
 
         $sut = new AuthHandler($tokenGenerator);
 
-        $response = $sut->authenticate(['email' => 'valid@valid.com', 'password' => 'valid_password']);
+        $response = $sut->authenticate([
+            'email' => 'valid@valid.com', 
+            'password' => 'valid_password'
+        ]);
 
         $this->assertEquals('valid_token', $response['token']);
     }
