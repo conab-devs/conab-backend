@@ -17,10 +17,10 @@ class AuthHandler
 
     public function authenticate($request)
     {
-        $keysInArgumentOrder = ['email', 'password'];
+        $arguments = ['email', 'password'];
 
-        foreach ($keysInArgumentOrder as $argumentKey) {
-            if (!array_key_exists($argumentKey, $request)) {
+        foreach ($arguments as $argument) {
+            if (!array_key_exists($argument, $request)) {
                 throw new ServerError("Ops, ocorreu um erro no servidor.");
             }
         }
