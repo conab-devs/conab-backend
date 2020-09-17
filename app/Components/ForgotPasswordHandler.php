@@ -2,12 +2,13 @@
 
 namespace App\Components;
 
+use App\Components\Errors\ServerError;
 use App\Components\Errors\UnauthorizedException;
-use App\Mail\ResetMail;
 use App\Components\TokenGenerator\TokenGenerator;
-use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetMail;
 use App\PasswordReset;
 use App\User;
+use Illuminate\Support\Facades\Mail;
 
 class ForgotPasswordHandler
 {
@@ -28,28 +29,28 @@ class ForgotPasswordHandler
         Mail::to($email)->send(new ResetMail($token));
     }
 
-    public function resetPassword($info)
+    public function resetPassword($request)
     {
         $query = $this->reset->where([
-            'email' => $info['email'], 
-            'token' => $info['token']
+            'email' => $request['email'],
+            'token' => $request['token'],
         ]);
 
-        if (! $query->count()) {
+        if (!$query->count()) {
             throw new UnauthorizedException('Nenhuma requisição de mudança de senha encontrada');
         }
 
-        $user = $this->user->firstWhere('email', $info['email']);
-        $user->update(['password' => $info['password']]);
+        $user = $this->user->firstWhere('email', $request['email']);
+        $user->update(['password' => $request['password']]);
 
         $resetRequest = $query->first();
         $resetRequest->delete();
     }
-    
+
     public function generateToken(string $email)
     {
         $passwordRequest = $this->reset->firstWhere('email', $email);
-        
+
         if ($passwordRequest) {
             return $passwordRequest->token;
         }
@@ -58,7 +59,7 @@ class ForgotPasswordHandler
 
         $this->reset->fill(['email' => $email, 'token' => $token]);
         $this->reset->save();
-        
+
         return $token;
     }
 }
