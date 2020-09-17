@@ -8,6 +8,6 @@ class ServerError extends CustomException
 
     public function __construct($message = '', $code = 0, \Exception $previous = null)
     {
-        parent::__construct('Server Error', $code, $previous);
+        parent::__construct($message, $code, $previous);
     }
 }

@@ -8,6 +8,6 @@ class UnauthorizedException extends CustomException
 
     public function __construct($message = '', $code = 0, \Exception $previous = null)
     {
-        parent::__construct("You don't have authorization to this resource", $code, $previous);
+        parent::__construct($message, $code, $previous);
     }
 }

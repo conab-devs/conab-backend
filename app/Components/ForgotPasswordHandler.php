@@ -36,7 +36,7 @@ class ForgotPasswordHandler
         ]);
 
         if (! $query->count()) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException('Nenhuma requisição de mudança de senha encontrada');
         }
 
         $user = $this->user->firstWhere('email', $info['email']);

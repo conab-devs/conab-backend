@@ -21,12 +21,12 @@ class AuthHandler
 
         foreach ($keysInArgumentOrder as $argumentKey) {
             if (!array_key_exists($argumentKey, $request)) {
-                throw new ServerError();
+                throw new ServerError("Ops, ocorreu um erro no servidor.");
             }
         }
 
         if (! $token = $this->generator->generate($request)) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException('Credenciais inválidas, tente novamente.');
         }
 
         return ['token' => $token];
