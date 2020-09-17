@@ -26,7 +26,7 @@ class ForgotPasswordHandler
     public function sendResetRequest(string $email)
     {
         $token = $this->generateToken($email);
-        Mail::to($email)->send(new ResetMail($token));
+        Mail::to($email)->send(new ResetMail($token, $email));
     }
 
     public function resetPassword($request)

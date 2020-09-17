@@ -115,7 +115,7 @@ class ForgotPasswordTest extends TestCase
     }
 
     /** @test */
-    public function ensure_that_reset_request_is_sent_with_valid_token()
+    public function ensure_that_reset_request_is_sent_with_valid_token_and_mail()
     {
         $email = 'valid_mail@mail.com';
         $token = 'valid_token';
@@ -139,8 +139,8 @@ class ForgotPasswordTest extends TestCase
 
         $sut->sendResetRequest($email);
 
-        Mail::assertSent(function (\App\Mail\ResetMail $mail) use ($token) {
-            return $mail->token === $token;
+        Mail::assertSent(function (\App\Mail\ResetMail $mail) use ($token, $email) {
+            return $mail->token === $token && $mail->email === $email;
         });
     }
 
