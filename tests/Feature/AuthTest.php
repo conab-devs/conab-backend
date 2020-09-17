@@ -76,5 +76,15 @@ class AuthTest extends TestCase
         $this->user->refresh();
         
         $this->assertTrue(Hash::check('new_password', $this->user->password));
+    }   
+    
+    /** @test */
+    public function should_try_to_make_login_and_throw_error_if_credentials_invalid()
+    {
+        $response = $this->postJson('/api/login', [
+            'email' => 'invalid_mail@mail.com',
+            'password' => 'invalid_password'
+        ]);
+        $response->assertStatus(401);
     }
 }
