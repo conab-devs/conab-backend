@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Login;
-use App\Http\Requests\ResetRequest;
-use App\Http\Requests\ResetPassword;
-use App\Components\ForgotPasswordHandler;
 use App\Components\AuthHandler;
+use App\Components\ForgotPasswordHandler;
 use App\Components\Traits\HttpResponse;
+use App\Http\Requests\Login;
+use App\Http\Requests\ResetPassword;
+use App\Http\Requests\ResetRequest;
 use App\User;
 
 class AuthController extends Controller
@@ -18,10 +18,11 @@ class AuthController extends Controller
     {
         try {
             $user = User::where('email', $request->input('email'))->first();
-            $responseContent = $handler->authenticate($request->all());
+            $responseContent = $handler->authenticate($request->only(['email', 'password']));
+            
             return response()->json([
                 'token' => $responseContent['token'],
-                'user' => $user->load('phones')
+                'user' => $user,
             ]);
         } catch (\Exception $error) {
             return $this->respondWithError($error);
@@ -34,9 +35,9 @@ class AuthController extends Controller
             User::where('email', $request->input('email'))->firstOrFail();
             $handler->sendResetRequest($request->input('email'));
             return response()->json([
-                'message' => 'The reset token was sent to your email'
+                'message' => 'The reset token was sent to your email',
             ]);
-        } catch (\Exception $error) {            
+        } catch (\Exception $error) {
             return $this->respondWithError($error);
         }
     }
