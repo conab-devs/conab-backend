@@ -24,7 +24,7 @@ class AuthTest extends TestCase
         $this->sut = $this->makeAuthHandler();
     }
 
-    public function makeAuthHandler($userType = 'CUSTOMER', $token = 'valid_jwt_token')
+    public function makeAuthHandler($token = 'valid_jwt_token')
     {
         $tokenGenerator = Mockery::mock(JwtGenerator::class);
         $tokenGenerator->shouldReceive('generate')->andReturn($token);
@@ -47,7 +47,7 @@ class AuthTest extends TestCase
     {
         $this->expectException(ServerError::class);
         $this->sut->authenticate([
-            'email' => 'valid@valid.com',
+            'email' => 'valid_mail@mail.com',
             'device_name'> 'valid_device_name'
         ]);
     }
@@ -61,9 +61,10 @@ class AuthTest extends TestCase
             ->with(['email' => 'valid@valid.com', 'password' => 'invalid_password'])
             ->andReturn('');
 
-        $sut = new AuthHandler($tokenGenerator);
-
-        $sut->authenticate(['email' => 'valid@valid.com', 'password' => 'invalid_password']);
+        (new AuthHandler($tokenGenerator))->authenticate([
+            'email' => 'valid@valid.com', 
+            'password' => 'invalid_password'
+        ]);
     }
 
     /** @test */
