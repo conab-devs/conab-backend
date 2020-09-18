@@ -16,10 +16,12 @@ class CooperativeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $cooperatives = Cooperative::with(['address', 'phones'])
-                ->paginate(10);
+            ->when($request->name, function ($query, $name) {
+                $query->where('name', 'like', "%{$name}%");
+            })->paginate(10);
 
         return response()->json($cooperatives);
     }
