@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Components\AuthHandler;
 use App\Components\ForgotPasswordHandler;
-use App\Components\Traits\HttpResponse;
 use App\Http\Requests\Login;
 use App\Http\Requests\ResetPassword;
 use App\Http\Requests\ResetRequest;
@@ -12,8 +11,6 @@ use App\User;
 
 class AuthController extends Controller
 {
-    use HttpResponse;
-
     public function login(Login $request, AuthHandler $handler)
     {
         $user = User::where('email', $request->input('email'))->first();
