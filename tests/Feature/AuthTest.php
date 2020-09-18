@@ -68,6 +68,7 @@ class AuthTest extends TestCase
             [
                 'email' => $this->user->email,
                 'password' => 'new_password',
+                'password_confirmation' => 'new_password',
                 'token' => $token,
             ]
         );
