@@ -2,16 +2,16 @@
 
 namespace Tests\Unit;
 
-use App\Components\Errors\UnauthorizedException;
 use App\Components\ForgotPasswordHandler;
 use App\Components\TokenGenerator\StringGenerator;
+use App\Exceptions\ServerError;
+use App\Exceptions\UnauthorizedException;
 use App\PasswordReset;
 use App\User;
 use Illuminate\Support\Facades\Mail;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tests\TestCase;
-use App\Components\Errors\ServerError;
 
 /** @author Franklyn */
 class ForgotPasswordTest extends TestCase
@@ -34,12 +34,12 @@ class ForgotPasswordTest extends TestCase
     public function should_throw_error_if_email_not_passed()
     {
         $this->expectException(ServerError::class);
-        $sut = new ForgotPasswordHandler($this->passwordReset, 
-                                        $this->generator, 
-                                        $this->user);
+        $sut = new ForgotPasswordHandler($this->passwordReset,
+            $this->generator,
+            $this->user);
 
         $sut->resetPassword([
-            'token'> 'valid_token'
+            'token' > 'valid_token',
         ]);
     }
 
@@ -47,9 +47,9 @@ class ForgotPasswordTest extends TestCase
     public function should_throw_error_if_token_not_passed()
     {
         $this->expectException(ServerError::class);
-        $sut = new ForgotPasswordHandler($this->passwordReset, 
-                                        $this->generator, 
-                                        $this->user);
+        $sut = new ForgotPasswordHandler($this->passwordReset,
+            $this->generator,
+            $this->user);
         $sut->resetPassword([
             'email' => 'valid_mail@mail.com',
         ]);
@@ -80,9 +80,9 @@ class ForgotPasswordTest extends TestCase
 
         $this->generator->shouldReceive('generate')->andReturn('valid_token');
 
-        $sut = new ForgotPasswordHandler($this->passwordReset, 
-                                        $this->generator, 
-                                        $this->user);
+        $sut = new ForgotPasswordHandler($this->passwordReset,
+            $this->generator,
+            $this->user);
 
         $token = $sut->generateToken($spy->email);
 
@@ -107,9 +107,9 @@ class ForgotPasswordTest extends TestCase
         $this->generator = Mockery::mock(StringGenerator::class);
         $this->generator->shouldReceive('generate')->andReturn($token);
 
-        $sut = new ForgotPasswordHandler($this->passwordReset, 
-                                        $this->generator, 
-                                        $this->user);
+        $sut = new ForgotPasswordHandler($this->passwordReset,
+            $this->generator,
+            $this->user);
 
         $this->assertEquals('valid_token', $sut->generateToken($email));
     }
@@ -133,9 +133,9 @@ class ForgotPasswordTest extends TestCase
 
         $this->generator->shouldReceive('generate')->andReturn($token);
 
-        $sut = new ForgotPasswordHandler($this->passwordReset, 
-                                        $this->generator, 
-                                        $this->user);
+        $sut = new ForgotPasswordHandler($this->passwordReset,
+            $this->generator,
+            $this->user);
 
         $sut->sendResetRequest($email);
 
@@ -151,9 +151,9 @@ class ForgotPasswordTest extends TestCase
 
         $this->passwordReset->shouldReceive('where->count')->andReturn(0);
 
-        (new ForgotPasswordHandler($this->passwordReset, 
-                                  $this->generator, 
-                                  $this->user))
+        (new ForgotPasswordHandler($this->passwordReset,
+            $this->generator,
+            $this->user))
             ->resetPassword([
                 'email' => 'invalid_email',
                 'password' => 'new_password',
@@ -180,9 +180,9 @@ class ForgotPasswordTest extends TestCase
         $this->passwordReset->shouldReceive('where->count')->andReturn(1);
         $this->passwordReset->shouldReceive('where->first')->andReturn($resetSpy);
 
-        (new ForgotPasswordHandler($this->passwordReset, 
-                                  $this->generator, 
-                                  $this->user))
+        (new ForgotPasswordHandler($this->passwordReset,
+            $this->generator,
+            $this->user))
             ->resetPassword([
                 'email' => $email,
                 'password' => $newPassword,

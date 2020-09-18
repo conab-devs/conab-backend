@@ -2,8 +2,8 @@
 
 namespace App\Components;
 
-use App\Components\Errors\ServerError;
-use App\Components\Errors\UnauthorizedException;
+use App\Exceptions\ServerError;
+use App\Exceptions\UnauthorizedException;
 use App\Components\TokenGenerator\TokenGenerator;
 use App\Mail\ResetMail;
 use App\PasswordReset;

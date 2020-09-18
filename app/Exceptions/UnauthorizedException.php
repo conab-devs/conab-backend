@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components\Errors;
+namespace App\Exceptions;
 
 class UnauthorizedException extends CustomException
 {

@@ -5,8 +5,8 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery;
-use App\Components\Errors\ServerError;
-use App\Components\Errors\UnauthorizedException;
+use App\Exceptions\ServerError;
+use App\Exceptions\UnauthorizedException;
 use App\Components\AuthHandler;
 use App\Components\TokenGenerator\JwtGenerator;
 
