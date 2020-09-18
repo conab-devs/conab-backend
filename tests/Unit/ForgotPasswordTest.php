@@ -35,8 +35,8 @@ class ForgotPasswordTest extends TestCase
     {
         $this->expectException(ServerError::class);
         $sut = new ForgotPasswordHandler($this->passwordReset,
-            $this->generator,
-            $this->user);
+                                        $this->generator,
+                                        $this->user);
 
         $sut->resetPassword([
             'token' > 'valid_token',
@@ -48,8 +48,8 @@ class ForgotPasswordTest extends TestCase
     {
         $this->expectException(ServerError::class);
         $sut = new ForgotPasswordHandler($this->passwordReset,
-            $this->generator,
-            $this->user);
+                                        $this->generator,
+                                        $this->user);
         $sut->resetPassword([
             'email' => 'valid_mail@mail.com',
         ]);
@@ -66,27 +66,31 @@ class ForgotPasswordTest extends TestCase
     /** @test */
     public function generate_token_should_return_password_reset_token_if_it_already_exists()
     {
-        $spy = Mockery::mock(PasswordReset::class);
-        $spy->shouldReceive('getAttribute')
+        $queriedReset = Mockery::mock(PasswordReset::class);
+        $queriedReset->shouldReceive('getAttribute')
             ->with('token')
             ->andReturn('existent_token');
-        $spy->shouldReceive('getAttribute')
+        $queriedReset->shouldReceive('getAttribute')
             ->with('email')
+            ->twice()
             ->andReturn('valid_mail@mail.com');
 
         $this->passwordReset->shouldReceive('firstWhere')
-            ->with('email', $spy->email)
-            ->andReturn($spy);
+            ->with('email', $queriedReset->email)
+            ->once()
+            ->andReturn($queriedReset);
 
-        $this->generator->shouldReceive('generate')->andReturn('valid_token');
+        $this->generator->shouldReceive('generate')
+            ->never()
+            ->andReturn('valid_token');
 
         $sut = new ForgotPasswordHandler($this->passwordReset,
-            $this->generator,
-            $this->user);
+                                        $this->generator,
+                                        $this->user);
 
-        $token = $sut->generateToken($spy->email);
+        $token = $sut->generateToken($queriedReset->email);
 
-        $this->assertEquals($spy->token, $token);
+        $this->assertEquals($queriedReset->token, $token);
     }
 
     /** @test */
@@ -97,19 +101,22 @@ class ForgotPasswordTest extends TestCase
 
         $this->passwordReset->shouldReceive('firstWhere')
             ->with('email', $email)
+            ->once()
             ->andReturn(null);
         $this->passwordReset->shouldReceive('fill')
             ->with(['email' => $email, 'token' => $token])
+            ->once()
             ->andReturn(null);
         $this->passwordReset->shouldReceive('save')
+            ->once()
             ->andReturn(1);
 
         $this->generator = Mockery::mock(StringGenerator::class);
-        $this->generator->shouldReceive('generate')->andReturn($token);
+        $this->generator->shouldReceive('generate')->once()->andReturn($token);
 
         $sut = new ForgotPasswordHandler($this->passwordReset,
-            $this->generator,
-            $this->user);
+                                        $this->generator,
+                                        $this->user);
 
         $this->assertEquals('valid_token', $sut->generateToken($email));
     }
@@ -124,18 +131,21 @@ class ForgotPasswordTest extends TestCase
 
         $this->passwordReset->shouldReceive('firstWhere')
             ->with('email', $email)
+            ->once()
             ->andReturn(null);
         $this->passwordReset->shouldReceive('fill')
             ->with(['email' => $email, 'token' => $token])
+            ->once()
             ->andReturn(null);
         $this->passwordReset->shouldReceive('save')
+            ->once()
             ->andReturn(1);
 
-        $this->generator->shouldReceive('generate')->andReturn($token);
+        $this->generator->shouldReceive('generate')->once()->andReturn($token);
 
         $sut = new ForgotPasswordHandler($this->passwordReset,
-            $this->generator,
-            $this->user);
+                                        $this->generator,
+                                        $this->user);
 
         $sut->sendResetRequest($email);
 
@@ -149,11 +159,11 @@ class ForgotPasswordTest extends TestCase
     {
         $this->expectException(UnauthorizedException::class);
 
-        $this->passwordReset->shouldReceive('where->count')->andReturn(0);
+        $this->passwordReset->shouldReceive('where->count')->once()->andReturn(0);
 
         (new ForgotPasswordHandler($this->passwordReset,
-            $this->generator,
-            $this->user))
+                                  $this->generator,
+                                  $this->user))
             ->resetPassword([
                 'email' => 'invalid_email',
                 'password' => 'new_password',
@@ -167,22 +177,29 @@ class ForgotPasswordTest extends TestCase
         $email = 'valid_mail@mail.com';
         $newPassword = 'new_password';
 
-        $userSpy = Mockery::mock(User::class);
-        $userSpy->shouldReceive('update')->with(['password' => $newPassword]);
+        $queriedUser = Mockery::mock(User::class);
+        $queriedUser->shouldReceive('update')
+            ->once()
+            ->with(['password' => $newPassword]);
 
         $this->user->shouldReceive('firstWhere')
             ->with('email', $email)
-            ->andReturn($userSpy);
+            ->once()
+            ->andReturn($queriedUser);
 
-        $resetSpy = Mockery::mock(PasswordReset::class);
-        $resetSpy->shouldReceive('delete')->once();
+        $queriedReset = Mockery::mock(PasswordReset::class);
+        $queriedReset->shouldReceive('delete')->once();
 
-        $this->passwordReset->shouldReceive('where->count')->andReturn(1);
-        $this->passwordReset->shouldReceive('where->first')->andReturn($resetSpy);
+        $this->passwordReset->shouldReceive('where->count')
+            ->once()
+            ->andReturn(1);
+        $this->passwordReset->shouldReceive('where->first')
+            ->once()
+            ->andReturn($queriedReset);
 
         (new ForgotPasswordHandler($this->passwordReset,
-            $this->generator,
-            $this->user))
+                                  $this->generator,
+                                  $this->user))
             ->resetPassword([
                 'email' => $email,
                 'password' => $newPassword,
