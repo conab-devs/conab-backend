@@ -39,7 +39,7 @@ class ForgotPasswordTest extends TestCase
                                         $this->user);
 
         $sut->resetPassword([
-            'token' > 'valid_token',
+            'token' => 'valid_token',
         ]);
     }
 

@@ -38,7 +38,6 @@ class AuthTest extends TestCase
         $this->expectException(ServerError::class);
         $this->sut->authenticate([
             'password' => 'valid_password',
-            'device_name'> 'valid_device_name'
         ]);
     }
 
@@ -48,7 +47,6 @@ class AuthTest extends TestCase
         $this->expectException(ServerError::class);
         $this->sut->authenticate([
             'email' => 'valid_mail@mail.com',
-            'device_name'> 'valid_device_name'
         ]);
     }
 
