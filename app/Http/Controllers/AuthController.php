@@ -25,7 +25,8 @@ class AuthController extends Controller
     }
 
     public function sendResetPasswordRequest(ResetRequest $request,
-                                            ForgotPasswordHandler $handler) {
+                                            ForgotPasswordHandler $handler) 
+    {
         User::where('email', $request->input('email'))->firstOrFail();
         $handler->sendResetRequest($request->input('email'));
         return response()->json([
@@ -34,7 +35,8 @@ class AuthController extends Controller
     }
 
     public function resetPassword(ResetPassword $request,
-                                 ForgotPasswordHandler $handler) {
+                                 ForgotPasswordHandler $handler) 
+    {
         $handler->resetPassword($request->all());
         return response()->json(['message' => 'The password was reset sucessfully']);
     }
