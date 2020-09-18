@@ -29,7 +29,8 @@ class AuthController extends Controller
         }
     }
 
-    public function sendResetPasswordRequest(ResetRequest $request, ForgotPasswordHandler $handler)
+    public function sendResetPasswordRequest(ResetRequest $request, 
+                                            ForgotPasswordHandler $handler)
     {
         try {
             User::where('email', $request->input('email'))->firstOrFail();
@@ -42,7 +43,8 @@ class AuthController extends Controller
         }
     }
 
-    public function resetPassword(ResetPassword $request, ForgotPasswordHandler $handler)
+    public function resetPassword(ResetPassword $request, 
+                                 ForgotPasswordHandler $handler)
     {
         try {
             $handler->resetPassword($request->all());
