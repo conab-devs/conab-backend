@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Components\ForgotPasswordHandler;
-use App\Components\TokenGenerator\StringGenerator;
+use App\Components\Auth\ForgotPasswordHandler;
+use App\Components\Auth\TokenGenerator\StringGenerator;
 use App\Exceptions\ServerError;
 use App\Exceptions\UnauthorizedException;
 use App\PasswordReset;

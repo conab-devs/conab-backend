@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Components\AuthHandler;
-use App\Components\ForgotPasswordHandler;
-use App\Components\TokenGenerator\JwtGenerator;
-use App\Components\TokenGenerator\StringGenerator;
-use App\Components\TokenGenerator\TokenGenerator;
+use App\Components\Auth\AuthHandler;
+use App\Components\Auth\ForgotPasswordHandler;
+use App\Components\Auth\TokenGenerator\JwtGenerator;
+use App\Components\Auth\TokenGenerator\StringGenerator;
+use App\Components\Auth\TokenGenerator\TokenGenerator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

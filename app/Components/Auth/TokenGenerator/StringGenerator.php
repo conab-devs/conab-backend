@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Components\TokenGenerator;
+namespace App\Components\Auth\TokenGenerator;
 
 use Illuminate\Support\Str;
-use App\Components\TokenGenerator\TokenGenerator;
+use App\Components\Auth\TokenGenerator\TokenGenerator;
 
 class StringGenerator implements TokenGenerator
 {

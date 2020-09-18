@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Components\TokenGenerator;
+namespace App\Components\Auth\TokenGenerator;
 
 use Illuminate\Support\Facades\Auth;
-use App\Components\TokenGenerator\TokenGenerator;
+use App\Components\Auth\TokenGenerator\TokenGenerator;
 
 class JwtGenerator implements TokenGenerator
 {

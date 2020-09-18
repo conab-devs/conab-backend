@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Components;
+namespace App\Components\Auth;
 
 use App\Exceptions\ServerError;
 use App\Exceptions\UnauthorizedException;
-use App\Components\TokenGenerator\TokenGenerator;
+use App\Components\Auth\TokenGenerator\TokenGenerator;
 
 class AuthHandler
 {

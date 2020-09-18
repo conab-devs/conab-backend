@@ -7,8 +7,8 @@ use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery;
 use App\Exceptions\ServerError;
 use App\Exceptions\UnauthorizedException;
-use App\Components\AuthHandler;
-use App\Components\TokenGenerator\JwtGenerator;
+use App\Components\Auth\AuthHandler;
+use App\Components\Auth\TokenGenerator\JwtGenerator;
 
 /** @author Franklyn */
 class AuthTest extends TestCase

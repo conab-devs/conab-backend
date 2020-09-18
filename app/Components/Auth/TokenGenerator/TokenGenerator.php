@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components\TokenGenerator;
+namespace App\Components\Auth\TokenGenerator;
 
 interface TokenGenerator
 {
