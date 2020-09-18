@@ -111,7 +111,6 @@ class ForgotPasswordTest extends TestCase
             ->once()
             ->andReturn(1);
 
-        $this->generator = Mockery::mock(StringGenerator::class);
         $this->generator->shouldReceive('generate')->once()->andReturn($token);
 
         $sut = new ForgotPasswordHandler($this->passwordReset,
