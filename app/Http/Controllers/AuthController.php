@@ -2,37 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Components\AuthHandler;
-use App\Components\Services\UserService;
-use App\Components\TokenGenerator;
+use App\Components\Auth\AuthHandler;
+use App\Components\Auth\ForgotPasswordHandler;
+use App\Http\Requests\Login;
+use App\Http\Requests\ResetPassword;
+use App\Http\Requests\ResetRequest;
 use App\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(Login $request, AuthHandler $handler)
     {
-        $validated = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-            'device_name' => 'required',
-        ])->validate();
+        $user = User::where('email', $request->input('email'))->first();
+        $responseContent = $handler->authenticate($request->only([
+            'email', 'password'
+        ]));
 
-        try {
-            $service = new UserService(new User());
-            $authHandler = new AuthHandler($service, new TokenGenerator());
+        return response()->json([
+            'token' => $responseContent['token'],
+            'user' => $user,
+        ]);
+    }
 
-            $responseContent = $authHandler->authenticate($validated);
+    public function sendResetPasswordRequest(ResetRequest $request,
+                                            ForgotPasswordHandler $handler) 
+    {
+        User::where('email', $request->input('email'))->firstOrFail();
+        $handler->sendResetRequest($request->input('email'));
+        return response()->json([
+            'message' => 'The reset token was sent to your email',
+        ]);
+    }
 
-            return response()->json([
-                'token' => $responseContent['token'],
-                'user' => $responseContent['user']->load('phones')
-            ]);
-        } catch (\Exception $error) {
-            return response()->json([
-                'message' => $error->getMessage(),
-            ], $error->status);
-        }
+    public function resetPassword(ResetPassword $request,
+                                 ForgotPasswordHandler $handler) 
+    {
+        $handler->resetPassword($request->all());
+        return response()->json(['message' => 'The password was reset sucessfully']);
     }
 }

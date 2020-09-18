@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::middleware('auth:api')->group(function () {
-    Route::get('/hello', function () {
-        return 'hello';
-    });
     Route::get('/conab/admins', 'AdminConabController@index');
     Route::get('/conab/admins/{id}', 'AdminConabController@show');
     Route::post('/conab/admins', 'AdminConabController@store');
@@ -34,4 +31,7 @@ Route::middleware('auth:api')->group(function () {
 });
 
 Route::post('/login', 'AuthController@login');
+Route::post('/password/reset/request', 'AuthController@sendResetPasswordRequest');
+Route::post('/password/reset', 'AuthController@resetPassword');
+
 

@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\CustomException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -50,6 +51,12 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if ($exception instanceof CustomException) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], $exception->status);
+        }
+
         return parent::render($request, $exception);
     }
 }
