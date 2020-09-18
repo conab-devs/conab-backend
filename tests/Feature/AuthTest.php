@@ -86,7 +86,6 @@ class AuthTest extends TestCase
             'email' => 'invalid_mail@mail.com',
             'password' => 'invalid_password'
         ]);
-        $response->dump();
         $response->assertStatus(401);
     }
 }
