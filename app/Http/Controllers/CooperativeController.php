@@ -18,7 +18,8 @@ class CooperativeController extends Controller
      */
     public function index()
     {
-        $cooperatives = Cooperative::with(['address', 'phones'])->get();
+        $cooperatives = Cooperative::with(['address', 'phones'])
+                ->paginate(10);
 
         return response()->json($cooperatives);
     }
@@ -86,7 +87,7 @@ class CooperativeController extends Controller
         $cooperative = Cooperative::findOrFail($id);
 
         Validator::make($request->all(), [
-            'name' => ['bail', Rule::unique('cooperatives')->ignore($cooperative->id), 'max:100'],
+            'name' => ['bail', Rule::unique('cooperatives', 'name')->ignore($cooperative->id), 'max:100'],
             'phones' => 'array',
             'phones.*.number' => [
                 'distinct',
