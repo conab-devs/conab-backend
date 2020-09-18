@@ -3,10 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Cooperative extends Model
 {
     protected $fillable = ['name', 'dap_path'];
+
+    protected $appends = ['dap_url'];
+
+    protected $hidden = ['dap_path'];
 
     public function phones()
     {
@@ -16,5 +21,9 @@ class Cooperative extends Model
     public function address()
     {
         return $this->belongsTo('App\Address', 'address_id');
+    }
+
+    public function getDapUrlAttribute() {
+        return Storage::url($this->attributes['dap_path']);
     }
 }
