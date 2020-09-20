@@ -20,12 +20,12 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $responseContent['token'],
-            'user' => $user,
+            'user' => $user->load('phones'),
         ]);
     }
 
     public function sendResetPasswordRequest(ResetRequest $request,
-                                            ForgotPasswordHandler $handler) 
+                                            ForgotPasswordHandler $handler)
     {
         User::where('email', $request->input('email'))->firstOrFail();
         $handler->sendResetRequest($request->input('email'));
@@ -35,7 +35,7 @@ class AuthController extends Controller
     }
 
     public function resetPassword(ResetPassword $request,
-                                 ForgotPasswordHandler $handler) 
+                                 ForgotPasswordHandler $handler)
     {
         $handler->resetPassword($request->all());
         return response()->json(['message' => 'The password was reset sucessfully']);
