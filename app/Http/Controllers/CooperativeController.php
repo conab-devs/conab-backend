@@ -16,9 +16,12 @@ class CooperativeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $cooperatives = Cooperative::with(['address', 'phones'])->get();
+        $cooperatives = Cooperative::with(['address', 'phones'])
+            ->when($request->name, function ($query, $name) {
+                $query->where('name', 'like', "%{$name}%");
+            })->paginate(10);
 
         return response()->json($cooperatives);
     }
@@ -86,7 +89,7 @@ class CooperativeController extends Controller
         $cooperative = Cooperative::findOrFail($id);
 
         Validator::make($request->all(), [
-            'name' => ['bail', Rule::unique('cooperatives')->ignore($cooperative->id), 'max:100'],
+            'name' => ['bail', Rule::unique('cooperatives', 'name')->ignore($cooperative->id), 'max:100'],
             'phones' => 'array',
             'phones.*.number' => [
                 'distinct',
