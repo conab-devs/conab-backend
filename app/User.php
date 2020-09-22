@@ -42,8 +42,13 @@ class User extends Authenticatable implements JWTSubject
         return $this->attributes['password'];
     }
 
-    public function getProfilePictureUrl() {
-        return asset(Storage::url($this->attributes['profile_picture']));
+    public function getProfilePictureAttribute() {
+        if (config('app.env') === 'testing' ||
+            $this->attributes['profile_picture'] === null)
+        {
+            return $this->attributes['profile_picture'];
+        }
+        return Storage::url($this->attributes['profile_picture']);
     }
 
     public function cooperative()

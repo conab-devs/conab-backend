@@ -28,7 +28,7 @@ class UploadController extends Controller
                 $path = $avatar->store('uploads');
                 $user->profile_picture = $path;
                 $user->save();
-                return response(['url' => $user->getProfilePictureUrl()], 200);
+                return response(['url' => Storage::url($path)], 200);
             }
         }
 
