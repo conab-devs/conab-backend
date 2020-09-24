@@ -15,5 +15,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/user', function (Request $request) {
+    // test
     return $request->user();
 });
