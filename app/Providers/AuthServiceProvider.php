@@ -25,14 +25,15 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define('login', function ($user, $device) {
-            $permissions = [
-                'CUSTOMER' => 'MOBILE', 
-                'ADMIN_COOP' => 'MOBILE', 
-                'ADMIN_CONAB' => 'WEB', 
-            ];
-
-            return $permissions[$user->user_type] === $device;
+        Gate::define('manage-cooperative-admin', function ($user, \App\User $resource = null) {
+            if ($user->user_type === 'ADMIN_CONAB') {
+                return true;
+            }
+            if ($resource) {
+                return $user->id === $resource->id
+                       && $user->user_type !== 'CUSTOMER';
+            }
+            return false;
         });
     }
 }

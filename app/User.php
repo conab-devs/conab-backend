@@ -60,7 +60,6 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany('App\Phone', 'user_phones');
     }
 
-
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

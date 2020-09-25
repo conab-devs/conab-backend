@@ -23,6 +23,11 @@ class Cooperative extends Model
         return $this->belongsTo('App\Address', 'address_id');
     }
 
+    public function admins()
+    {
+        return $this->hasMany('App\User', 'cooperative_id');
+    }
+
     public function getDapUrlAttribute() {
         return Storage::url($this->attributes['dap_path']);
     }
