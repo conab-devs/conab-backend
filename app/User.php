@@ -53,7 +53,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function cooperative()
     {
-        return $this->hasOne('App\Cooperative', 'cooperative_id');
+        return $this->belongsTo('App\Cooperative');
     }
 
     public function phones() {
