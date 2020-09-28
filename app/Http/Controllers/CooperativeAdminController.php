@@ -17,7 +17,9 @@ class CooperativeAdminController extends Controller
     public function index(Cooperative $cooperative)
     {
         if (Gate::denies('manage-cooperative-admin')) {
-            return response()->json('Você não tem autorização a este recurso', 401);
+            return response()->json([
+                'message' => 'Você não tem autorização a este recurso'
+            ], 401);
         }
         return response()->json(
             $cooperative->admins()->with('phones')->paginate(5), 200
@@ -32,7 +34,9 @@ class CooperativeAdminController extends Controller
             ->first();
 
         if (Gate::denies('manage-cooperative-admin', $admin)) {
-            return response()->json('Você não tem autorização a este recurso', 401);
+            return response()->json([
+                'message' => 'Você não tem autorização a este recurso'
+            ], 401);
         }
 
         if (!$admin) {
@@ -47,7 +51,9 @@ class CooperativeAdminController extends Controller
     public function store(AdminCooperativeStore $request, Cooperative $cooperative)
     {
         if (Gate::denies('manage-cooperative-admin')) {
-            return response()->json('Você não tem autorização a este recurso', 401);
+            return response()->json([
+                'message' => 'Você não tem autorização a este recurso'
+            ], 401);
         }
 
         $adminInformations = array_merge($request->validated(), [
@@ -73,7 +79,9 @@ class CooperativeAdminController extends Controller
             ->first();
 
         if (Gate::denies('manage-cooperative-admin', $admin)) {
-            return response()->json('Você não tem autorização a este recurso', 401);
+            return response()->json([
+                'message' => 'Você não tem autorização a este recurso'
+            ], 401);
         }
 
         $data = Validator::make($request->all(), [
