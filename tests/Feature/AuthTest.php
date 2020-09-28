@@ -24,6 +24,7 @@ class AuthTest extends TestCase
         $this->credentials = [
             'email' => $this->faker()->unique()->safeEmail,
             'password' => 'valid_password',
+            'user_type' => 'ADMIN_CONAB'
         ];
 
         $this->user = factory(User::class)->create($this->credentials);
@@ -46,8 +47,7 @@ class AuthTest extends TestCase
         $response = $this->withHeaders([
             'Authorization' => "Bearer $token",
         ])->getJson('/api/conab/admins');
-        
- 
+
         $response->assertStatus(200);
     }
 
@@ -75,10 +75,10 @@ class AuthTest extends TestCase
         $resetResponse->assertStatus(200);
 
         $this->user->refresh();
-        
+
         $this->assertTrue(Hash::check('new_password', $this->user->password));
-    }   
-    
+    }
+
     /** @test */
     public function should_try_to_make_login_and_throw_error_if_credentials_invalid()
     {
