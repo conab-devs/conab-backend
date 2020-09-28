@@ -31,7 +31,7 @@ class AuthServiceProvider extends ServiceProvider
             }
             if ($resource) {
                 return $user->id === $resource->id
-                       && $user->user_type !== 'CUSTOMER';
+                       && $user->cooperative;
             }
             return false;
         });
