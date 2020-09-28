@@ -11,6 +11,11 @@ use Illuminate\Validation\Rule;
 
 class CooperativeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('only-admin-conab');
+    }
+
     /**
      * Display a listing of the resource.
      *
