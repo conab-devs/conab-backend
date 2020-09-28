@@ -25,6 +25,15 @@ class AdminConabControllerTest extends TestCase
         $this->assertCount(3, $response['data']);
     }
 
+    /** @test */
+    public function should_return_un_authorized_if_customer_try_to_list_admins()
+    {
+        factory(User::class, 3)->create(['user_type' => 'ADMIN_CONAB']);
+        $user = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $response = $this->actingAs($user, 'api')->getJson('/api/conab/admins');
+        $response->assertStatus(401);
+    }
+
 
     /** @test */
     public function should_return_only_admins()
@@ -74,6 +83,15 @@ class AdminConabControllerTest extends TestCase
     }
 
     /** @test */
+    public function should_return_unauthorized_if_customer_try_to_show_an_admin()
+    {
+        $user = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $admin = factory(User::class)->create(['name' => 'admin', 'user_type' => 'ADMIN_CONAB']);
+        $response = $this->actingAs($user, 'api')->getJson("/api/conab/admins/$admin->id");
+        $response->assertStatus(401);
+    }
+
+    /** @test */
     public function should_create_an_admin()
     {
         $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
@@ -90,6 +108,24 @@ class AdminConabControllerTest extends TestCase
             ->postJson('/api/conab/admins', $data);
         $response->assertStatus(201)
             ->assertJsonFragment($data);
+    }
+
+    /** @test */
+    public function should_return_unauthorized_if_customer_try_to_create_an_admin()
+    {
+        $authenticatedUser = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $data = [
+            'name' => 'any_name',
+            'email' => 'any@email.com',
+            'cpf' => '999.999.999-99',
+            'phones' => [
+                [ 'number' => '(99) 99999-9999' ],
+                [ 'number' => '(88) 88888-8888' ]
+            ]
+        ];
+        $response = $this->actingAs($authenticatedUser, 'api')
+            ->postJson('/api/conab/admins', $data);
+        $response->assertStatus(401);
     }
 
     /** @test */
@@ -317,6 +353,44 @@ class AdminConabControllerTest extends TestCase
     }
 
     /** @test */
+    public function should_return_unauthorized_if_customer_try_to_update_an_admin()
+    {
+        $user = factory(User::class)
+            ->create(['password' => '123456', 'user_type' => 'CUSTOMER']);
+
+        $authenticatedRoute = $this->actingAs($user, 'api');
+
+        $dataWithOnlyName = ['name' => 'updated_name'];
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithOnlyName);
+        $response->assertStatus(401);
+
+        $dataWithOnlyEmail = ['email' => 'updated@email.com'];
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithOnlyEmail);
+        $response->assertStatus(401);
+
+        $dataWithOnlyCpf = ['cpf' => '111.111.111-11'];
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithOnlyCpf);
+        $response->assertStatus(401);
+
+        $dataWithOnlyPassword = [
+            'password' => '123456', // current password
+            'new_password' => '654321'
+        ];
+
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithOnlyPassword);
+        $response->assertStatus(401);
+
+        $dataWithOnlyPhones = [
+            'phones' => [
+                [ 'number' => '(11) 11111-1111' ],
+                [ 'number' => '(22) 22222-2222' ]
+            ]
+        ];
+        $response = $authenticatedRoute->putJson("/api/conab/admins", $dataWithOnlyPhones);
+        $response->assertStatus(401);
+    }
+
+    /** @test */
     public function on_the_update_should_throw_an_error_if_pass_invalid_name()
     {
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
@@ -444,6 +518,16 @@ class AdminConabControllerTest extends TestCase
         $response = $authenticatedRoute->deleteJson("/api/conab/admins/$fakeAdmin->id");
         $response->assertOk();
         $this->assertDatabaseMissing('users', ['id' => $fakeAdmin->id]);
+    }
+
+    /** @test */
+    public function should_return_unauthorized_if_customer_try_to_delete_an_admin()
+    {
+        $user = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $authenticatedRoute->deleteJson("/api/conab/admins/$fakeAdmin->id");
+        $response->assertStatus(401);
     }
 
     /** @test */
