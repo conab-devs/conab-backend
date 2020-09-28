@@ -96,6 +96,7 @@ class AdminCooperativeControllerTest extends TestCase
         $cooperative = factory(Cooperative::class)->create();
         $admin = factory(User::class)->make(['user_type' => 'ADMIN_COOP']);
         $cooperative->admins()->save($admin);
+        $admin->makeHidden('cooperative');
         $response = $this->actingAs($admin, 'api')
             ->getJson("/api/cooperatives/$cooperative->id/admins/$admin->id");
         $response->assertOK();
