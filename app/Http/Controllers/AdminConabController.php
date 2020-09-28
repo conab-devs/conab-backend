@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminConabController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('only-admin-conab');
+    }
+
     /**
      * Display a listing of the resource.
      *

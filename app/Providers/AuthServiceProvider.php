@@ -35,5 +35,9 @@ class AuthServiceProvider extends ServiceProvider
             }
             return false;
         });
+
+        Gate::define('admin-conab', function ($user) {
+            return $user->user_type === 'ADMIN_CONAB';
+        });
     }
 }
