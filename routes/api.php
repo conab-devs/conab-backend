@@ -18,7 +18,7 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::get('/conab/admins/{id}', 'AdminConabController@show');
     Route::post('/conab/admins', 'AdminConabController@store');
     Route::put('/conab/admins', 'AdminConabController@update');
-    Route::delete('/conab/admins/{user}', 'UserController@destroy');
+    Route::delete('/conab/admins/{user}', 'UserController');
 
     Route::get('cooperatives', 'CooperativeController@index');
     Route::get('cooperatives/{id}', 'CooperativeController@show');
@@ -33,7 +33,7 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::get('/cooperatives/{cooperative}/admins/{id}', 'CooperativeAdminController@show');
     Route::post('/cooperatives/{cooperative}/admins', 'CooperativeAdminController@store');
     Route::put('/cooperatives/{cooperative}/admins/{id}', 'CooperativeAdminController@update');
-    Route::delete('/users/{user}', 'UserController@destroy');
+    Route::delete('/users/{user}', 'UserController');
 });
 
 Route::post('/login', 'AuthController@login');
