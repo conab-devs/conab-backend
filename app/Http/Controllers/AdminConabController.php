@@ -121,17 +121,4 @@ class AdminConabController extends Controller
 
         return response($admin->refresh(), 200);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $admin = User::findOrFail($id);
-        $admin->phones()->delete();
-        $admin->delete();
-    }
 }
