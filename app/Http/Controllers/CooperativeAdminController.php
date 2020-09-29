@@ -86,7 +86,7 @@ class CooperativeAdminController extends Controller
 
         $data = Validator::make($request->all(), [
             'name' => 'string',
-            'email' => 'string|email',
+            'email' => 'string|email||unique:users,email',
             'cpf' => [
                 'regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/',
                 Rule::unique('users')->ignore($admin->id),
