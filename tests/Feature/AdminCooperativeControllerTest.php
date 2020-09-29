@@ -368,20 +368,30 @@ class AdminCooperativeControllerTest extends TestCase
     {
         $admin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($admin, 'api');
-        $user = factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
+        $user = factory(User::class)->make(['user_type' => 'ADMIN_COOP']);
+        $cooperative = factory(\App\Cooperative::class)->create();
+        $cooperative->admins()->save($user);
         $response = $authenticatedRoute->deleteJson("/api/users/$user->id");
         $response->assertOk();
         $this->assertDatabaseMissing('users', ['id' => $user->id]);
     }
 
     /** @test */
-    public function should_return_unauthorized_if_user_try_to_destroy_others_account()
+    public function should_return_unauthorized_if_admin_coop_try_to_destroy_someones_account()
     {
         $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $admin = factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
-        $authenticatedRoute = $this->actingAs($customer, 'api');
-        $response = $authenticatedRoute->deleteJson("/api/users/$admin->id");
+        $authenticatedRoute = $this->actingAs($admin, 'api');
+        $response = $authenticatedRoute->deleteJson("/api/users/$customer->id");
         $response->assertStatus(401);
+
+        $adminConab = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $adminConabDestroyResponse = $authenticatedRoute->deleteJson("/api/users/$adminConab->id");
+        $adminConabDestroyResponse->assertStatus(401);
+
+        $adminCoop = factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
+        $adminCoopDestroyResponse = $authenticatedRoute->deleteJson("/api/users/$adminCoop->id");
+        $adminCoopDestroyResponse->assertStatus(401);
     }
 
     /** @test */

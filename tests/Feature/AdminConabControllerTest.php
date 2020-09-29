@@ -521,12 +521,42 @@ class AdminConabControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_unauthorized_if_customer_try_to_delete_an_admin()
+    public function should_return_unauthorized_if_admin_conab_try_to_delete_customer()
+    {
+        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($user, 'api');
+        $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $response = $authenticatedRoute->deleteJson("/api/conab/admins/$customer->id");
+        $response->assertStatus(401);
+    }
+
+    /** @test */
+    public function should_return_unauthorized_if_customer_try_to_delete_an_admin_conab()
     {
         $user = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $authenticatedRoute = $this->actingAs($user, 'api');
         $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $response = $authenticatedRoute->deleteJson("/api/conab/admins/$fakeAdmin->id");
+        $response->assertStatus(401);
+    }
+
+    /** @test */
+    public function should_return_unauthorized_if_customer_try_to_destroy_admin_coop()
+    {
+        $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $admin = factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
+        $authenticatedRoute = $this->actingAs($customer, 'api');
+        $response = $authenticatedRoute->deleteJson("/api/users/$admin->id");
+        $response->assertStatus(401);
+    }
+
+    /** @test */
+    public function should_return_unauthorized_if_customer_try_to_destroy_other_customer_account()
+    {
+        $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $anotherCustomer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $authenticatedRoute = $this->actingAs($customer, 'api');
+        $response = $authenticatedRoute->deleteJson("/api/users/$anotherCustomer->id");
         $response->assertStatus(401);
     }
 
