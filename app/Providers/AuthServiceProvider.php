@@ -39,5 +39,22 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('admin-conab', function ($user) {
             return $user->user_type === 'ADMIN_CONAB';
         });
+
+        Gate::define('destroy-user', function ($user, \App\User $resource) {
+            if ($user->user_type === "ADMIN_CONAB"
+                && ($resource->user_type === "ADMIN_CONAB"
+                || $resource->cooperative)
+            ) {
+                return true;
+            }
+
+            if (! $user->user_type === "ADMIN_CONAB"
+                && ! $resource->cooperative
+                && $user->id === $resource->id
+            ) {
+                return true;
+            }
+            return false;
+        });
     }
 }

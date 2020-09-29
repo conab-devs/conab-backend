@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
-    public function destroy(\App\User $user)
+    public function __invoke(\App\User $user)
     {
-        if (Gate::denies('manage-cooperative-admin', $user)) {
+        if (Gate::denies('destroy-user', $user)) {
             return response()->json('Você não tem autorização a este recurso', 401);
         }
 
