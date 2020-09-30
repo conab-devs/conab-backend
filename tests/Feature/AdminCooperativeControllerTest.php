@@ -49,14 +49,6 @@ class AdminCooperativeControllerTest extends TestCase
     public function should_return_unauthorized_if_user_is_not_a_conab_admin_on_index()
     {
         $cooperative = factory(Cooperative::class)->create();
-        $cooperative->admins()->createMany(
-            factory(User::class, 3)
-            ->make(['user_type' => 'ADMIN_COOP'])
-            ->each(function ($model) {
-                $model->makeVisible(['password']);
-            })
-            ->toArray()
-        );
         $user = factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
         $response = $this->actingAs($user, 'api')
             ->getJson("/api/cooperatives/$cooperative->id/admins");
@@ -67,13 +59,9 @@ class AdminCooperativeControllerTest extends TestCase
     public function should_return_not_found_if_the_sought_admin_does_not_exists()
     {
         $cooperative = factory(Cooperative::class)->create();
-
-        $secondCooperative = factory(Cooperative::class)->create();
-        $admin = factory(User::class)->make(['user_type' => 'ADMIN_COOP']);
-        $secondCooperative->admins()->save($admin);
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $response = $this->actingAs($user, 'api')
-            ->getJson("/api/cooperatives/$cooperative->id/admins/$admin->id");
+            ->getJson("/api/cooperatives/$cooperative->id/admins/20");
         $response->assertStatus(404);
     }
 
@@ -104,17 +92,15 @@ class AdminCooperativeControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_unauthorized_on_show_if_admin_cooperative_try_to_show_others_informations()
+    public function should_return_unauthorized_on_show_if_cooperative_admin_try_to_show_others_informations()
     {
         $cooperative = factory(Cooperative::class)->create();
-        $admin = factory(User::class)->make(['user_type' => 'ADMIN_COOP']);
-        $cooperative->admins()->save($admin);
         $user = factory(User::class)->create([
             'user_type' => 'ADMIN_COOP',
         ]);
 
         $response = $this->actingAs($user, 'api')
-            ->getJson("/api/cooperatives/$cooperative->id/admins/$admin->id");
+            ->getJson("/api/cooperatives/$cooperative->id/admins/22");
         $response->assertStatus(401);
     }
 
@@ -418,7 +404,6 @@ class AdminCooperativeControllerTest extends TestCase
             'password' => '123456'
         ]);
         $cooperative->admins()->save($admin);
-        $admin->phones()->save(factory(\App\Phone::class)->make());
 
         $dataWithOnlyName = ['name' => 'updated_name'];
         $response = $authenticatedRoute->putJson(
@@ -480,7 +465,6 @@ class AdminCooperativeControllerTest extends TestCase
             'password' => '123456'
         ]);
         $cooperative->admins()->save($admin);
-        $admin->phones()->save(factory(\App\Phone::class)->make());
 
         $dataWithOnlyName = ['name' => 'updated_name'];
         $response = $authenticatedRoute->putJson(
@@ -500,7 +484,6 @@ class AdminCooperativeControllerTest extends TestCase
             'password' => '123456'
         ]);
         $cooperative->admins()->save($admin);
-        $admin->phones()->save(factory(\App\Phone::class)->make());
 
         $authenticatedRoute = $this->actingAs($user, 'api');
 
@@ -522,7 +505,6 @@ class AdminCooperativeControllerTest extends TestCase
             'password' => '123456'
         ]);
         $cooperative->admins()->save($admin);
-        $admin->phones()->save(factory(\App\Phone::class)->make());
 
         $authenticatedRoute = $this->actingAs($user, 'api');
 
@@ -551,7 +533,6 @@ class AdminCooperativeControllerTest extends TestCase
             'password' => '123456'
         ]);
         $cooperative->admins()->save($admin);
-        $admin->phones()->save(factory(\App\Phone::class)->make());
 
         $authenticatedRoute = $this->actingAs($user, 'api');
 
@@ -608,7 +589,6 @@ class AdminCooperativeControllerTest extends TestCase
             'password' => '123456'
         ]);
         $cooperative->admins()->save($admin);
-        $admin->phones()->save(factory(\App\Phone::class)->make());
         $authenticatedRoute = $this->actingAs($user, 'api');
 
         $dataWithInvalidPhoneNumbers = [
@@ -646,7 +626,6 @@ class AdminCooperativeControllerTest extends TestCase
             'password' => '123456'
         ]);
         $cooperative->admins()->save($admin);
-        $admin->phones()->save(factory(\App\Phone::class)->make());
         $authenticatedRoute = $this->actingAs($user, 'api');
 
         factory(User::class)->create(['cpf' => '111.111.111-11', 'user_type' => 'ADMIN_COOP']);
@@ -676,7 +655,6 @@ class AdminCooperativeControllerTest extends TestCase
             'password' => '123456'
         ]);
         $cooperative->admins()->save($admin);
-        $admin->phones()->save(factory(\App\Phone::class)->make());
 
         $authenticatedRoute = $this->actingAs($user, 'api');
         $phone = factory(Phone::class)->create();

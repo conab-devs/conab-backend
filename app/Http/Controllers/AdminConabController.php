@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use App\Components\Validators\UpdateUser;
 
 class AdminConabController extends Controller
 {
@@ -78,28 +78,8 @@ class AdminConabController extends Controller
     {
         $admin = User::with('phones')->findOrFail(Auth::id());
 
-        $data = Validator::make($request->all(), [
-            'name' => 'string',
-            'email' => 'string|email',
-            'cpf' => [
-                'regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/',
-                Rule::unique('users')->ignore($admin->id)
-            ],
-            'password' => 'string',
-            'new_password' => 'string|required_with:password',
-            'phones.*.number' => [
-                'string',
-                'distinct',
-                'regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/',
-                Rule::unique('phones')->where(function ($query) use ($admin) {
-                    $phonesId = [];
-                    foreach ($admin->phones as $phone) {
-                        array_push($phonesId, $phone->id);
-                    }
-                    return $query->whereNotIn('id', $phonesId)->get('number');
-                })
-            ]
-        ])->validate();
+        $validator = new UpdateUser();
+        $data = $validator->execute($request, $admin);
 
         $admin->name = $data['name'] ?? $admin->name;
         $admin->email = $data['email'] ?? $admin->email;

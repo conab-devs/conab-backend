@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Cooperative;
-use App\Http\Requests\AdminCooperativeStore;
+use App\Http\Requests\CooperativeAdminStore;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+use App\Components\Validators\UpdateUser;
 
 class CooperativeAdminController extends Controller
 {
@@ -18,7 +17,7 @@ class CooperativeAdminController extends Controller
     {
         if (Gate::denies('manage-cooperative-admin')) {
             return response()->json([
-                'message' => 'Você não tem autorização a este recurso'
+                'message' => 'Você não tem autorização a este recurso',
             ], 401);
         }
         return response()->json(
@@ -35,7 +34,7 @@ class CooperativeAdminController extends Controller
 
         if (Gate::denies('manage-cooperative-admin', $admin)) {
             return response()->json([
-                'message' => 'Você não tem autorização a este recurso'
+                'message' => 'Você não tem autorização a este recurso',
             ], 401);
         }
 
@@ -48,11 +47,11 @@ class CooperativeAdminController extends Controller
         return response()->json($admin);
     }
 
-    public function store(AdminCooperativeStore $request, Cooperative $cooperative)
+    public function store(CooperativeAdminStore $request, Cooperative $cooperative)
     {
         if (Gate::denies('manage-cooperative-admin')) {
             return response()->json([
-                'message' => 'Você não tem autorização a este recurso'
+                'message' => 'Você não tem autorização a este recurso',
             ], 401);
         }
 
@@ -61,12 +60,18 @@ class CooperativeAdminController extends Controller
             'user_type' => 'ADMIN_COOP',
         ]);
 
-        DB::transaction(function () use (&$adminInformations, $cooperative) {
-            $user = User::create($adminInformations);
-            $cooperative->admins()->save($user);
-            $user->phones()->createMany($adminInformations['phones']);
-            $adminInformations = $user->loadMissing('phones');
-        });
+        try {
+            DB::transaction(function () use (&$adminInformations, $cooperative) {
+                $user = User::create($adminInformations);
+                $cooperative->admins()->save($user);
+                $user->phones()->createMany($adminInformations['phones']);
+                $adminInformations = $user->loadMissing('phones');
+            });
+        } catch (\Exception $err) {
+            return response()->json([
+                "message" => "Algo deu errado, tente novamente em alguns instantes",
+            ], 500);
+        }
 
         return response()->json($adminInformations, 201);
     }
@@ -80,39 +85,19 @@ class CooperativeAdminController extends Controller
 
         if (Gate::denies('manage-cooperative-admin', $admin)) {
             return response()->json([
-                'message' => 'Você não tem autorização a este recurso'
+                'message' => 'Você não tem autorização a este recurso',
             ], 401);
         }
 
-        $data = Validator::make($request->all(), [
-            'name' => 'string',
-            'email' => 'string|email||unique:users,email',
-            'cpf' => [
-                'regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/',
-                Rule::unique('users')->ignore($admin->id),
-            ],
-            'password' => 'string',
-            'new_password' => 'string|required_with:password',
-            'phones.*.number' => [
-                'string',
-                'distinct',
-                'regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/',
-                Rule::unique('phones')->where(function ($query) use ($admin) {
-                    $phonesId = [];
-                    foreach ($admin->phones as $phone) {
-                        array_push($phonesId, $phone->id);
-                    }
-                    return $query->whereNotIn('id', $phonesId)->get('number');
-                })
-            ],
-        ])->validate();
+        $validator = new UpdateUser();
+        $data = $validator->execute($request, $admin);
 
         DB::transaction(function () use (&$admin, $data, $request) {
             $admin->update($request->except('password', 'new_password', 'phones'));
 
             if (!empty($data['password'])) {
                 if (!Hash::check($data['password'], $admin->password)) {
-                    return response('', 400);
+                    return response('Senha inválida.', 400);
                 }
                 $admin->password = $data['new_password'];
             }
