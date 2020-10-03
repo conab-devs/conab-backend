@@ -53,13 +53,12 @@ class User extends Authenticatable implements JWTSubject
 
     public function cooperative()
     {
-        return $this->hasOne('App\Cooperative', 'cooperative_id');
+        return $this->belongsTo('App\Cooperative');
     }
 
     public function phones() {
         return $this->belongsToMany('App\Phone', 'user_phones');
     }
-
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
