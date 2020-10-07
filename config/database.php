@@ -2,7 +2,19 @@
 
 use Illuminate\Support\Str;
 
-$dbUrl = parse_url(env('DATABASE_URL'));
+$dbUrl = null;
+
+if (env('APP_ENV') === 'local' || env('APP_ENV') === 'testing') {
+    $dbUrl = [
+        'host' => env('DB_HOST', '127.0.0.1'),
+        'path' => env('DB_DATABASE', 'forge'),
+        'port' => env('DB_PORT', '5432'),
+        'user' => env('DB_USERNAME', 'forge'),
+        'pass' => env('DB_PASSWORD', '')
+    ];
+} else {
+    $dbUrl = parse_url(env('DATABASE_URL'));
+}
 
 return [
 
