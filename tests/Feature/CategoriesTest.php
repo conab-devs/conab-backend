@@ -32,4 +32,16 @@ class CategoriesTest extends TestCase
         ]);
         $response->assertStatus(422);
     }
+
+    /** @test */
+    public function should_return_validation_error_if_integer_description_is_passed()
+    {
+        $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $response = $this->actingAs($user, 'api')->postJson('api/categories', [
+            'name' => 'valid_name',
+            'description' => 123456
+        ]);
+        $response->assertStatus(422);
+    }
 }

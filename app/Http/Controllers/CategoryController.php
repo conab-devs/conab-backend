@@ -10,6 +10,7 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|unique:categories',
+            'description' => 'string'
         ]);
     }
 }
