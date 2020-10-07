@@ -44,4 +44,19 @@ class CategoriesTest extends TestCase
         ]);
         $response->assertStatus(422);
     }
+
+    /** @test */
+    public function should_create_category()
+    {
+        $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $this->actingAs($user, 'api')->postJson('api/categories', [
+            'name' => 'valid_name',
+            'description' => 'valid_description'
+        ]);
+
+        $this->assertDatabaseHas('categories', [
+            'name' => 'valid_name'
+        ]);
+    }
 }
