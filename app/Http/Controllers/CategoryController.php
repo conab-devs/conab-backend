@@ -14,6 +14,9 @@ class CategoryController extends Controller
             'description' => 'string'
         ]);
 
-        (Category::create($validated))->save();
+        $category = Category::create($validated);
+        $category->save();
+
+        return response()->json($category, 201);
     }
 }

@@ -59,4 +59,20 @@ class CategoriesTest extends TestCase
             'name' => 'valid_name'
         ]);
     }
+
+    /** @test */
+    public function should_return_created_category()
+    {
+        $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $response = $this->actingAs($user, 'api')->postJson('api/categories', [
+            'name' => 'valid_name',
+            'description' => 'valid_description'
+        ]);
+
+        $response->assertCreated()->assertJson([
+            'name' => 'valid_name',
+            'description' => 'valid_description'
+        ]);
+    }
 }
