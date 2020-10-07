@@ -34,6 +34,8 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::post('/cooperatives/{cooperative}/admins', 'CooperativeAdminController@store');
     Route::put('/cooperatives/{cooperative}/admins/{id}', 'CooperativeAdminController@update');
     Route::delete('/users/{user}', 'UserController');
+
+    Route::post('/categories', 'CategoryController@store');
 });
 
 Route::post('/login', 'AuthController@login');
