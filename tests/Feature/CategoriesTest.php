@@ -118,4 +118,35 @@ class CategoriesTest extends TestCase
 
         $response->assertOk()->assertJson($newAttributes);
     }
+
+    /** @test */
+    public function should_return_validation_error_if_integer_name_is_passed_to_update()
+    {
+        $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $category = factory(\App\Category::class)->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->putJson("api/categories/$category->id", [
+                'name' => 123456,
+                'description' => 'This is a valid description about the category.'
+            ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_integer_description_is_passed_to_update()
+    {
+        $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $category = factory(\App\Category::class)->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->putJson("api/categories/$category->id", [
+                'name' => 'valid_name',
+                'description' => 123456
+            ]);
+
+        $response->assertStatus(422);
+    }
 }
