@@ -87,4 +87,17 @@ class CategoriesTest extends TestCase
 
       $response->assertOk()->assertJsonCount(5);
     }
+
+    /** @test */
+    public function should_return_one_category()
+    {
+        $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $category = factory(\App\Category::class)->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->getJson("api/categories/$category->id");
+
+        $response->assertOk()->assertJson($category->toArray());
+    }
 }

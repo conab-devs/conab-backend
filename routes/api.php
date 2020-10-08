@@ -37,7 +37,7 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
 
     Route::post('/categories', 'CategoryController@store');
     Route::get('/categories', 'CategoryController@index');
-
+    Route::get('/categories/{category}', 'CategoryController@show');
 });
 
 Route::post('/login', 'AuthController@login');
