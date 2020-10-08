@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class CategoriesTest extends TestCase
@@ -16,7 +15,7 @@ class CategoriesTest extends TestCase
         $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
 
         $response = $this->actingAs($user, 'api')->postJson('api/categories', [
-            'description' => 'This is a valid description about the category.'
+            'description' => 'This is a valid description about the category.',
         ]);
         $response->assertStatus(422);
     }
@@ -28,7 +27,7 @@ class CategoriesTest extends TestCase
 
         $response = $this->actingAs($user, 'api')->postJson('api/categories', [
             'name' => 123456,
-            'description' => 'This is a valid description about the category.'
+            'description' => 'This is a valid description about the category.',
         ]);
         $response->assertStatus(422);
     }
@@ -40,7 +39,7 @@ class CategoriesTest extends TestCase
 
         $response = $this->actingAs($user, 'api')->postJson('api/categories', [
             'name' => 'valid_name',
-            'description' => 123456
+            'description' => 123456,
         ]);
         $response->assertStatus(422);
     }
@@ -52,11 +51,11 @@ class CategoriesTest extends TestCase
 
         $this->actingAs($user, 'api')->postJson('api/categories', [
             'name' => 'valid_name',
-            'description' => 'valid_description'
+            'description' => 'valid_description',
         ]);
 
         $this->assertDatabaseHas('categories', [
-            'name' => 'valid_name'
+            'name' => 'valid_name',
         ]);
     }
 
@@ -67,25 +66,34 @@ class CategoriesTest extends TestCase
 
         $response = $this->actingAs($user, 'api')->postJson('api/categories', [
             'name' => 'valid_name',
-            'description' => 'valid_description'
+            'description' => 'valid_description',
         ]);
 
         $response->assertCreated()->assertJson([
             'name' => 'valid_name',
-            'description' => 'valid_description'
+            'description' => 'valid_description',
         ]);
     }
 
     /** @test */
     public function should_return_five_categories()
     {
-      $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        factory(\App\Category::class, 5)->create();
 
-      factory(\App\Category::class, 5)->create();
+        $conabAdmin = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $conabAdminResponse = $this->actingAs($conabAdmin, 'api')
+            ->getJson('api/categories');
+        $conabAdminResponse->assertOk()->assertJsonCount(5);
 
-      $response = $this->actingAs($user, 'api')->getJson('api/categories');
+        $customer = factory(\App\User::class)->create(['user_type' => 'CUSTOMER']);
+        $customerResponse = $this->actingAs($customer, 'api')
+            ->getJson('api/categories');
+        $customerResponse->assertOk()->assertJsonCount(5);
 
-      $response->assertOk()->assertJsonCount(5);
+        $cooperativeAdmin = factory(\App\User::class)->create(['user_type' => 'ADMIN_COOP']);
+        $cooperativeAdminResponse = $this->actingAs($cooperativeAdmin, 'api')
+            ->getJson('api/categories');
+        $cooperativeAdminResponse->assertOk()->assertJsonCount(5);
     }
 
     /** @test */
@@ -110,7 +118,7 @@ class CategoriesTest extends TestCase
 
         $newAttributes = [
             'name' => 'valid_name',
-            'description' => 'valid_description'
+            'description' => 'valid_description',
         ];
 
         $response = $this->actingAs($user, 'api')
@@ -129,7 +137,7 @@ class CategoriesTest extends TestCase
         $response = $this->actingAs($user, 'api')
             ->putJson("api/categories/$category->id", [
                 'name' => 123456,
-                'description' => 'This is a valid description about the category.'
+                'description' => 'This is a valid description about the category.',
             ]);
         $response->assertStatus(422);
     }
@@ -144,7 +152,7 @@ class CategoriesTest extends TestCase
         $response = $this->actingAs($user, 'api')
             ->putJson("api/categories/$category->id", [
                 'name' => 'valid_name',
-                'description' => 123456
+                'description' => 123456,
             ]);
 
         $response->assertStatus(422);
@@ -185,7 +193,7 @@ class CategoriesTest extends TestCase
     {
         $newAttributes = [
             'name' => 'valid_name',
-            'description' => 'valid_description'
+            'description' => 'valid_description',
         ];
 
         $customer = factory(\App\User::class)->create(['user_type' => 'CUSTOMER']);
@@ -205,7 +213,7 @@ class CategoriesTest extends TestCase
     {
         $attributes = [
             'name' => 'valid_name',
-            'description' => 'valid_description'
+            'description' => 'valid_description',
         ];
 
         $customer = factory(\App\User::class)->create(['user_type' => 'CUSTOMER']);
