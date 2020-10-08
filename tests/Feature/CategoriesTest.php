@@ -178,10 +178,25 @@ class CategoriesTest extends TestCase
         $cooperativeAdminResponse = $this->actingAs($cooperativeAdmin, 'api')
             ->deleteJson("api/categories/$category->id");
         $cooperativeAdminResponse->assertUnauthorized();
+    }
 
-        $conabAdmin = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $conabAdminResponse = $this->actingAs($conabAdmin, 'api')
-            ->deleteJson("api/categories/$category->id");
-        $conabAdminResponse->assertNoContent();
+    /** @test */
+    public function only_conab_admins_should_be_able_to_update_an_category()
+    {
+        $newAttributes = [
+            'name' => 'valid_name',
+            'description' => 'valid_description'
+        ];
+
+        $customer = factory(\App\User::class)->create(['user_type' => 'CUSTOMER']);
+        $category = factory(\App\Category::class)->create();
+        $customerResponse = $this->actingAs($customer, 'api')
+            ->putJson("api/categories/$category->id", $newAttributes);
+        $customerResponse->assertUnauthorized();
+
+        $cooperativeAdmin = factory(\App\User::class)->create(['user_type' => 'ADMIN_COOP']);
+        $cooperativeAdminResponse = $this->actingAs($cooperativeAdmin, 'api')
+            ->putJson("api/categories/$category->id", $newAttributes);
+        $cooperativeAdminResponse->assertUnauthorized();
     }
 }

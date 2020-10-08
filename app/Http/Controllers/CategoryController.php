@@ -38,6 +38,12 @@ class CategoryController extends Controller
             'description' => 'string'
         ]);
 
+        if (Gate::denies('admin-conab')) {
+            return response()->json([
+                'message' => 'Você não tem autorização a este recurso',
+            ], 401);
+        }
+
         $category->update($validated);
 
         return response()->json($category, 200);
