@@ -164,4 +164,24 @@ class CategoriesTest extends TestCase
 
         $this->assertDeleted('categories', $category->toArray());
     }
+
+    /** @test */
+    public function only_conab_admins_should_be_able_to_delete_an_category()
+    {
+        $customer = factory(\App\User::class)->create(['user_type' => 'CUSTOMER']);
+        $category = factory(\App\Category::class)->create();
+        $customerResponse = $this->actingAs($customer, 'api')
+            ->deleteJson("api/categories/$category->id");
+        $customerResponse->assertUnauthorized();
+
+        $cooperativeAdmin = factory(\App\User::class)->create(['user_type' => 'ADMIN_COOP']);
+        $cooperativeAdminResponse = $this->actingAs($cooperativeAdmin, 'api')
+            ->deleteJson("api/categories/$category->id");
+        $cooperativeAdminResponse->assertUnauthorized();
+
+        $conabAdmin = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $conabAdminResponse = $this->actingAs($conabAdmin, 'api')
+            ->deleteJson("api/categories/$category->id");
+        $conabAdminResponse->assertNoContent();
+    }
 }

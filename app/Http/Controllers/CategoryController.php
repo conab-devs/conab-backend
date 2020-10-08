@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Category;
+use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
@@ -44,6 +45,12 @@ class CategoryController extends Controller
 
     public function destroy(\App\Category $category)
     {
+        if (Gate::denies('admin-conab')) {
+            return response()->json([
+                'message' => 'Você não tem autorização a este recurso',
+            ], 401);
+        }
+
         $category->delete();
         return response()->json([], 204);
     }
