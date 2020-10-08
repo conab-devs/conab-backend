@@ -22,7 +22,7 @@ class CategoriesTest extends TestCase
     }
 
     /** @test */
-    public function should_return_validation_error_if_integer_name_is_passed()
+    public function should_return_validation_error_if_integer_name_is_passed_to_store()
     {
         $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
 
@@ -34,7 +34,7 @@ class CategoriesTest extends TestCase
     }
 
     /** @test */
-    public function should_return_validation_error_if_integer_description_is_passed()
+    public function should_return_validation_error_if_integer_description_is_passed_to_store()
     {
         $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
 
