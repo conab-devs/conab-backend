@@ -29,4 +29,16 @@ class CategoryController extends Controller
 
         return response()->json($category, 201);
     }
+
+    public function update(Request $request, \App\Category $category)
+    {
+        $validated = $request->validate([
+            'name' => 'string|unique:categories',
+            'description' => 'string'
+        ]);
+
+        $category->update($validated);
+
+        return response()->json($category, 200);
+    }
 }

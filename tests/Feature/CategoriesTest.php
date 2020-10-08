@@ -100,4 +100,22 @@ class CategoriesTest extends TestCase
 
         $response->assertOk()->assertJson($category->toArray());
     }
+
+    /** @test */
+    public function should_update_category()
+    {
+        $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $category = factory(\App\Category::class)->create();
+
+        $newAttributes = [
+            'name' => 'valid_name',
+            'description' => 'valid_description'
+        ];
+
+        $response = $this->actingAs($user, 'api')
+            ->putJson("api/categories/$category->id", $newAttributes);
+
+        $response->assertOk()->assertJson($newAttributes);
+    }
 }
