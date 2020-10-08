@@ -99,14 +99,22 @@ class CategoriesTest extends TestCase
     /** @test */
     public function should_return_one_category()
     {
-        $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
-
         $category = factory(\App\Category::class)->create();
 
-        $response = $this->actingAs($user, 'api')
+        $conabAdmin = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $conabAdminResponse = $this->actingAs($conabAdmin, 'api')
             ->getJson("api/categories/$category->id");
+        $conabAdminResponse->assertOk()->assertJson($category->toArray());
 
-        $response->assertOk()->assertJson($category->toArray());
+        $customer = factory(\App\User::class)->create(['user_type' => 'CUSTOMER']);
+        $customerResponse = $this->actingAs($customer, 'api')
+            ->getJson("api/categories/$category->id");
+        $customerResponse->assertOk()->assertJson($category->toArray());
+
+        $cooperativeAdmin = factory(\App\User::class)->create(['user_type' => 'ADMIN_COOP']);
+        $cooperativeAdminResponse = $this->actingAs($cooperativeAdmin, 'api')
+            ->getJson("api/categories/$category->id");
+        $cooperativeAdminResponse->assertOk()->assertJson($category->toArray());
     }
 
     /** @test */
