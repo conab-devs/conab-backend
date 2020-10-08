@@ -199,4 +199,23 @@ class CategoriesTest extends TestCase
             ->putJson("api/categories/$category->id", $newAttributes);
         $cooperativeAdminResponse->assertUnauthorized();
     }
+
+    /** @test */
+    public function only_conab_admins_should_be_able_to_store_an_category()
+    {
+        $attributes = [
+            'name' => 'valid_name',
+            'description' => 'valid_description'
+        ];
+
+        $customer = factory(\App\User::class)->create(['user_type' => 'CUSTOMER']);
+        $customerResponse = $this->actingAs($customer, 'api')
+            ->postJson("api/categories", $attributes);
+        $customerResponse->assertUnauthorized();
+
+        $cooperativeAdmin = factory(\App\User::class)->create(['user_type' => 'ADMIN_COOP']);
+        $cooperativeAdminResponse = $this->actingAs($cooperativeAdmin, 'api')
+            ->postJson("api/categories", $attributes);
+        $cooperativeAdminResponse->assertUnauthorized();
+    }
 }

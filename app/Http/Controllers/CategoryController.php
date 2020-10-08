@@ -25,6 +25,12 @@ class CategoryController extends Controller
             'description' => 'string'
         ]);
 
+        if (Gate::denies('admin-conab')) {
+            return response()->json([
+                'message' => 'Você não tem autorização a este recurso',
+            ], 401);
+        }
+
         $category = Category::create($validated);
         $category->save();
 
