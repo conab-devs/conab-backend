@@ -234,4 +234,36 @@ class CategoriesTest extends TestCase
             ->postJson("api/categories", $attributes);
         $cooperativeAdminResponse->assertUnauthorized();
     }
+
+    /** @test */
+    public function should_return_validation_error_if_try_to_update_category_with_the_same_name()
+    {
+        $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $category = factory(\App\Category::class)->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->putJson("api/categories/$category->id", [
+                'name' => $category->name,
+                'description' => 'valid_description',
+            ]);
+
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_try_to_store_category_with_existing_name()
+    {
+        $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $category = factory(\App\Category::class)->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->postJson('api/categories', [
+                'name' => $category->name,
+                'description' => 'valid_description',
+            ]);
+
+        $response->assertStatus(422);
+    }
 }
