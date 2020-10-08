@@ -149,4 +149,19 @@ class CategoriesTest extends TestCase
 
         $response->assertStatus(422);
     }
+
+    /** @test */
+    public function should_delete_an_category_and_return_response_without_content()
+    {
+        $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        $category = factory(\App\Category::class)->create();
+
+        $response = $this->actingAs($user, 'api')
+            ->deleteJson("api/categories/$category->id");
+
+        $response->assertNoContent();
+
+        $this->assertDeleted('categories', $category->toArray());
+    }
 }

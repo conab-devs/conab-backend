@@ -39,6 +39,7 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::get('/categories', 'CategoryController@index');
     Route::get('/categories/{category}', 'CategoryController@show');
     Route::put('/categories/{category}', 'CategoryController@update');
+    Route::delete('/categories/{category}', 'CategoryController@destroy');
 });
 
 Route::post('/login', 'AuthController@login');
