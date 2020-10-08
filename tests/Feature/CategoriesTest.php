@@ -75,4 +75,16 @@ class CategoriesTest extends TestCase
             'description' => 'valid_description'
         ]);
     }
+
+    /** @test */
+    public function should_return_five_categories()
+    {
+      $user = factory(\App\User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+      factory(\App\Category::class, 5)->create();
+
+      $response = $this->actingAs($user, 'api')->getJson('api/categories');
+
+      $response->assertOk()->assertJsonCount(5);
+    }
 }
