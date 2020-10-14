@@ -16,7 +16,6 @@
         "guzzlehttp/guzzle": "^7.1",
         "hamcrest/hamcrest-php": "^2.0",
         "kreait/firebase-php": "^5.9",
-        "kreait/laravel-firebase": "^2.4",
         "laravel/framework": "^7.0",
         "laravel/tinker": "^2.0",
         "mockery/mockery": "^1.4",

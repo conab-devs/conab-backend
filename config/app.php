@@ -182,7 +182,7 @@ return [
         /*
          * Firebase provider
          * */
-        Kreait\Laravel\Firebase\ServiceProvider::class
+//        Kreait\Laravel\Firebase\ServiceProvider::class
 
     ],
 
