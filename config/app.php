@@ -180,10 +180,9 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         /*
-         * Firebase provider
+         * Firebase Storage Provider
          * */
-//        Kreait\Laravel\Firebase\ServiceProvider::class
-
+        App\Providers\FirebaseStorageProvider::class,
     ],
 
     /*
