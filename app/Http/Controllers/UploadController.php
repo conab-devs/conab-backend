@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Components\FirebaseStorageAdapter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use \Kreait\Firebase\Storage;
-#use Illuminate\Support\Facades\Storage;
 
 class UploadController extends Controller
 {
@@ -21,27 +22,24 @@ class UploadController extends Controller
         $user = Auth::user();
 
         if ($request->hasFile('avatar')) {
+
             $avatar = $request->file('avatar');
-            $localFolder =  public_path('uploads') . '/';
-            $name = Str::random(80);
-            $extension = $avatar->getClientOriginalExtension();
-            $fileName = "$name.$extension";
-            if ($file = $avatar->move($localFolder, $fileName)) {
-                $firebaseName = "uploads/$name";
-                $uploadedFile = fopen($file->getRealPath(), 'r');
 
-                $firebaseStorage = app('firebase.storage');
-                $firebaseStorage->getBucket()->upload($uploadedFile, [
-                    'name' => $firebaseName
-                ]);
-
-                $expiresAt = new \DateTime('tomorrow');
-                $imageReference = $firebaseStorage->getBucket()->object($firebaseName);
-                if($imageReference->exists())
-                    return response(['url' => $imageReference->signedUrl($expiresAt)], 200);
+            if (App::environment('production')) {
+                $name = Str::random(80);
+                $fileName = $name . "." . $avatar->getClientOriginalExtension();
+                $localFolder =  public_path('storage/uploads') . '/';
+                if ($file = $avatar->move($localFolder, $fileName)) {
+                    /* @var $firebaseStorageAdapter FirebaseStorageAdapter */
+                    $firebaseStorageAdapter = resolve(FirebaseStorageAdapter::class);
+                    $firebaseObjectName = "uploads/$name";
+                    $firebaseStorageAdapter->uploadFile($file->getRealPath(), $firebaseObjectName);
+                    $user->profile_picture = $firebaseObjectName;
+                    return response([ 'url' => $firebaseStorageAdapter->getUrl($firebaseObjectName)]);
+                }
             }
 
-           /* if (Storage::exists($user->profile_picture)) {
+            if (Storage::exists($user->profile_picture)) {
                 Storage::delete($user->profile_picture);
             }
 
@@ -51,7 +49,7 @@ class UploadController extends Controller
                 $user->profile_picture = $path;
                 $user->save();
                 return response(['url' => Storage::url($path)], 200);
-            }*/
+            }
         }
 
         return response(['error' => 'Avatar is required and should be a valid file'], 400);
