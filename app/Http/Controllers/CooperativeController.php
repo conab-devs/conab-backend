@@ -53,6 +53,7 @@ class CooperativeController extends Controller
         $cooperative = new Cooperative();
 
         if ($request->hasFile('dap_path') && ($request->file('dap_path')->isValid())) {
+            // TODO: Upload dap on firebase storage.
             $path = $request->file('dap_path')->store('uploads');
             $cooperative->dap_path = $path;
         } else {

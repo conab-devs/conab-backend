@@ -57,10 +57,9 @@ class UploadController extends Controller
 
         /* @var $firebaseStorageAdapter FirebaseStorageAdapter */
         $firebaseStorageAdapter = resolve(FirebaseStorageAdapter::class);
-        $firebaseObjectName = "uploads/$filename";
 
-        if ($firebaseStorageAdapter->uploadFile($file->getRealPath(), $firebaseObjectName)
-            && $file_url = $firebaseStorageAdapter->getUrl($firebaseObjectName)) {
+        if ($firebaseStorageAdapter->uploadFile($file->getRealPath(), $filename)
+            && $file_url = $firebaseStorageAdapter->getUrl($filename)) {
             return $file_url;
         }
 

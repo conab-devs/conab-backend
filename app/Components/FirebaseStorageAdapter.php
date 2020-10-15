@@ -13,21 +13,21 @@ class FirebaseStorageAdapter
         $this->storage = $storage;
     }
 
-    public function uploadFile(string $filePath, string $name) : bool
+    public function uploadFile(string $filePath, string $filename) : bool
     {
         try {
             $uploadedFile = fopen($filePath, 'r');
-            $this->storage->getBucket()->upload($uploadedFile, [ 'name' => $name ]);
+            $this->storage->getBucket()->upload($uploadedFile, [ 'name' => "uploads/$filename" ]);
             return true;
         } catch (\Exception $error) {
             return false;
         }
     }
 
-    public function getUrl(string $firebaseObjectName) : ?string
+    public function getUrl(string $filename) : ?string
     {
         $expiresAt = new \DateTime('tomorrow');
-        $imageReference = $this->storage->getBucket()->object($firebaseObjectName);
+        $imageReference = $this->storage->getBucket()->object("uploads/$filename");
         if($imageReference->exists())
             return $imageReference->signedUrl($expiresAt);
 
