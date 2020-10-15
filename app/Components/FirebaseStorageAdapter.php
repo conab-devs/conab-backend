@@ -24,10 +24,10 @@ class FirebaseStorageAdapter
         }
     }
 
-    public function getUrl(string $firebaseObject) : ?string
+    public function getUrl(string $firebaseObjectName) : ?string
     {
         $expiresAt = new \DateTime('tomorrow');
-        $imageReference = $this->storage->getBucket()->object($firebaseObject);
+        $imageReference = $this->storage->getBucket()->object($firebaseObjectName);
         if($imageReference->exists())
             return $imageReference->signedUrl($expiresAt);
 
