@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Components\FirebaseStorageAdapter;
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use App\Components\Traits\UploadFirebase;
 
 class UploadController extends Controller
 {
+    use UploadFirebase;
+
     /**
      * Store a newly created resource in storage.
      *
@@ -30,7 +30,7 @@ class UploadController extends Controller
         ) {
             if (
                 App::environment('production')
-                && $file_url = $this->uploadOnFirebase($avatar)
+                && $file_url = $this->uploadFileOnFirebase($avatar)
             ) {
                 $user->profile_picture = $file_url;
                 $user->save();
@@ -49,22 +49,22 @@ class UploadController extends Controller
         return response(['error' => 'Avatar is required and should be a valid file'], 400);
     }
 
-    private function uploadOnFirebase(UploadedFile $avatar) : ?string
-    {
-        $localFolder =  public_path('storage/uploads') . '/';
-        $filename = Str::random(80) . "." . $avatar->getClientOriginalExtension();
-        $file = $avatar->move($localFolder, $filename);
-
-        /* @var $firebaseStorageAdapter FirebaseStorageAdapter */
-        $firebaseStorageAdapter = resolve(FirebaseStorageAdapter::class);
-
-        if ($firebaseStorageAdapter->uploadFile($file->getRealPath(), $filename)
-            && $file_url = $firebaseStorageAdapter->getUrl($filename)) {
-            return $file_url;
-        }
-
-        return null;
-    }
+//    private function uploadOnFirebase(UploadedFile $avatar) : ?string
+//    {
+//        $localFolder =  public_path('storage/uploads') . '/';
+//        $filename = Str::random(80) . "." . $avatar->getClientOriginalExtension();
+//        $file = $avatar->move($localFolder, $filename);
+//
+//        /* @var $firebaseStorageAdapter FirebaseStorageAdapter */
+//        $firebaseStorageAdapter = resolve(FirebaseStorageAdapter::class);
+//
+//        if ($firebaseStorageAdapter->uploadFile($file->getRealPath(), $filename)
+//            && $file_url = $firebaseStorageAdapter->getUrl($filename)) {
+//            return $file_url;
+//        }
+//
+//        return null;
+//    }
 
     private function deleteProfilePictureIfExists(string $profilePicture) : void
     {
