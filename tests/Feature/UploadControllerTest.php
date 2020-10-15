@@ -21,7 +21,7 @@ class UploadControllerTest extends TestCase
 
         Storage::fake('public');
 
-        $response = $authenticatedRoute->postJson('/api/uploads', [
+        $authenticatedRoute->postJson('/api/uploads', [
             'avatar' => UploadedFile::fake()->image('photo.png')
         ])->assertOk()->assertJsonStructure(['url']);
 
