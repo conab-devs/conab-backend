@@ -44,11 +44,17 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function getProfilePictureAttribute() {
-        if (App::environment('testing') ||
-            $this->attributes['profile_picture'] === null)
-        {
+        if (
+            App::environment('testing')
+            || $this->attributes['profile_picture'] === null
+        ) {
             return $this->attributes['profile_picture'];
         }
+
+        if (App::environment('production')) {
+            return $this->attributes['profile_picture'];
+        }
+
         return Storage::url($this->attributes['profile_picture']);
     }
 
