@@ -28,7 +28,6 @@ class UploadController extends Controller
             $request->hasFile('avatar')
             && ($avatar = $request->file('avatar'))->isValid()
         ) {
-
             if (
                 App::environment('production')
                 && $file_url = $this->uploadOnFirebase($avatar)

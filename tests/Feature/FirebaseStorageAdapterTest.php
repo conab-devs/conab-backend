@@ -36,15 +36,12 @@ class FirebaseStorageAdapterTest extends TestCase
         Storage::fake('public');
 
         $this->bucketMock->shouldReceive('upload')->once();
-        $this->storageMock->shouldReceive('getBucket')->once()->andReturn($this->bucketMock);
-
-        $localFolder = public_path('uploads') . '/';
-        $image = UploadedFile::fake()->image('photo.png');
-        $file = $image->move($localFolder, $image->getFilename());
+        $this->storageMock->shouldReceive('getBucket')
+            ->once()->andReturn($this->bucketMock);
+        $file = $this->makeFakeFile();
 
         $firebaseStorageAdapter = new FirebaseStorageAdapter($this->storageMock);
-        $name = Str::random(80);
-        $result = $firebaseStorageAdapter->uploadFile($file->getRealPath(), $name);
+        $result = $firebaseStorageAdapter->uploadFile($file->getRealPath(), Str::random(80));
 
         $this->assertTrue($result);
     }
@@ -54,15 +51,12 @@ class FirebaseStorageAdapterTest extends TestCase
     {
         Storage::fake('public');
 
-        $this->storageMock->shouldReceive('getBucket')->once()->andThrow(RuntimeException::class);
-
-        $localFolder = public_path('uploads') . '/';
-        $image = UploadedFile::fake()->image('photo.png');
-        $file = $image->move($localFolder, $image->getFilename());
+        $this->storageMock->shouldReceive('getBucket')
+            ->once()->andThrow(RuntimeException::class);
+        $file = $this->makeFakeFile();
 
         $firebaseStorageAdapter = new FirebaseStorageAdapter($this->storageMock);
-        $name = Str::random(80);
-        $result = $firebaseStorageAdapter->uploadFile($file->getRealPath(), $name);
+        $result = $firebaseStorageAdapter->uploadFile($file->getRealPath(), Str::random(80));
 
         $this->assertFalse($result);
     }
@@ -72,17 +66,22 @@ class FirebaseStorageAdapterTest extends TestCase
     {
         Storage::fake('public');
 
-        $this->bucketMock->shouldReceive('upload')->once()->andThrow(\InvalidArgumentException::class);
-        $this->storageMock->shouldReceive('getBucket')->once()->andReturn($this->bucketMock);
-
-        $localFolder = public_path('uploads') . '/';
-        $image = UploadedFile::fake()->image('photo.png');
-        $file = $image->move($localFolder, $image->getFilename());
+        $this->bucketMock->shouldReceive('upload')
+            ->once()->andThrow(\InvalidArgumentException::class);
+        $this->storageMock->shouldReceive('getBucket')
+            ->once()->andReturn($this->bucketMock);
+        $file = $this->makeFakeFile();
 
         $firebaseStorageAdapter = new FirebaseStorageAdapter($this->storageMock);
-        $name = Str::random(80);
-        $result = $firebaseStorageAdapter->uploadFile($file->getRealPath(), $name);
+        $result = $firebaseStorageAdapter->uploadFile($file->getRealPath(), Str::random(80));
 
         $this->assertFalse($result);
+    }
+
+    private function makeFakeFile()
+    {
+        $localFolder = public_path('uploads') . '/';
+        $image = UploadedFile::fake()->image('photo.png');
+        return $image->move($localFolder, $image->getFilename());
     }
 }
