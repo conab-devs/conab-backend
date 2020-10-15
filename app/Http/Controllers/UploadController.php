@@ -42,7 +42,7 @@ class UploadController extends Controller
                 $user->profile_picture = $path;
                 $user->save();
 
-                return response(['url' => Storage::url($path)], 200);
+                return response(['url' => $user->profile_picture], 200);
             }
         }
 
