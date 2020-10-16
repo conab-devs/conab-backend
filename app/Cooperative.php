@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
 class Cooperative extends Model
@@ -29,6 +30,10 @@ class Cooperative extends Model
     }
 
     public function getDapUrlAttribute() {
-        return Storage::url($this->attributes['dap_path']);
+        if (App::environment(['local','testing'])) {
+            return Storage::url($this->attributes['dap_path']);
+        }
+
+        return $this->attributes['dap_path'];
     }
 }
