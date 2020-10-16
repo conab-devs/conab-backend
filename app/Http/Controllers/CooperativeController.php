@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Address;
 use App\Cooperative;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Components\Traits\UploadFirebase;
 
 class CooperativeController extends Controller
 {
+    use UploadFirebase;
+
     public function __construct()
     {
         $this->middleware('only-admin-conab');
@@ -19,6 +23,7 @@ class CooperativeController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -28,7 +33,7 @@ class CooperativeController extends Controller
                 $query->where('name', 'like', "%{$name}%");
             })->paginate(10);
 
-        return response()->json($cooperatives);
+        return response($cooperatives);
     }
 
     /**
@@ -43,7 +48,8 @@ class CooperativeController extends Controller
             'name' => 'bail|required|unique:cooperatives|max:100',
             'dap_path' => 'required|mimetypes:application/pdf',
             'phones' => 'required|array',
-            'phones.*.number' => 'required|distinct|regex:/(\(\d{2}\)\ \d{4,5}\-\d{4})/|unique:phones,number|max:15',
+            'phones.*.number' =>
+                'required|distinct|regex:/(\(\d{2}\)\ \d{4,5}\-\d{4})/|unique:phones,number|max:15',
             'city' => 'required|max:100',
             'street' => 'required|max:100',
             'neighborhood' => 'required|max:100',
@@ -52,12 +58,11 @@ class CooperativeController extends Controller
 
         $cooperative = new Cooperative();
 
-        if ($request->hasFile('dap_path') && ($request->file('dap_path')->isValid())) {
-            // TODO: Upload dap on firebase storage.
-            $path = $request->file('dap_path')->store('uploads');
-            $cooperative->dap_path = $path;
-        } else {
-            return response()->json('Failed to send DAP.', 400);
+        $cooperative->dap_path = !$request->hasFile('dap_path')
+            ?: $this->uploadDap($request->file('dap_path'));
+
+        if (!$cooperative->dap_path) {
+            return response('Falha ao enviar o DAP', 400);
         }
 
         $address = Address::create($request->only(['city', 'street', 'neighborhood', 'number']));
@@ -67,7 +72,7 @@ class CooperativeController extends Controller
         $cooperative->save();
         $cooperative->phones()->createMany($request->input('phones'));
 
-        return response()->json($cooperative->load(['address', 'phones']), 201);
+        return response($cooperative->load(['address', 'phones']), 201);
     }
 
     /**
@@ -76,11 +81,11 @@ class CooperativeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(int $id)
     {
         $cooperative = Cooperative::with(['address', 'phones'])->findOrFail($id);
 
-        return response()->json($cooperative);
+        return response($cooperative);
     }
 
     /**
@@ -90,12 +95,16 @@ class CooperativeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $cooperative = Cooperative::findOrFail($id);
 
         Validator::make($request->all(), [
-            'name' => ['bail', Rule::unique('cooperatives', 'name')->ignore($cooperative->id), 'max:100'],
+            'name' => [
+                'bail',
+                Rule::unique('cooperatives', 'name')->ignore($cooperative->id),
+                'max:100'
+            ],
             'phones' => 'array',
             'phones.*.number' => [
                 'distinct',
@@ -121,10 +130,10 @@ class CooperativeController extends Controller
         $address->fill($request->all());
         $address->update();
 
-        return response()->json(null, 204);
+        return response(null, 204);
     }
 
-    public function updateDap(Request $request, $id)
+    public function updateDap(Request $request, int $id)
     {
         $cooperative = Cooperative::findOrFail($id);
 
@@ -132,17 +141,16 @@ class CooperativeController extends Controller
             'dap_path' => 'required|mimetypes:application/pdf',
         ]);
 
-        if ($request->hasFile('dap_path') && ($request->file('dap_path')->isValid())) {
-            $path = $request->file('dap_path')->store('uploads');
-            Storage::delete($cooperative->dap_path);
-            $cooperative->dap_path = $path;
-        } else {
-            return response()->json('Failed to send DAP.', 400);
+        $cooperative->dap_path = !$request->hasFile('dap_path')
+            ?: $this->uploadDap($request->file('dap_path'));
+
+        if (!$cooperative->dap_path) {
+            return response('Falha ao enviar o DAP', 400);
         }
 
         $cooperative->update();
 
-        return response()->json(null, 204);
+        return response(null, 204);
     }
 
     /**
@@ -151,7 +159,7 @@ class CooperativeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $cooperative = Cooperative::findOrFail($id);
 
@@ -159,6 +167,15 @@ class CooperativeController extends Controller
         $cooperative->delete();
         $cooperative->address()->delete();
 
-        return response()->json(null, 204);
+        return response(null, 204);
+    }
+
+    private function uploadDap(UploadedFile $dap): ?string
+    {
+        if (!$dap->isValid()) return null;
+
+        return App::environment('local')
+            ? $this->uploadFileOnFirebase($dap)
+            : $dap->store('uploads');
     }
 }
