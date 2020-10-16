@@ -26,7 +26,9 @@ class FirebaseStorageAdapter
 
     public function getUrl(string $filename) : ?string
     {
-        $expiresAt = new \DateTime('tomorrow');
+        $expiresAt = new \DateTime();
+        // The url requires to define a expires time, so I defined it to 2 years.
+        $expiresAt->add(new \DateInterval('P2Y'));
         $imageReference = $this->storage->getBucket()->object("uploads/$filename");
         if($imageReference->exists())
             return $imageReference->signedUrl($expiresAt);
