@@ -24,52 +24,15 @@ class UploadController extends Controller
         /* @var $user User */
         $user = Auth::user();
 
-        if (
-            $request->hasFile('avatar')
-            && ($avatar = $request->file('avatar'))->isValid()
-        ) {
-            if (
-                App::environment('production')
-                && $file_url = $this->uploadFileOnFirebase($avatar)
-            ) {
-                $user->profile_picture = $file_url;
-                $user->save();
+        if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
+            $user->profile_picture = App::environment('production')
+                ? $this->uploadFileOnFirebase($avatar)
+                : $avatar->store('uploads');
+            $user->save();
 
-                return response(['url' => $file_url], 200);
-            } else {
-                $this->deleteProfilePictureIfExists($user->profile_picture);
-                $path = $avatar->store('uploads');
-                $user->profile_picture = $path;
-                $user->save();
-
-                return response(['url' => $user->profile_picture], 200);
-            }
+            return response(['url' => $user->profile_picture]);
         }
 
         return response(['error' => 'Avatar is required and should be a valid file'], 400);
-    }
-
-//    private function uploadOnFirebase(UploadedFile $avatar) : ?string
-//    {
-//        $localFolder =  public_path('storage/uploads') . '/';
-//        $filename = Str::random(80) . "." . $avatar->getClientOriginalExtension();
-//        $file = $avatar->move($localFolder, $filename);
-//
-//        /* @var $firebaseStorageAdapter FirebaseStorageAdapter */
-//        $firebaseStorageAdapter = resolve(FirebaseStorageAdapter::class);
-//
-//        if ($firebaseStorageAdapter->uploadFile($file->getRealPath(), $filename)
-//            && $file_url = $firebaseStorageAdapter->getUrl($filename)) {
-//            return $file_url;
-//        }
-//
-//        return null;
-//    }
-
-    private function deleteProfilePictureIfExists(string $profilePicture) : void
-    {
-        if (Storage::exists($profilePicture)) {
-            Storage::delete($profilePicture);
-        }
     }
 }
