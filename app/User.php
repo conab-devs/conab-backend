@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Facades\Storage;
@@ -43,11 +44,17 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function getProfilePictureAttribute() {
-        if (config('app.env') === 'testing' ||
-            $this->attributes['profile_picture'] === null)
-        {
+        if (
+            App::environment('testing')
+            || $this->attributes['profile_picture'] === null
+        ) {
             return $this->attributes['profile_picture'];
         }
+
+        if (App::environment('production')) {
+            return $this->attributes['profile_picture'];
+        }
+
         return Storage::url($this->attributes['profile_picture']);
     }
 

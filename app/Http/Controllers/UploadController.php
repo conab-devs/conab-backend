@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Components\Traits\UploadFirebase;
 
 class UploadController extends Controller
 {
+    use UploadFirebase;
+
     /**
      * Store a newly created resource in storage.
      *
@@ -16,20 +21,16 @@ class UploadController extends Controller
      */
     public function store(Request $request)
     {
+        /* @var $user User */
         $user = Auth::user();
 
-        if ($request->hasFile('avatar')) {
-            if (Storage::exists($user->profile_picture)) {
-                Storage::delete($user->profile_picture);
-            }
+        if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
+            $user->profile_picture = App::environment('production')
+                ? $this->uploadFileOnFirebase($avatar)
+                : $avatar->store('uploads');
+            $user->save();
 
-            $avatar = $request->file('avatar');
-            if ($avatar->isValid()) {
-                $path = $avatar->store('uploads');
-                $user->profile_picture = $path;
-                $user->save();
-                return response(['url' => Storage::url($path)], 200);
-            }
+            return response(['url' => $user->profile_picture]);
         }
 
         return response(['error' => 'Avatar is required and should be a valid file'], 400);
