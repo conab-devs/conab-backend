@@ -179,6 +179,10 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /*
+         * Firebase Storage Provider
+         * */
+        App\Providers\FirebaseStorageProvider::class,
     ],
 
     /*
