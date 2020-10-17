@@ -20,7 +20,7 @@ class FirebaseStorageAdapter
             $this->storage->getBucket()->upload($uploadedFile, [ 'name' => "uploads/$filename" ]);
             return true;
         } catch (\Exception $error) {
-            return false;
+            throw $error;
         }
     }
 
