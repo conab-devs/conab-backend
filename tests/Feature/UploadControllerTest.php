@@ -29,27 +29,6 @@ class UploadControllerTest extends TestCase
     }
 
     /** @test */
-    public function on_upload_should_delete_existing_file()
-    {
-        $user = factory(User::class)->create(['profile_picture' => '', 'user_type' => 'ADMIN_CONAB']);
-        $authenticatedRoute = $this->actingAs($user, 'api');
-
-        Storage::fake('public');
-        // upload first file
-        $authenticatedRoute->postJson('/api/uploads', [
-            'avatar' => UploadedFile::fake()->image('photo.png')
-        ])->assertOk();
-        $oldPath = $user->profile_picture;
-        Storage::disk('public')->assertExists($oldPath);
-
-        // upload first second
-        $authenticatedRoute->postJson('/api/uploads', [
-            'avatar' => UploadedFile::fake()->image('photo.png')
-        ])->assertOk();
-        Storage::disk('public')->assertMissing($oldPath);
-    }
-
-    /** @test */
     public function on_upload_should_throw_an_error_if_no_avatar_is_send()
     {
         $user = factory(User::class)->create(['profile_picture' => '', 'user_type' => 'ADMIN_CONAB']);
