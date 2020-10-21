@@ -15,6 +15,20 @@ class UserTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => 'valid_cpf',
+            'phones' => [
+                ['number' => '(00) 00000-0000'],
+                ['number' => '(11) 11111-1111'],
+            ],
+            'addresses' => [
+                ['street' => 'valid_street',
+                 'neighborhood' => 'valid_neighborhood',
+                 'city' => 'valid_city',
+                 'number' => 'any_num'],
+                ['street' => 'another_street',
+                 'neighborhood' => 'another_neighborhood',
+                 'city' => 'another_city',
+                 'number' => 'any_num'],
+            ],
         ]);
         $response->assertStatus(422);
     }
@@ -27,6 +41,20 @@ class UserTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => 'valid_cpf',
+            'phones' => [
+                ['number' => '(00) 00000-0000'],
+                ['number' => '(11) 11111-1111'],
+            ],
+            'addresses' => [
+                ['street' => 'valid_street',
+                 'neighborhood' => 'valid_neighborhood',
+                 'city' => 'valid_city',
+                 'number' => 'any_num'],
+                ['street' => 'another_street',
+                 'neighborhood' => 'another_neighborhood',
+                 'city' => 'another_city',
+                 'number' => 'any_num'],
+            ],
         ]);
         $response->assertStatus(422);
     }
