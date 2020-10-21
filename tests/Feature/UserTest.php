@@ -392,4 +392,34 @@ class UserTest extends TestCase
         ]);
         $response->assertStatus(422);
     }
+
+    /** @test */
+    public function should_return_validation_error_if_duplicated_phones_are_passed()
+    {
+        $user = factory(\App\User::class)->create();
+        $user->phones()->create([
+            'number' => '(11) 11111-1111'
+        ]);
+
+        $response = $this->postJson('api/users', [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'password' => '123456',
+            'phones' => [
+                ['number' => '(11) 11111-1111'],
+            ],
+            'cpf' => '123.123.123-12',
+            'addresses' => [
+                ['street' => 'valid_street',
+                 'neighborhood' => 'valid_neighborhood',
+                 'city' => 'valid_city',
+                 'number' => 'any_num'],
+                ['street' => 'another_street',
+                 'neighborhood' => 'another_neighborhood',
+                 'city' => 'another_city',
+                 'number' => 'any_num'],
+            ],
+        ]);
+        $response->assertStatus(422);
+    }
 }
