@@ -366,4 +366,30 @@ class UserTest extends TestCase
         ]);
         $response->assertStatus(422);
     }
+
+    /** @test */
+    public function should_return_validation_error_if_phones_are_passed()
+    {
+        $response = $this->postJson('api/users', [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'password' => '123456',
+            'phones' => [
+                ['number' => '85 85858-8585'],
+                ['number' => '85 86428-1575'],
+            ],
+            'cpf' => '123.123.123-12',
+            'addresses' => [
+                ['street' => 'valid_street',
+                 'neighborhood' => 'valid_neighborhood',
+                 'city' => 'valid_city',
+                 'number' => 'any_num'],
+                ['street' => 'another_street',
+                 'neighborhood' => 'another_neighborhood',
+                 'city' => 'another_city',
+                 'number' => 'any_num'],
+            ],
+        ]);
+        $response->assertStatus(422);
+    }
 }
