@@ -293,4 +293,32 @@ class UserTest extends TestCase
         ]);
         $response->assertStatus(422);
     }
+
+    /** @test */
+    public function should_return_validation_error_if_existing_cpf_is_passed()
+    {
+        factory(\App\User::class)->create(['cpf' => '123.123.123-12']);
+
+        $response = $this->postJson('api/users', [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'password' => '123456',
+            'cpf' => '123.123.123-12',
+            'phones' => [
+                ['number' => '(00) 00000-0000'],
+                ['number' => '(11) 11111-1111'],
+            ],
+            'addresses' => [
+                ['street' => 'valid_street',
+                 'neighborhood' => 'valid_neighborhood',
+                 'city' => 'valid_city',
+                 'number' => 'any_num'],
+                ['street' => 'another_street',
+                 'neighborhood' => 'another_neighborhood',
+                 'city' => 'another_city',
+                 'number' => 'any_num'],
+            ],
+        ]);
+        $response->assertStatus(422);
+    }
 }
