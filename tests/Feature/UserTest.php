@@ -561,4 +561,43 @@ class UserTest extends TestCase
         ]);
         $response->assertStatus(422);
     }
+
+    public function should_return_validation_error_if_number_is_not_passed()
+    {
+        $response = $this->postJson('api/users', [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'password' => '123456',
+            'phones' => [
+                ['number' => '(11) 11111-1111'],
+            ],
+            'cpf' => '123.123.123-12',
+            'addresses' => [
+                ['street' => 'valid_street',
+                 'neighborhood' => 'valid_neighborhood',
+                 'city' => 'valid_city'],
+            ]
+        ]);
+        $response->assertStatus(422);
+    }
+
+    public function should_return_validation_error_if_number_is_not_a_string()
+    {
+        $response = $this->postJson('api/users', [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'password' => '123456',
+            'phones' => [
+                ['number' => '(11) 11111-1111'],
+            ],
+            'cpf' => '123.123.123-12',
+            'addresses' => [
+                ['street' => 'valid_street',
+                 'neighborhood' => 'valid_neighborhood',
+                 'city' => 'valid_city'],
+                 'number' => 123456,
+            ]
+        ]);
+        $response->assertStatus(422);
+    }
 }
