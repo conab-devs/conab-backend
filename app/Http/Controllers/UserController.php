@@ -17,7 +17,10 @@ class UserController extends Controller
             'phones' => 'required|array',
             'phones.*.number' => 'required|string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/|distinct|unique:phones,number',
             'addresses' => 'required|array',
-            'addresses.*' => 'required|string',
+            'addresses.*.street' => 'required|string',
+            'addresses.*.neighborhood' => 'required|string',
+            'addresses.*.city' => 'required|string',
+            'addresses.*.number' => 'required|string'
         ]);
     }
 
