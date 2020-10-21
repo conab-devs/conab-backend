@@ -14,4 +14,9 @@ class Address extends Model
     {
         return $this->hasOne(Cooperative::class);
     }
+
+    public function user()
+    {
+        return $this->hasOne('App\User', 'user_addresses');
+    }
 }

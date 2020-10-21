@@ -620,7 +620,7 @@ class UserTest extends TestCase
         ]);
         $response->assertCreated();
         $response->assertJsonStructure([
-            'name', 'email', 'cpf', 'id', 'updated_at', 'created_at'
+            'name', 'email', 'cpf', 'id', 'updated_at', 'created_at',
         ]);
 
         $this->assertDatabaseHas('users', [
@@ -632,8 +632,8 @@ class UserTest extends TestCase
     public function should_store_phones_with_user()
     {
         $phones = [
-            '(12) 12122-1212',
-            '(22) 12345-1234',
+            ['number' => '(12) 12122-1212'],
+            ['number' => '(22) 12345-1234'],
         ];
 
         $response = $this->postJson('api/users', [
@@ -642,8 +642,8 @@ class UserTest extends TestCase
             'password' => 'valid_password',
             'cpf' => '123.123.123-12',
             'phones' => [
-                ['number' => $phones[0]],
-                ['number' => $phones[1]],
+                ['number' => $phones[0]['number']],
+                ['number' => $phones[1]['number']],
             ],
             'addresses' => [
                 ['street' => 'valid_street',
@@ -654,9 +654,42 @@ class UserTest extends TestCase
         ]);
         $response->assertJsonStructure(['phones']);
 
-        for ($i = 0; $i < count($phones); $i++) {
+        for ($phone = 0; $phone < count($phones); $phone++) {
             $this->assertDatabaseHas('phones', [
-                'number' => $phones[$i],
+                'number' => $phones[$phone]['number'],
+            ]);
+        }
+    }
+
+    /** @test */
+    public function should_store_addresses_with_user()
+    {
+        $addresses = [
+            ['street' => 'valid_street',
+                'neighborhood' => 'valid_neighborhood',
+                'city' => 'valid_city',
+                'number' => 'valid_num'],
+            ['street' => 'another_street',
+                'neighborhood' => 'another_neighborhood',
+                'city' => 'another_city',
+                'number' => 'another_num'],
+        ];
+
+        $response = $this->postJson('api/users', [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'password' => 'valid_password',
+            'cpf' => '123.123.123-12',
+            'phones' => [
+                ['number' => '(12) 12121-1212'],
+            ],
+            'addresses' => $addresses,
+        ]);
+        $response->assertJsonStructure(['addresses']);
+
+        for ($address = 0; $address < count($addresses); $address++) {
+            $this->assertDatabaseHas('addresses', [
+                'street' => $addresses[$address]['street'],
             ]);
         }
     }

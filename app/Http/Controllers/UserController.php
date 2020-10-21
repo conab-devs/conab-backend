@@ -25,7 +25,8 @@ class UserController extends Controller
 
         $user = \App\User::create($validated);
         $user->phones()->createMany($validated['phones']);
-        $user->load('phones');
+        $user->addresses()->createMany($validated['addresses']);
+        $user->load('phones', 'addresses');
 
         return response()->json($user, 201);
     }
