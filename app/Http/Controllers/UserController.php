@@ -9,7 +9,7 @@ class UserController extends Controller
 {
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
@@ -22,6 +22,12 @@ class UserController extends Controller
             'addresses.*.city' => 'required|string',
             'addresses.*.number' => 'required|string'
         ]);
+
+        $user = \App\User::create($validated);
+        $user->phones()->createMany($validated['phones']);
+        $user->load('phones');
+
+        return response()->json($user, 201);
     }
 
     public function destroy(\App\User $user)
