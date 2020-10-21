@@ -7,7 +7,14 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
-    public function __invoke(\App\User $user)
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required'
+        ]);
+    }
+
+    public function destroy(\App\User $user)
     {
         if (Gate::denies('destroy-user', $user)) {
             return response()->json('Você não tem autorização a este recurso', 401);
