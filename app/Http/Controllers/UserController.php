@@ -14,7 +14,8 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
             'cpf' => 'required|regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/|unique:users,cpf',
-            'phones' => 'required'
+            'phones' => 'required|array',
+            'phones.*.number' => 'required|string'
         ]);
     }
 
