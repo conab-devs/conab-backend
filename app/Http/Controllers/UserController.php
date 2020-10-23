@@ -49,8 +49,7 @@ class UserController extends Controller
         ]);
 
         $user = auth()->user();
-        $user->fill($validated);
-        $user->save();
+        $user->update($validated);
 
         return response()->json($user);
     }
