@@ -34,7 +34,7 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'string',
             'email' => 'email|unique:users',
             'password' => 'string|min:6',
@@ -47,6 +47,12 @@ class UserController extends Controller
             'addresses.*.city' => 'string',
             'addresses.*.number' => 'string'
         ]);
+
+        $user = auth()->user();
+        $user->fill($validated);
+        $user->save();
+
+        return response()->json($user);
     }
 
     public function destroy(\App\User $user)

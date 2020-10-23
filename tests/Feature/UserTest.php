@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -886,5 +887,31 @@ class UserTest extends TestCase
             ],
         ]);
         $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_update_user()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $new_informations = [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'password' => 'an_password',
+            'cpf' => '123.123.123-12',
+        ];
+
+        $response = $this->actingAs($user)
+            ->putJson("api/users", $new_informations);
+        $response->assertStatus(200);
+
+        $expected_return = array_diff_key(
+            $new_informations, ['password' => '']
+        );
+        $response->assertJson($expected_return);
+
+        $this->assertTrue(
+            Hash::check($new_informations['password'], $user->password)
+        );
     }
 }
