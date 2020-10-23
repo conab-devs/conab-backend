@@ -9,7 +9,11 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    /**
+     * @test
+     *
+     * User's store controller action
+     */
     public function should_return_validation_error_if_no_name_is_passed()
     {
         $response = $this->postJson('api/users', [
@@ -367,7 +371,7 @@ class UserTest extends TestCase
     }
 
     /** @test */
-    public function should_return_validation_error_if_phones_are_passed()
+    public function should_return_validation_error_if_wrong_format_phones_are_passed()
     {
         $response = $this->postJson('api/users', [
             'name' => 'valid_name',
@@ -692,5 +696,195 @@ class UserTest extends TestCase
                 'street' => $addresses[$address]['street'],
             ]);
         }
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_integer_is_passed_on_name_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'name' => 123456,
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_invalid_email_is_passed_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'email' => 'invalid_email',
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_email_already_exists_on_update()
+    {
+        $user = factory(\App\User::class)->create([
+            'email' => 'valid_mail@mail.com'
+        ]);
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'email' => 'valid_mail@mail.com',
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_integer_password_is_passed_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'password' => 123456,
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_password_length_is_lesser_than_6_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'password' => '1234',
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_integer_cpf_is_passed_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'cpf' => 1234,
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_cpf_with_wrong_format_is_passed_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'cpf' => '1234',
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_existing_cpf_is_passed_on_update()
+    {
+        $user = factory(\App\User::class)->create(['cpf' => '123.123.123-12']);
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'cpf' => '123.123.123-12',
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_array_is_not_passed_to_phones_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'phones' => 123,
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_wrong_format_phones_are_passed_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'phones' => [
+                ['number' => '85 85858-8585'],
+                ['number' => '85 86428-1575'],
+            ],
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_duplicated_phones_are_passed_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+        $user->phones()->create([
+            'number' => '(11) 11111-1111',
+        ]);
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'phones' => [
+                ['number' => '(11) 11111-1111'],
+            ],
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_array_is_not_passed_to_addresses_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'addresses' => 123,
+        ]);
+        $response->assertStatus(422);
+    }
+
+    public function should_return_validation_error_if_street_is_not_a_string_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'addresses' => [
+                ['street' => 123456],
+            ],
+        ]);
+        $response->assertStatus(422);
+    }
+
+    public function should_return_validation_error_if_neighborhood_is_not_a_string_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'addresses' => [
+                ['neighborhood' => 123456],
+            ],
+        ]);
+        $response->assertStatus(422);
+    }
+
+    public function should_return_validation_error_if_city_is_not_a_string_on_updated()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'addresses' => [
+                ['city' => 123456],
+            ],
+        ]);
+        $response->assertStatus(422);
+    }
+
+    public function should_return_validation_error_if_number_is_not_a_string_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'addresses' => [
+                ['number' => 123456],
+            ],
+        ]);
+        $response->assertStatus(422);
     }
 }

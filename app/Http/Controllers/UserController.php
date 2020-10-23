@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserStore;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -29,6 +30,23 @@ class UserController extends Controller
                 "message" => "Algo deu errado, tente novamente em alguns instantes",
             ], 500);
         }
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'name' => 'string',
+            'email' => 'email|unique:users',
+            'password' => 'string|min:6',
+            'cpf' => 'regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/|unique:users,cpf',
+            'phones' => 'array',
+            'phones.*.number' => 'string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/|distinct|unique:phones,number',
+            'addresses' => 'array',
+            'addresses.*.street' => 'string',
+            'addresses.*.neighborhood' => 'string',
+            'addresses.*.city' => 'string',
+            'addresses.*.number' => 'string'
+        ]);
     }
 
     public function destroy(\App\User $user)
