@@ -914,4 +914,41 @@ class UserTest extends TestCase
             Hash::check($new_informations['password'], $user->password)
         );
     }
+
+    /** @test */
+    public function should_update_user_without_password()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $new_informations = [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'cpf' => '123.123.123-12',
+        ];
+
+        $response = $this->actingAs($user)
+            ->putJson("api/users", $new_informations);
+        $response->assertStatus(200);
+
+        $response->assertJson($new_informations);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_database_password_is_sent()
+    {
+        $user = factory(\App\User::class)->create(['password' => 'valid_pass']);
+
+        $older_password = 'valid_pass';
+
+        $new_informations = [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'password' => $older_password,
+            'cpf' => '123.123.123-12',
+        ];
+
+        $response = $this->actingAs($user)
+            ->putJson("api/users", $new_informations);
+        $response->assertStatus(422);
+    }
 }

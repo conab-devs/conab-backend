@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserStore;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -49,6 +50,13 @@ class UserController extends Controller
         ]);
 
         $user = auth()->user();
+
+        if (! empty($validated['password'])) {
+            if (Hash::check($validated['password'], $user->password)) {
+                return response()->json('Informe um novo password, não o antigo.', 422);
+            }
+        }
+
         $user->update($validated);
 
         return response()->json($user);
