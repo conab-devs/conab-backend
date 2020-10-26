@@ -934,7 +934,7 @@ class UserTest extends TestCase
     }
 
     /** @test */
-    public function should_return_validation_error_if_database_password_is_sent()
+    public function should_return_validation_error_if_repeated_password_is_sent()
     {
         $user = factory(\App\User::class)->create(['password' => 'valid_pass']);
 
