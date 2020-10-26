@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStore;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -46,12 +46,12 @@ class UserController extends Controller
             'addresses.*.street' => 'string',
             'addresses.*.neighborhood' => 'string',
             'addresses.*.city' => 'string',
-            'addresses.*.number' => 'string'
+            'addresses.*.number' => 'string',
         ]);
 
         $user = auth()->user();
 
-        if (! empty($validated['password'])) {
+        if (!empty($validated['password'])) {
             if (Hash::check($validated['password'], $user->password)) {
                 return response()->json('Informe um novo password, não o antigo.', 422);
             }
@@ -59,15 +59,13 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        if (! empty($validated['addresses'])) {
-            $user->addresses()->delete();
-            $user->addresses()->createMany($validated['addresses']);
-        }
-
-        if (! empty($validated['phones'])) {
-            $user->phones()->delete();
-            $user->phones()->createMany($validated['phones']);
-        }
+        $relationships_keys = collect(['addresses', 'phones']);
+        $relationships_keys->each(function ($relationship) use ($user, $validated) {
+            if (isset($validated[$relationship])) {
+                $user->{$relationship}()->delete();
+                $user->{$relationship}()->createMany($validated[$relationship]);
+            }
+        });
 
         $user->load('addresses', 'phones');
 
