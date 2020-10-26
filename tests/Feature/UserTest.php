@@ -1042,8 +1042,8 @@ class UserTest extends TestCase
 
         $user->addresses()
             ->create(factory(\App\Address::class)
-                    ->make()
-                    ->toArray());
+            ->make()
+            ->toArray());
 
         $new_address = [
             'addresses' => [
@@ -1061,5 +1061,30 @@ class UserTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJson($new_address);
+    }
+
+    /** @test */
+    public function should_update_user_phones()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $user->phones()
+            ->create(factory(\App\Phone::class)
+            ->make()
+            ->toArray());
+
+        $new_phone = [
+            'phones' => [
+                [
+                    'number' => '(11) 11111-1111)',
+                ],
+            ],
+        ];
+
+        $response = $this->actingAs($user)
+            ->putJson('api/users', $new_phone);
+        $response->assertStatus(200);
+
+        $response->assertJson($new_phone);
     }
 }
