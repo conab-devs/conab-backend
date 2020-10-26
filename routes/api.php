@@ -40,6 +40,8 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::get('/categories/{category}', 'CategoryController@show');
     Route::put('/categories/{category}', 'CategoryController@update');
     Route::delete('/categories/{category}', 'CategoryController@destroy');
+
+    Route::get('/products', 'ProductController@index');
 });
 
 Route::post('/login', 'AuthController@login');
