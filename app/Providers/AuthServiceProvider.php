@@ -56,5 +56,10 @@ class AuthServiceProvider extends ServiceProvider
             }
             return false;
         });
+
+        Gate::define('manage-product', function ($user, \App\Product $resource) {
+           return $user->user_type === 'ADMIN_COOP'
+               && $resource->cooperative_id === $user->cooperative_id;
+        });
     }
 }
