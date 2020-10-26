@@ -6,6 +6,7 @@ use App\Category;
 use App\Cooperative;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class ProductControllerTest extends TestCase
@@ -25,9 +26,8 @@ class ProductControllerTest extends TestCase
         $data = [
             'name' => 'any_name',
             'price' => 9.99,
-            'photo_path' => 'path_file.png',
+            'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
-            'cooperative_id' => $cooperative->id,
             'category_id' => $category->id
         ];
 
