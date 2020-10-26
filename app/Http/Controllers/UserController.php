@@ -59,6 +59,13 @@ class UserController extends Controller
 
         $user->update($validated);
 
+        if (! empty($validated['addresses'])) {
+            $user->addresses()->delete();
+            $user->addresses()->createMany($validated['addresses']);
+        }
+
+        $user->load('addresses');
+
         return response()->json($user);
     }
 

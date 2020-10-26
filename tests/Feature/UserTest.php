@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -26,14 +26,18 @@ class UserTest extends TestCase
                 ['number' => '(11) 11111-1111'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -52,14 +56,18 @@ class UserTest extends TestCase
                 ['number' => '(11) 11111-1111'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -77,14 +85,18 @@ class UserTest extends TestCase
                 ['number' => '(11) 11111-1111'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -103,14 +115,18 @@ class UserTest extends TestCase
                 ['number' => '(11) 11111-1111'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -131,14 +147,18 @@ class UserTest extends TestCase
                 ['number' => '(11) 11111-1111'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -156,14 +176,18 @@ class UserTest extends TestCase
                 ['number' => '(11) 11111-1111'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -182,14 +206,18 @@ class UserTest extends TestCase
                 ['number' => '(11) 11111-1111'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -208,14 +236,18 @@ class UserTest extends TestCase
                 ['number' => '(11) 11111-1111'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -233,14 +265,18 @@ class UserTest extends TestCase
                 ['number' => '(11) 11111-1111'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -259,14 +295,18 @@ class UserTest extends TestCase
                 ['number' => '(11) 11111-1111'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -285,14 +325,18 @@ class UserTest extends TestCase
                 ['number' => '(11) 11111-1111'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -313,14 +357,18 @@ class UserTest extends TestCase
                 ['number' => '(11) 11111-1111'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -335,14 +383,18 @@ class UserTest extends TestCase
             'password' => '123456',
             'cpf' => '123.123.123-12',
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -358,14 +410,18 @@ class UserTest extends TestCase
             'phones' => 123,
             'cpf' => '123.123.123-12',
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -384,14 +440,18 @@ class UserTest extends TestCase
             ],
             'cpf' => '123.123.123-12',
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -414,14 +474,18 @@ class UserTest extends TestCase
             ],
             'cpf' => '123.123.123-12',
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'any_num'],
-                ['street' => 'another_street',
+                    'number' => 'any_num',
+                ],
+                [
+                    'street' => 'another_street',
                     'neighborhood' => 'another_neighborhood',
                     'city' => 'another_city',
-                    'number' => 'any_num'],
+                    'number' => 'any_num',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -522,8 +586,10 @@ class UserTest extends TestCase
             ],
             'cpf' => '123.123.123-12',
             'addresses' => [
-                ['street' => 'valid_street',
-                    'neighborhood' => 123456],
+                [
+                    'street' => 'valid_street',
+                    'neighborhood' => 123456,
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -540,8 +606,10 @@ class UserTest extends TestCase
             ],
             'cpf' => '123.123.123-12',
             'addresses' => [
-                ['street' => 'valid_street',
-                    'neighborhood' => 'valid_neighborhood'],
+                [
+                    'street' => 'valid_street',
+                    'neighborhood' => 'valid_neighborhood',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -558,9 +626,11 @@ class UserTest extends TestCase
             ],
             'cpf' => '123.123.123-12',
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
-                    'city' => 123456],
+                    'city' => 123456,
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -577,9 +647,11 @@ class UserTest extends TestCase
             ],
             'cpf' => '123.123.123-12',
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
-                    'city' => 'valid_city'],
+                    'city' => 'valid_city',
+                ],
             ],
         ]);
         $response->assertStatus(422);
@@ -596,9 +668,11 @@ class UserTest extends TestCase
             ],
             'cpf' => '123.123.123-12',
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
-                    'city' => 'valid_city'],
+                    'city' => 'valid_city',
+                ],
                 'number' => 123456,
             ],
         ]);
@@ -617,10 +691,12 @@ class UserTest extends TestCase
                 ['number' => '(12) 12122-1212'],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'valid_num'],
+                    'number' => 'valid_num',
+                ],
             ],
         ]);
         $response->assertCreated();
@@ -651,10 +727,12 @@ class UserTest extends TestCase
                 ['number' => $phones[1]['number']],
             ],
             'addresses' => [
-                ['street' => 'valid_street',
+                [
+                    'street' => 'valid_street',
                     'neighborhood' => 'valid_neighborhood',
                     'city' => 'valid_city',
-                    'number' => 'valid_num'],
+                    'number' => 'valid_num',
+                ],
             ],
         ]);
         $response->assertJsonStructure(['phones']);
@@ -670,14 +748,18 @@ class UserTest extends TestCase
     public function should_store_addresses_with_user()
     {
         $addresses = [
-            ['street' => 'valid_street',
+            [
+                'street' => 'valid_street',
                 'neighborhood' => 'valid_neighborhood',
                 'city' => 'valid_city',
-                'number' => 'valid_num'],
-            ['street' => 'another_street',
+                'number' => 'valid_num',
+            ],
+            [
+                'street' => 'another_street',
                 'neighborhood' => 'another_neighborhood',
                 'city' => 'another_city',
-                'number' => 'another_num'],
+                'number' => 'another_num',
+            ],
         ];
 
         $response = $this->postJson('api/users', [
@@ -725,7 +807,7 @@ class UserTest extends TestCase
     public function should_return_validation_error_if_email_already_exists_on_update()
     {
         $user = factory(\App\User::class)->create([
-            'email' => 'valid_mail@mail.com'
+            'email' => 'valid_mail@mail.com',
         ]);
 
         $response = $this->actingAs($user)->putJson("api/users", [
@@ -906,7 +988,8 @@ class UserTest extends TestCase
         $response->assertStatus(200);
 
         $expected_return = array_diff_key(
-            $new_informations, ['password' => '']
+            $new_informations,
+            ['password' => '']
         );
         $response->assertJson($expected_return);
 
@@ -950,5 +1033,33 @@ class UserTest extends TestCase
         $response = $this->actingAs($user)
             ->putJson("api/users", $new_informations);
         $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_update_user_address()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $user->addresses()
+            ->create(factory(\App\Address::class)
+                    ->make()
+                    ->toArray());
+
+        $new_address = [
+            'addresses' => [
+                [
+                    'street' => 'valid_street',
+                    'neighborhood' => 'valid_neighborhood',
+                    'city' => 'valid_city',
+                    'number' => 'AB12',
+                ],
+            ],
+        ];
+
+        $response = $this->actingAs($user)
+            ->putJson('api/users', $new_address);
+        $response->assertStatus(200);
+
+        $response->assertJson($new_address);
     }
 }
