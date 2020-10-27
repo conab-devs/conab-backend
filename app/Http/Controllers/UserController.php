@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UserUpdate;
 
 class UserController extends Controller
 {
@@ -33,43 +34,49 @@ class UserController extends Controller
         }
     }
 
-    public function update(Request $request)
+    public function update(UserUpdate $request)
     {
-        $validated = $request->validate([
-            'name' => 'string',
-            'email' => 'email|unique:users',
-            'password' => 'string|min:6',
-            'cpf' => 'regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/|unique:users,cpf',
-            'phones' => 'array',
-            'phones.*.number' => 'string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/|distinct|unique:phones,number',
-            'addresses' => 'array',
-            'addresses.*.street' => 'string',
-            'addresses.*.neighborhood' => 'string',
-            'addresses.*.city' => 'string',
-            'addresses.*.number' => 'string',
-        ]);
-
+        $validated = $request->validated();
         $user = auth()->user();
 
-        if (!empty($validated['password'])) {
-            if (Hash::check($validated['password'], $user->password)) {
-                return response()->json('Informe um novo password, não o antigo.', 422);
-            }
+        $password = $validated['password'] ?? null;
+
+        if ($this->isInvalidPassword($password, $user)) {
+            return response()->json('Informe um novo password, não o antigo.', 422);
         }
 
-        $user->update($validated);
+        DB::beginTransaction();
 
-        $relationships_keys = collect(['addresses', 'phones']);
-        $relationships_keys->each(function ($relationship) use ($user, $validated) {
-            if (isset($validated[$relationship])) {
-                $user->{$relationship}()->delete();
-                $user->{$relationship}()->createMany($validated[$relationship]);
-            }
-        });
+        try {
+            $user->update($validated);
 
-        $user->load('addresses', 'phones');
+            $relationships_keys = collect(['addresses', 'phones']);
+            $relationships_keys->each(function ($relationship) use ($user, $validated) {
+                if (isset($validated[$relationship])) {
+                    $user->{$relationship}()->delete();
+                    $user->{$relationship}()->createMany($validated[$relationship]);
+                }
+            });
 
-        return response()->json($user);
+            DB::commit();
+
+            $user->load('addresses', 'phones');
+
+            return response()->json($user);
+        } catch (\Exception $err) {
+            DB::rollback();
+            return response()->json([
+                'message' => 'Algo deu errado, tente novamente em alguns instantes'
+            ], 500);
+        }
+    }
+
+    private function isInvalidPassword($password, $user)
+    {
+        if (!empty($password)) {
+            return Hash::check($password, $user->password);
+        }
+        return false;
     }
 
     public function destroy(\App\User $user)
