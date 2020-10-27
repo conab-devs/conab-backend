@@ -6,8 +6,8 @@ use App\Http\Requests\UserStore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserUpdate;
+use App\Components\Validators\PasswordValidator;
 
 class UserController extends Controller
 {
@@ -41,7 +41,7 @@ class UserController extends Controller
 
         $password = $validated['password'] ?? null;
 
-        if ($this->isInvalidPassword($password, $user)) {
+        if (PasswordValidator::validate($password, $user->password)) {
             return response()->json('Informe um novo password, não o antigo.', 422);
         }
 
@@ -69,14 +69,6 @@ class UserController extends Controller
                 'message' => 'Algo deu errado, tente novamente em alguns instantes'
             ], 500);
         }
-    }
-
-    private function isInvalidPassword($password, $user)
-    {
-        if (!empty($password)) {
-            return Hash::check($password, $user->password);
-        }
-        return false;
     }
 
     public function destroy(\App\User $user)
