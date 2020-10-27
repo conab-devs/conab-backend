@@ -6,8 +6,8 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
 use App\Components\Validators\UpdateUser;
+use App\Components\Validators\PasswordValidator;
 
 class AdminConabController extends Controller
 {
@@ -37,7 +37,7 @@ class AdminConabController extends Controller
      */
      public function show($id)
      {
-         $admin = User::with('phones')->findOrFail($id);
+        $admin = User::with('phones')->findOrFail($id);
         return response($admin, 200);
      }
 
@@ -85,11 +85,11 @@ class AdminConabController extends Controller
         $admin->email = $data['email'] ?? $admin->email;
         $admin->cpf = $data['cpf'] ?? $admin->cpf;
 
-        if (!empty($data['password'])) {
-            if (!Hash::check($data['password'], $admin->password)) {
-                return response('', 400);
-            }
-            $admin->password = $data['new_password'];
+        $password = $data['new_password'] ?? null;
+        if (PasswordValidator::validate($password, $admin->password)) {
+            return response()->json('Informe um novo password, não o antigo.', 422);
+        } else {
+            $admin->password = $password;
         }
 
         $admin->save();
