@@ -8,8 +8,8 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Hash;
 use App\Components\Validators\UpdateUser;
+use App\Components\Validators\PasswordValidator;
 
 class CooperativeAdminController extends Controller
 {
@@ -95,11 +95,11 @@ class CooperativeAdminController extends Controller
         DB::transaction(function () use (&$admin, $data, $request) {
             $admin->update($request->except('password', 'new_password', 'phones'));
 
-            if (!empty($data['password'])) {
-                if (!Hash::check($data['password'], $admin->password)) {
-                    return response('Senha inválida.', 400);
-                }
-                $admin->password = $data['new_password'];
+            $password = $data['new_password'] ?? null;
+            if (PasswordValidator::validate($password, $admin->password)) {
+                return response()->json('Informe um novo password, não o antigo.', 422);
+            } else {
+                $admin->password = $password;
             }
 
             $admin->save();
@@ -110,6 +110,6 @@ class CooperativeAdminController extends Controller
             }
         });
 
-        return response($admin->refresh(), 200);
+        return response($admin, 200);
     }
 }
