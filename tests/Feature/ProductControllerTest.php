@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Category;
 use App\Cooperative;
+use App\Product;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -36,5 +37,25 @@ class ProductControllerTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonFragment($data);
+    }
+
+    /** @test */
+    public function should_get_product_by_id()
+    {
+        $cooperative = factory(Cooperative::class)->create();
+        $admin_coop = factory(User::class)->create([
+            'cooperative_id' => $cooperative->id,
+            'user_type' => 'ADMIN_COOP'
+        ]);
+        $category = factory(Category::class)->create();
+        $product = factory(Product::class)->create([
+            'cooperative_id' => $cooperative->id,
+            'category_id' => $category->id
+        ]);
+
+        $response = $this->actingAs($admin_coop, 'api')
+            ->get("/api/products/$product->id");
+
+        $response->assertOk()->assertJson($product->toArray());
     }
 }
