@@ -42,6 +42,7 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::delete('/categories/{category}', 'CategoryController@destroy');
 
     Route::get('/products', 'ProductController@index');
+    Route::get('/products/{product}', 'ProductController@show');
     Route::post('/products', 'ProductController@store');
 });
 
