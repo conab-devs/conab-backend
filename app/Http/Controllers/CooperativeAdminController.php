@@ -92,7 +92,9 @@ class CooperativeAdminController extends Controller
         $validator = new UpdateUser();
         $data = $validator->execute($request, $admin);
 
-        DB::transaction(function () use (&$admin, $data, $request) {
+        try {
+            DB::beginTransaction();
+
             $admin->update($request->except('password', 'new_password', 'phones'));
 
             $password = $data['new_password'] ?? null;
@@ -108,8 +110,15 @@ class CooperativeAdminController extends Controller
                 $admin->phones()->delete();
                 $admin->phones()->createMany($data['phones']);
             }
-        });
 
-        return response($admin, 200);
+            DB::commit();
+
+            return response()->json($admin);
+        } catch (\Exception $error) {
+            DB::rollback();
+            return response()->json([
+                'message' => 'Algo deu errado, tente novamente em alguns instantes'
+            ], 500);
+        }
     }
 }
