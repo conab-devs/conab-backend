@@ -13,8 +13,7 @@ class UserController extends Controller
 {
     public function show()
     {
-        $user = auth()->user();
-        return response()->json($user);
+        return response(auth()->user());
     }
 
     public function store(UserStore $request)
