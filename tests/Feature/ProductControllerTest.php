@@ -43,17 +43,15 @@ class ProductControllerTest extends TestCase
     public function should_get_product_by_id()
     {
         $cooperative = factory(Cooperative::class)->create();
-        $cooperativeAdmin = factory(User::class)->create([
-            'cooperative_id' => $cooperative->id,
-            'user_type' => 'ADMIN_COOP'
-        ]);
+        $user = factory(User::class)->create();
+
         $category = factory(Category::class)->create();
         $product = factory(Product::class)->create([
             'cooperative_id' => $cooperative->id,
             'category_id' => $category->id
         ]);
 
-        $response = $this->actingAs($cooperativeAdmin, 'api')
+        $response = $this->actingAs($user, 'api')
             ->get("/api/products/$product->id");
 
         $response->assertOk()->assertJson($product->toArray());
@@ -63,6 +61,7 @@ class ProductControllerTest extends TestCase
     public function should_deny_product_create_to_users_who_are_not_cooperative_administrators()
     {
         $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $costumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $category = factory(Category::class)->create();
 
         $data = [
@@ -73,9 +72,12 @@ class ProductControllerTest extends TestCase
             'category_id' => $category->id
         ];
 
-        $response = $this->actingAs($conabAdmin, 'api')
+        $conabAdminResponse = $this->actingAs($conabAdmin, 'api')
             ->postJson('/api/products', $data);
+        $conabAdminResponse->assertStatus(401);
 
-        $response->assertStatus(401);
+        $costumerResponse = $this->actingAs($costumer, 'api')
+            ->postJson('/api/products', $data);
+        $costumerResponse->assertStatus(401);
     }
 }
