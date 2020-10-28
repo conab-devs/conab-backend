@@ -84,5 +84,7 @@ class UserController extends Controller
 
         $user->phones()->delete();
         $user->delete();
+
+        return response('', 204);
     }
 }

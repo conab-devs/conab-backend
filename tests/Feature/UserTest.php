@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
+/** @author User  */
 class UserTest extends TestCase
 {
     use RefreshDatabase;
@@ -1097,5 +1098,16 @@ class UserTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJson($user->toArray());
+   }
+
+   /** @test */
+   public function should_allow_customers_to_delete_their_accounts_own_accounts()
+   {
+        $user = factory(\App\User::class)->create(['user_type' => 'CUSTOMER']);
+
+        $response = $this->actingAs($user)->deleteJson("api/users/$user->id");
+        $response->assertStatus(204);
+
+        $this->assertDeleted('users', $user->toArray());
    }
 }

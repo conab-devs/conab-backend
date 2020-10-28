@@ -516,7 +516,7 @@ class AdminConabControllerTest extends TestCase
         $authenticatedRoute = $this->actingAs($user, 'api');
         $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $response = $authenticatedRoute->deleteJson("/api/conab/admins/$fakeAdmin->id");
-        $response->assertOk();
+        $response->assertStatus(204);
         $this->assertDatabaseMissing('users', ['id' => $fakeAdmin->id]);
     }
 
