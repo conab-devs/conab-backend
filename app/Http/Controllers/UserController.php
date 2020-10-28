@@ -11,6 +11,12 @@ use App\Components\Validators\PasswordValidator;
 
 class UserController extends Controller
 {
+    public function show()
+    {
+        $user = auth()->user();
+        return response()->json($user);
+    }
+
     public function store(UserStore $request)
     {
         DB::beginTransaction();

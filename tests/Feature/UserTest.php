@@ -1087,4 +1087,15 @@ class UserTest extends TestCase
 
         $response->assertJson($new_phone);
     }
+
+   /** @test */
+   public function should_get_the_authenticated_user_data()
+   {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->getJson('api/users');
+        $response->assertStatus(200);
+
+        $response->assertJson($user->toArray());
+   }
 }
