@@ -80,4 +80,27 @@ class ProductControllerTest extends TestCase
             ->postJson('/api/products', $data);
         $costumerResponse->assertStatus(401);
     }
+
+    /** @test */
+    public function should_deny_product_delete_to_users_who_are_not_cooperative_administrators()
+    {
+        $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $costumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+
+        $category = factory(Category::class)->create();
+        $cooperative = factory(Cooperative::class)->create();
+
+        $product = factory(Product::class)->create([
+            'category_id' => $category->id,
+            'cooperative_id' => $cooperative->id
+        ]);
+
+        $conabAdminResponse = $this->actingAs($conabAdmin, 'api')
+            ->delete("/api/products/$product->id");
+        $conabAdminResponse->assertStatus(401);
+
+        $costumerResponse = $this->actingAs($costumer, 'api')
+            ->delete("/api/products/$product->id");
+        $costumerResponse->assertStatus(401);
+    }
 }
