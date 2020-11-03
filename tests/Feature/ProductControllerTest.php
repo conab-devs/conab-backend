@@ -126,5 +126,32 @@ class ProductControllerTest extends TestCase
         $cooperativeAdminResponse->assertStatus(200);
     }
 
+    /** @test */
+    public function should_update_a_product()
+    {
+        $cooperative = factory(Cooperative::class)->create();
+        $cooperativeAdmin = factory(User::class)->create([
+            'user_type' => 'ADMIN_COOP',
+            'cooperative_id' => $cooperative->id
+        ]);
 
+        $product = factory(Product::class)->create([
+            'category_id' => factory(Category::class)->create()->id,
+            'cooperative_id' => $cooperative->id
+        ]);
+
+        $data = [
+            'name' => 'any_name',
+            'price' => 9.99,
+            'photo_path' => UploadedFile::fake()->image('photo.png'),
+            'estimated_delivery_time' => 1,
+            'category_id' => factory(Category::class)->create()->id
+        ];
+
+        $response = $this->actingAs($cooperativeAdmin, 'api')
+            ->putJson("/api/products/$product->id", $data);
+
+        $response->assertStatus(200)
+            ->assertJsonFragment($data);
+    }
 }
