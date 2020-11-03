@@ -154,4 +154,62 @@ class ProductControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonFragment($data);
     }
+
+    /** @test */
+    public function should_deny_that_users_who_are_not_cooperative_administrators_update_a_product()
+    {
+        $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $costumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+
+        $product = factory(Product::class)->create([
+            'category_id' => factory(Category::class)->create()->id,
+            'cooperative_id' => factory(Cooperative::class)->create()->id
+        ]);
+
+        $data = [
+            'name' => 'any_name',
+            'price' => 9.99,
+            'photo_path' => UploadedFile::fake()->image('photo.png'),
+            'estimated_delivery_time' => 1,
+            'category_id' => factory(Category::class)->create()->id
+        ];
+
+        $conabAdminResponse = $this->actingAs($conabAdmin, 'api')
+            ->putJson("/api/products/$product->id", $data);
+        $conabAdminResponse->assertStatus(401);
+
+        $costumerResponse = $this->actingAs($costumer, 'api')
+            ->putJson("/api/products/$product->id", $data);
+        $costumerResponse->assertStatus(401);
+    }
+
+    /** @test */
+    public function should_deny_that_cooperative_administrators_update_products_that_are_not_their_own()
+    {
+        $cooperative1 = factory(Cooperative::class)->create();
+
+        $product = factory(Product::class)->create([
+            'category_id' => factory(Category::class)->create()->id,
+            'cooperative_id' => $cooperative1->id
+        ]);
+
+        $cooperative2 = factory(Cooperative::class)->create();
+        $cooperative2Admin = factory(User::class)->create([
+            'user_type' => 'ADMIN_COOP',
+            'cooperative_id' => $cooperative2->id
+        ]);
+
+        $data = [
+            'name' => 'any_name',
+            'price' => 9.99,
+            'photo_path' => UploadedFile::fake()->image('photo.png'),
+            'estimated_delivery_time' => 1,
+            'category_id' => factory(Category::class)->create()->id
+        ];
+
+        $response = $this->actingAs($cooperative2Admin, 'api')
+            ->putJson("/api/products/$product->id", $data);
+
+        $response->assertStatus(401);
+    }
 }
