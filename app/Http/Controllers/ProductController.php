@@ -70,6 +70,12 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        if (Gate::denies('manage-product', $product)) {
+            return response()->json([
+                'message' => 'Você não tem autorização a este recurso',
+            ], 401);
+        }
+        
         $request->validate([
             'name' => 'bail|max:255',
             'price' => 'numeric|between:0,99999999.99',
