@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Cooperative;
 use App\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -9,8 +10,16 @@ use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Cooperative $cooperative)
     {
+        if ($cooperative && Gate::allows('list-products-by-cooperative', $cooperative)) {
+            return Product::where('cooperative_id', $cooperative->id)->get();
+        } else if ($cooperative) {
+            return response()->json([
+                'message' => 'Você não tem autorização a este recurso',
+            ], 401);
+        }
+
         return response()->json(Product::all(), 200);
     }
 
@@ -75,7 +84,7 @@ class ProductController extends Controller
                 'message' => 'Você não tem autorização a este recurso',
             ], 401);
         }
-        
+
         $request->validate([
             'name' => 'bail|max:255',
             'price' => 'numeric|between:0,99999999.99',
