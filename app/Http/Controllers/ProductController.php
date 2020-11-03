@@ -68,9 +68,24 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Product $product)
     {
-        //
+        $request->validate([
+            'name' => 'bail|max:255',
+            'price' => 'numeric|between:0,99999999.99',
+            'photo_path' => 'image',
+            'estimated_delivery_time' => 'integer',
+            'category_id' => 'exists:App\Category,id',
+        ]);
+
+        $product->fill($request->all());
+        $product->photo_path = App::environment('production')
+            ? $this->uploadFileOnFirebase($request->file('photo_path'))
+            : $request->file('photo_path')->store('uploads');
+
+        $product->save();
+
+        return response($product);
     }
 
     /**
@@ -88,7 +103,5 @@ class ProductController extends Controller
         }
 
         $product->delete();
-
-        return response();
     }
 }
