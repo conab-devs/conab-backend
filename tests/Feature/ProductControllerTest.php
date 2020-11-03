@@ -212,4 +212,31 @@ class ProductControllerTest extends TestCase
 
         $response->assertStatus(401);
     }
+
+    /** @test */
+    public function should_return_products_from_their_own_cooperative()
+    {
+        $cooperative = factory(Cooperative::class)->create();
+
+        $productsCooperative = factory(Product::class, 5)->create([
+            'category_id' => factory(Category::class)->create()->id,
+            'cooperative_id' => $cooperative->id
+        ]);
+
+        factory(Product::class, 5)->create([
+            'category_id' => factory(Category::class)->create()->id,
+            'cooperative_id' => factory(Cooperative::class)->create()->id
+        ])->toArray();
+
+        $cooperativeAdmin = factory(User::class)->create([
+            'cooperative_id' => $cooperative->id,
+            'user_type' => 'ADMIN_COOP'
+        ]);
+
+        $response = $this->actingAs($cooperativeAdmin, 'api')
+            ->getJson("/api/products/cooperative/$cooperative->id");
+
+        $response->assertStatus(200)
+            ->assertJson($productsCooperative->toArray());
+    }
 }
