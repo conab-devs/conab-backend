@@ -103,4 +103,28 @@ class ProductControllerTest extends TestCase
             ->delete("/api/products/$product->id");
         $costumerResponse->assertStatus(401);
     }
+
+    /** @test */
+    public function should_allow_product_delete_to_users_who_are_cooperative_administrators()
+    {
+        $cooperative = factory(Cooperative::class)->create();
+        $category = factory(Category::class)->create();
+
+        $cooperativeAdmin = factory(User::class)->create([
+            'user_type' => 'ADMIN_COOP',
+            'cooperative_id' => $cooperative->id
+        ]);
+
+        $product = factory(Product::class)->create([
+            'category_id' => $category->id,
+            'cooperative_id' => $cooperative->id
+        ]);
+
+        $cooperativeAdminResponse = $this->actingAs($cooperativeAdmin, 'api')
+            ->delete("/api/products/$product->id");
+
+        $cooperativeAdminResponse->assertStatus(200);
+    }
+
+
 }
