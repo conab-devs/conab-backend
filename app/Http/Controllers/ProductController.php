@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Cooperative;
+use App\Http\Requests\Product\StoreRequest;
 use App\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
@@ -29,31 +29,14 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
+        $request->validated();
         $user = $request->user();
+
         $product = new Product();
         $product->cooperative_id = $user->cooperative_id;
-
-        if (Gate::denies('manage-product', $product)) {
-            return response()->json([
-                'message' => 'Você não tem autorização a este recurso',
-            ], 401);
-        }
-
-        $request->validate([
-            'name' => 'bail|required|max:255',
-            'price' => 'required|numeric|between:0,99999999.99',
-            'photo_path' => 'required|image',
-            'estimated_delivery_time' => 'required|integer',
-            'category_id' => 'required|exists:App\Category,id',
-        ]);
-
         $product->fill($request->all());
-        $product->photo_path = App::environment('production')
-            ? $this->uploadFileOnFirebase($request->file('photo_path'))
-            : $request->file('photo_path')->store('uploads');
-
         $product->save();
 
         return response($product, 201);
@@ -94,10 +77,6 @@ class ProductController extends Controller
         ]);
 
         $product->fill($request->all());
-        $product->photo_path = App::environment('production')
-            ? $this->uploadFileOnFirebase($request->file('photo_path'))
-            : $request->file('photo_path')->store('uploads');
-
         $product->save();
 
         return response($product);
