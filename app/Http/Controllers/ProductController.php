@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Cooperative;
 use App\Http\Requests\Product\StoreRequest;
+use App\Http\Requests\Product\UpdateRequest;
 use App\Product;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
@@ -60,21 +60,9 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(UpdateRequest $request, Product $product)
     {
-        if (Gate::denies('manage-product', $product)) {
-            return response()->json([
-                'message' => 'Você não tem autorização a este recurso',
-            ], 401);
-        }
-
-        $request->validate([
-            'name' => 'bail|max:255',
-            'price' => 'numeric|between:0,99999999.99',
-            'photo_path' => 'image',
-            'estimated_delivery_time' => 'integer',
-            'category_id' => 'exists:App\Category,id',
-        ]);
+        $request->validated();
 
         $product->fill($request->all());
         $product->save();
