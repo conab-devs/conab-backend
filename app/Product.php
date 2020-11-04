@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
 
 class Product extends Model
 {
@@ -16,6 +17,13 @@ class Product extends Model
     ];
 
     protected $hidden = ['id', 'created_at', 'updated_at'];
+
+    public function setPhotoPathAttribute($value)
+    {
+        $this->attributes['photo_path'] = App::environment('production')
+            ? $this->uploadFileOnFirebase($value)
+            : $value->store('uploads');
+    }
 
     public function category()
     {
