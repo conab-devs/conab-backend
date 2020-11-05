@@ -10,17 +10,27 @@ use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
-    public function index(Cooperative $cooperative)
+    public function index()
     {
-        if ($cooperative && Gate::allows('list-products-by-cooperative', $cooperative)) {
-            return Product::where('cooperative_id', $cooperative->id)->get();
-        } else if ($cooperative) {
+        $products = Product::with('category')
+            ->paginate(5);
+
+        return response($products);
+    }
+
+    public function indexCooperative(Cooperative $cooperative)
+    {
+        if (Gate::denies('index-products-cooperative', $cooperative)) {
             return response()->json([
                 'message' => 'Você não tem autorização a este recurso',
             ], 401);
         }
 
-        return response()->json(Product::all(), 200);
+        $products = $cooperative->products()
+            ->with('category')
+            ->paginate(5);
+
+        return response($products);
     }
 
     /**
