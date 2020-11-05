@@ -214,19 +214,44 @@ class ProductControllerTest extends TestCase
     }
 
     /** @test */
+    public function should_return_a_list_products()
+    {
+        $costumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $cooperatives = factory(Cooperative::class, 3)->create();
+
+        $idCoopeartives = array_map(function ($cooperative) {
+            return $cooperative['id'];
+        }, $cooperatives->toArray());
+
+        $products = factory(Product::class, 20)->create([
+            'category_id' => factory(Category::class)->create()->id,
+            'cooperative_id' => $idCoopeartives[rand(0, 2)]
+        ]);
+
+        $response = $this->actingAs($costumer, 'api')
+            ->getJson('/api/products');
+
+        $products = array_slice($products->toArray(), 0, 5);
+        $response->assertOk();
+        $this->assertCount(5, $response['data']);
+    }
+
+    /** @test */
     public function should_return_products_from_their_own_cooperative()
     {
         $cooperative = factory(Cooperative::class)->create();
 
-        $productsCooperative = factory(Product::class, 5)->create([
+        $amountProduct = 3;
+
+        factory(Product::class, $amountProduct)->create([
             'category_id' => factory(Category::class)->create()->id,
             'cooperative_id' => $cooperative->id
-        ]);
+        ])->toArray();
 
-        factory(Product::class, 5)->create([
+        factory(Product::class, 7)->create([
             'category_id' => factory(Category::class)->create()->id,
             'cooperative_id' => factory(Cooperative::class)->create()->id
-        ])->toArray();
+        ]);
 
         $cooperativeAdmin = factory(User::class)->create([
             'cooperative_id' => $cooperative->id,
@@ -236,7 +261,7 @@ class ProductControllerTest extends TestCase
         $response = $this->actingAs($cooperativeAdmin, 'api')
             ->getJson("/api/products/cooperative/$cooperative->id");
 
-        $response->assertStatus(200)
-            ->assertJson($productsCooperative->toArray());
+        $response->assertOk();
+        $this->assertCount($amountProduct, $response['data']);
     }
 }
