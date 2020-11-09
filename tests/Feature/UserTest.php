@@ -975,12 +975,15 @@ class UserTest extends TestCase
     /** @test */
     public function should_update_user()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(\App\User::class)->create([
+            'password' => '123456'
+        ]);
 
         $new_informations = [
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
-            'password' => 'an_password',
+            'password' => '123456',
+            'new_password' => 'an_password',
             'cpf' => '123.123.123-12',
         ];
 
@@ -988,14 +991,17 @@ class UserTest extends TestCase
             ->putJson("api/users", $new_informations);
         $response->assertStatus(200);
 
-        $expected_return = array_diff_key(
-            $new_informations,
-            ['password' => '']
-        );
-        $response->assertJson($expected_return);
+        $expected_response = array_diff_assoc($new_informations, [
+            'password' => '123456',
+            'new_password' => 'an_password',
+        ]);
+
+        $response->assertJson($expected_response);
+
+        $user->refresh();
 
         $this->assertTrue(
-            Hash::check($new_informations['password'], $user->password)
+            Hash::check($new_informations['new_password'], $user->password)
         );
     }
 

@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use App\Components\Validators\UpdateUser;
-use App\Components\Validators\PasswordValidator;
+use Illuminate\Support\Facades\Hash;
 
 class CooperativeAdminController extends Controller
 {
@@ -97,11 +97,11 @@ class CooperativeAdminController extends Controller
 
             $admin->update($request->except('password', 'new_password', 'phones'));
 
-            $password = $data['new_password'] ?? null;
-            if (PasswordValidator::validate($password, $admin->password)) {
-                return response()->json('Informe um novo password, não o antigo.', 422);
-            } else {
-                $admin->password = $password;
+            if (!empty($data['password'])) {
+                if (!Hash::check($data['password'], $admin->password)) {
+                    return response('', 400);
+                }
+                $admin->password = $data['new_password'];
             }
 
             $admin->save();

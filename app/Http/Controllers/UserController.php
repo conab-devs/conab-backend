@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStore;
-use Illuminate\Http\Request;
+use App\Http\Requests\UserUpdate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use App\Http\Requests\UserUpdate;
-use App\Components\Validators\PasswordValidator;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -44,16 +43,18 @@ class UserController extends Controller
         $validated = $request->validated();
         $user = auth()->user();
 
-        $password = $validated['password'] ?? null;
-
-        if (PasswordValidator::validate($password, $user->password)) {
-            return response()->json('Informe um novo password, não o antigo.', 422);
-        }
-
         DB::beginTransaction();
 
         try {
-            $user->update($validated);
+            if (!empty($validated['password'])) {
+                if (!Hash::check($validated['password'], $user->password)) {
+                    return response('', 400);
+                }
+                $user->password = $validated['new_password'];
+                $user->save();
+            }
+
+            $user->update($request->except('password', 'new_password'));
 
             $relationships_keys = collect(['addresses', 'phones']);
             $relationships_keys->each(function ($relationship) use ($user, $validated) {
@@ -71,7 +72,7 @@ class UserController extends Controller
         } catch (\Exception $err) {
             DB::rollback();
             return response()->json([
-                'message' => 'Algo deu errado, tente novamente em alguns instantes'
+                'message' => 'Algo deu errado, tente novamente em alguns instantes',
             ], 500);
         }
     }

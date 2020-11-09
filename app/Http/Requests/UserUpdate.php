@@ -27,6 +27,7 @@ class UserUpdate extends FormRequest
             'name' => 'string',
             'email' => 'email|unique:users',
             'password' => 'string|min:6',
+            'new_password' => 'string|min:6|required_with:password',
             'cpf' => 'regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/|unique:users,cpf',
             'phones' => 'array',
             'phones.*.number' => 'string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/|distinct|unique:phones,number',
