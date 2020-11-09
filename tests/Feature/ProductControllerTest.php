@@ -22,14 +22,13 @@ class ProductControllerTest extends TestCase
             'cooperative_id' => $cooperative->id,
             'user_type' => 'ADMIN_COOP'
         ]);
-        $category = factory(Category::class)->create();
 
         $data = [
             'name' => 'any_name',
             'price' => 9.99,
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
-            'category_id' => $category->id
+            'category_id' => factory(Category::class)->create()->id
         ];
 
         $response = $this->actingAs($cooperativeAdmin, 'api')
@@ -45,10 +44,8 @@ class ProductControllerTest extends TestCase
         $cooperative = factory(Cooperative::class)->create();
         $user = factory(User::class)->create();
 
-        $category = factory(Category::class)->create();
         $product = factory(Product::class)->create([
             'cooperative_id' => $cooperative->id,
-            'category_id' => $category->id
         ]);
 
         $response = $this->actingAs($user, 'api')
@@ -62,14 +59,13 @@ class ProductControllerTest extends TestCase
     {
         $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $costumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
-        $category = factory(Category::class)->create();
 
         $data = [
             'name' => 'any_name',
             'price' => 9.99,
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
-            'category_id' => $category->id
+            'category_id' => factory(Category::class)->create()->id
         ];
 
         $conabAdminResponse = $this->actingAs($conabAdmin, 'api')
@@ -87,11 +83,9 @@ class ProductControllerTest extends TestCase
         $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $costumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
 
-        $category = factory(Category::class)->create();
         $cooperative = factory(Cooperative::class)->create();
 
         $product = factory(Product::class)->create([
-            'category_id' => $category->id,
             'cooperative_id' => $cooperative->id
         ]);
 
@@ -108,7 +102,6 @@ class ProductControllerTest extends TestCase
     public function should_allow_product_delete_to_users_who_are_cooperative_administrators()
     {
         $cooperative = factory(Cooperative::class)->create();
-        $category = factory(Category::class)->create();
 
         $cooperativeAdmin = factory(User::class)->create([
             'user_type' => 'ADMIN_COOP',
@@ -116,7 +109,6 @@ class ProductControllerTest extends TestCase
         ]);
 
         $product = factory(Product::class)->create([
-            'category_id' => $category->id,
             'cooperative_id' => $cooperative->id
         ]);
 
@@ -136,7 +128,6 @@ class ProductControllerTest extends TestCase
         ]);
 
         $product = factory(Product::class)->create([
-            'category_id' => factory(Category::class)->create()->id,
             'cooperative_id' => $cooperative->id
         ]);
 
@@ -162,7 +153,6 @@ class ProductControllerTest extends TestCase
         $costumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
 
         $product = factory(Product::class)->create([
-            'category_id' => factory(Category::class)->create()->id,
             'cooperative_id' => factory(Cooperative::class)->create()->id
         ]);
 
@@ -189,7 +179,6 @@ class ProductControllerTest extends TestCase
         $cooperative1 = factory(Cooperative::class)->create();
 
         $product = factory(Product::class)->create([
-            'category_id' => factory(Category::class)->create()->id,
             'cooperative_id' => $cooperative1->id
         ]);
 
@@ -224,7 +213,6 @@ class ProductControllerTest extends TestCase
         }, $cooperatives->toArray());
 
         factory(Product::class, 20)->create([
-            'category_id' => factory(Category::class)->create()->id,
             'cooperative_id' => $idCoopeartives[rand(0, 2)]
         ]);
 
@@ -243,12 +231,10 @@ class ProductControllerTest extends TestCase
         $amountProduct = 3;
 
         factory(Product::class, $amountProduct)->create([
-            'category_id' => factory(Category::class)->create()->id,
             'cooperative_id' => $cooperative->id
         ]);
 
         factory(Product::class, 7)->create([
-            'category_id' => factory(Category::class)->create()->id,
             'cooperative_id' => factory(Cooperative::class)->create()->id
         ]);
 
@@ -277,7 +263,6 @@ class ProductControllerTest extends TestCase
         }, $cooperatives->toArray());
 
         factory(Product::class, 20)->create([
-            'category_id' => factory(Category::class)->create()->id,
             'cooperative_id' => $idCoopeartives[rand(0, 2)]
         ]);
 
