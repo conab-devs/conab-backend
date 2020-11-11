@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserStore;
-use App\Http\Requests\UserUpdate;
+use App\Http\Requests\User\Store;
+use App\Http\Requests\User\Update;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +15,7 @@ class UserController extends Controller
         return response(auth()->user());
     }
 
-    public function store(UserStore $request)
+    public function store(Store $request)
     {
         DB::beginTransaction();
 
@@ -38,7 +38,7 @@ class UserController extends Controller
         }
     }
 
-    public function update(UserUpdate $request)
+    public function update(Update $request)
     {
         $validated = $request->validated();
         $user = auth()->user();

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Cooperative;
-use App\Http\Requests\CooperativeAdminStore;
+use App\Http\Requests\Cooperative\Admin\Store;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -47,7 +47,7 @@ class CooperativeAdminController extends Controller
         return response()->json($admin);
     }
 
-    public function store(CooperativeAdminStore $request, Cooperative $cooperative)
+    public function store(Store $request, Cooperative $cooperative)
     {
         if (Gate::denies('manage-cooperative-admin')) {
             return response()->json([
