@@ -22,9 +22,8 @@ class UserController extends Controller
         try {
             $validated = $request->validated();
             $user = \App\User::create($validated);
-            $user->phones()->createMany($validated['phones']);
             $user->addresses()->createMany($validated['addresses']);
-            $user->load('phones', 'addresses');
+            $user->load('addresses');
 
             DB::commit();
 
@@ -53,10 +52,9 @@ class UserController extends Controller
                 $user->password = $validated['new_password'];
                 $user->save();
             }
-
             $user->update($request->except('password', 'new_password'));
 
-            $relationships_keys = collect(['addresses', 'phones']);
+            $relationships_keys = collect(['addresses']);
             $relationships_keys->each(function ($relationship) use ($user, $validated) {
                 if (isset($validated[$relationship])) {
                     $user->{$relationship}()->delete();
@@ -66,7 +64,7 @@ class UserController extends Controller
 
             DB::commit();
 
-            $user->load('addresses', 'phones');
+            $user->load('addresses');
 
             return response()->json($user);
         } catch (\Exception $err) {
@@ -84,6 +82,8 @@ class UserController extends Controller
         }
 
         $user->phones()->delete();
+        $user->addresses()->delete();
+
         $user->delete();
 
         return response('', 204);

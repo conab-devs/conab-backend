@@ -43,6 +43,10 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
 
     Route::put('/users', 'UserController@update');
     Route::get('/users', 'UserController@show');
+
+    Route::put('/phones', 'PhoneController@update');
+    Route::post('/phones', 'PhoneController@store');
+    Route::get('/phones', 'PhoneController@index');
 });
 
 Route::post('/users', 'UserController@store');

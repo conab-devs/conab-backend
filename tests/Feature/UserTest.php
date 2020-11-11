@@ -22,10 +22,6 @@ class UserTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => 'valid_cpf',
-            'phones' => [
-                ['number' => '(00) 00000-0000'],
-                ['number' => '(11) 11111-1111'],
-            ],
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -52,10 +48,6 @@ class UserTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => 'valid_cpf',
-            'phones' => [
-                ['number' => '(00) 00000-0000'],
-                ['number' => '(11) 11111-1111'],
-            ],
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -81,10 +73,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'password' => 'valid_password',
             'cpf' => 'valid_cpf',
-            'phones' => [
-                ['number' => '(00) 00000-0000'],
-                ['number' => '(11) 11111-1111'],
-            ],
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -111,10 +99,6 @@ class UserTest extends TestCase
             'email' => 'invalid_email',
             'password' => 'valid_password',
             'cpf' => 'valid_cpf',
-            'phones' => [
-                ['number' => '(00) 00000-0000'],
-                ['number' => '(11) 11111-1111'],
-            ],
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -143,10 +127,6 @@ class UserTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => 'valid_cpf',
-            'phones' => [
-                ['number' => '(00) 00000-0000'],
-                ['number' => '(11) 11111-1111'],
-            ],
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -172,10 +152,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'cpf' => 'valid_cpf',
-            'phones' => [
-                ['number' => '(00) 00000-0000'],
-                ['number' => '(11) 11111-1111'],
-            ],
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -202,10 +178,6 @@ class UserTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 123456,
             'cpf' => 'valid_cpf',
-            'phones' => [
-                ['number' => '(00) 00000-0000'],
-                ['number' => '(11) 11111-1111'],
-            ],
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -232,10 +204,6 @@ class UserTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => '1234',
             'cpf' => 'valid_cpf',
-            'phones' => [
-                ['number' => '(00) 00000-0000'],
-                ['number' => '(11) 11111-1111'],
-            ],
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -261,10 +229,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
-            'phones' => [
-                ['number' => '(00) 00000-0000'],
-                ['number' => '(11) 11111-1111'],
-            ],
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -291,10 +255,6 @@ class UserTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
             'cpf' => 1234,
-            'phones' => [
-                ['number' => '(00) 00000-0000'],
-                ['number' => '(11) 11111-1111'],
-            ],
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -321,10 +281,6 @@ class UserTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
             'cpf' => '1234',
-            'phones' => [
-                ['number' => '(00) 00000-0000'],
-                ['number' => '(11) 11111-1111'],
-            ],
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -353,127 +309,6 @@ class UserTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
             'cpf' => '123.123.123-12',
-            'phones' => [
-                ['number' => '(00) 00000-0000'],
-                ['number' => '(11) 11111-1111'],
-            ],
-            'addresses' => [
-                [
-                    'street' => 'valid_street',
-                    'neighborhood' => 'valid_neighborhood',
-                    'city' => 'valid_city',
-                    'number' => 'any_num',
-                ],
-                [
-                    'street' => 'another_street',
-                    'neighborhood' => 'another_neighborhood',
-                    'city' => 'another_city',
-                    'number' => 'any_num',
-                ],
-            ],
-        ]);
-        $response->assertStatus(422);
-    }
-
-    /** @test */
-    public function should_return_validation_error_if_no_phone_is_passed()
-    {
-        $response = $this->postJson('api/users', [
-            'name' => 'valid_name',
-            'email' => 'valid_mail@mail.com',
-            'password' => '123456',
-            'cpf' => '123.123.123-12',
-            'addresses' => [
-                [
-                    'street' => 'valid_street',
-                    'neighborhood' => 'valid_neighborhood',
-                    'city' => 'valid_city',
-                    'number' => 'any_num',
-                ],
-                [
-                    'street' => 'another_street',
-                    'neighborhood' => 'another_neighborhood',
-                    'city' => 'another_city',
-                    'number' => 'any_num',
-                ],
-            ],
-        ]);
-        $response->assertStatus(422);
-    }
-
-    /** @test */
-    public function should_return_validation_error_if_array_is_not_passed_to_phones()
-    {
-        $response = $this->postJson('api/users', [
-            'name' => 'valid_name',
-            'email' => 'valid_mail@mail.com',
-            'password' => '123456',
-            'phones' => 123,
-            'cpf' => '123.123.123-12',
-            'addresses' => [
-                [
-                    'street' => 'valid_street',
-                    'neighborhood' => 'valid_neighborhood',
-                    'city' => 'valid_city',
-                    'number' => 'any_num',
-                ],
-                [
-                    'street' => 'another_street',
-                    'neighborhood' => 'another_neighborhood',
-                    'city' => 'another_city',
-                    'number' => 'any_num',
-                ],
-            ],
-        ]);
-        $response->assertStatus(422);
-    }
-
-    /** @test */
-    public function should_return_validation_error_if_wrong_format_phones_are_passed()
-    {
-        $response = $this->postJson('api/users', [
-            'name' => 'valid_name',
-            'email' => 'valid_mail@mail.com',
-            'password' => '123456',
-            'phones' => [
-                ['number' => '85 85858-8585'],
-                ['number' => '85 86428-1575'],
-            ],
-            'cpf' => '123.123.123-12',
-            'addresses' => [
-                [
-                    'street' => 'valid_street',
-                    'neighborhood' => 'valid_neighborhood',
-                    'city' => 'valid_city',
-                    'number' => 'any_num',
-                ],
-                [
-                    'street' => 'another_street',
-                    'neighborhood' => 'another_neighborhood',
-                    'city' => 'another_city',
-                    'number' => 'any_num',
-                ],
-            ],
-        ]);
-        $response->assertStatus(422);
-    }
-
-    /** @test */
-    public function should_return_validation_error_if_duplicated_phones_are_passed()
-    {
-        $user = factory(\App\User::class)->create();
-        $user->phones()->create([
-            'number' => '(11) 11111-1111',
-        ]);
-
-        $response = $this->postJson('api/users', [
-            'name' => 'valid_name',
-            'email' => 'valid_mail@mail.com',
-            'password' => '123456',
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
-            'cpf' => '123.123.123-12',
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -499,9 +334,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
             'cpf' => '123.123.123-12',
         ]);
         $response->assertStatus(422);
@@ -514,9 +346,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
             'cpf' => '123.123.123-12',
             'addresses' => 123,
         ]);
@@ -530,9 +359,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
             'cpf' => '123.123.123-12',
             'addresses' => [
                 [],
@@ -547,9 +373,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
             'cpf' => '123.123.123-12',
             'addresses' => [
                 ['street' => 123456],
@@ -565,9 +388,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
             'cpf' => '123.123.123-12',
             'addresses' => [
                 ['street' => 'valid_street'],
@@ -582,9 +402,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
             'cpf' => '123.123.123-12',
             'addresses' => [
                 [
@@ -602,9 +419,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
             'cpf' => '123.123.123-12',
             'addresses' => [
                 [
@@ -622,9 +436,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
             'cpf' => '123.123.123-12',
             'addresses' => [
                 [
@@ -643,9 +454,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
             'cpf' => '123.123.123-12',
             'addresses' => [
                 [
@@ -664,9 +472,6 @@ class UserTest extends TestCase
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => '123456',
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
             'cpf' => '123.123.123-12',
             'addresses' => [
                 [
@@ -688,9 +493,6 @@ class UserTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '123.123.123-12',
-            'phones' => [
-                ['number' => '(12) 12122-1212'],
-            ],
             'addresses' => [
                 [
                     'street' => 'valid_street',
@@ -708,41 +510,6 @@ class UserTest extends TestCase
         $this->assertDatabaseHas('users', [
             'email' => 'valid_mail@mail.com',
         ]);
-    }
-
-    /** @test */
-    public function should_store_phones_with_user()
-    {
-        $phones = [
-            ['number' => '(12) 12122-1212'],
-            ['number' => '(22) 12345-1234'],
-        ];
-
-        $response = $this->postJson('api/users', [
-            'name' => 'valid_name',
-            'email' => 'valid_mail@mail.com',
-            'password' => 'valid_password',
-            'cpf' => '123.123.123-12',
-            'phones' => [
-                ['number' => $phones[0]['number']],
-                ['number' => $phones[1]['number']],
-            ],
-            'addresses' => [
-                [
-                    'street' => 'valid_street',
-                    'neighborhood' => 'valid_neighborhood',
-                    'city' => 'valid_city',
-                    'number' => 'valid_num',
-                ],
-            ],
-        ]);
-        $response->assertJsonStructure(['phones']);
-
-        for ($phone = 0; $phone < count($phones); $phone++) {
-            $this->assertDatabaseHas('phones', [
-                'number' => $phones[$phone]['number'],
-            ]);
-        }
     }
 
     /** @test */
@@ -768,9 +535,6 @@ class UserTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '123.123.123-12',
-            'phones' => [
-                ['number' => '(12) 12121-1212'],
-            ],
             'addresses' => $addresses,
         ]);
         $response->assertJsonStructure(['addresses']);
@@ -868,47 +632,6 @@ class UserTest extends TestCase
 
         $response = $this->actingAs($user)->putJson("api/users", [
             'cpf' => '123.123.123-12',
-        ]);
-        $response->assertStatus(422);
-    }
-
-    /** @test */
-    public function should_return_validation_error_if_array_is_not_passed_to_phones_on_update()
-    {
-        $user = factory(\App\User::class)->create();
-
-        $response = $this->actingAs($user)->putJson("api/users", [
-            'phones' => 123,
-        ]);
-        $response->assertStatus(422);
-    }
-
-    /** @test */
-    public function should_return_validation_error_if_wrong_format_phones_are_passed_on_update()
-    {
-        $user = factory(\App\User::class)->create();
-
-        $response = $this->actingAs($user)->putJson("api/users", [
-            'phones' => [
-                ['number' => '85 85858-8585'],
-                ['number' => '85 86428-1575'],
-            ],
-        ]);
-        $response->assertStatus(422);
-    }
-
-    /** @test */
-    public function should_return_validation_error_if_duplicated_phones_are_passed_on_update()
-    {
-        $user = factory(\App\User::class)->create();
-        $user->phones()->create([
-            'number' => '(11) 11111-1111',
-        ]);
-
-        $response = $this->actingAs($user)->putJson("api/users", [
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
         ]);
         $response->assertStatus(422);
     }
@@ -1068,31 +791,6 @@ class UserTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJson($new_address);
-    }
-
-    /** @test */
-    public function should_update_user_phones()
-    {
-        $user = factory(\App\User::class)->create();
-
-        $user->phones()
-            ->create(factory(\App\Phone::class)
-            ->make()
-            ->toArray());
-
-        $new_phone = [
-            'phones' => [
-                [
-                    'number' => '(11) 11111-1111)',
-                ],
-            ],
-        ];
-
-        $response = $this->actingAs($user)
-            ->putJson('api/users', $new_phone);
-        $response->assertStatus(200);
-
-        $response->assertJson($new_phone);
     }
 
    /** @test */
