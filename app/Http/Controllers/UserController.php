@@ -17,24 +17,9 @@ class UserController extends Controller
 
     public function store(Store $request)
     {
-        DB::beginTransaction();
+        $user = \App\User::create($request->validated());
 
-        try {
-            $validated = $request->validated();
-            $user = \App\User::create($validated);
-            $user->addresses()->createMany($validated['addresses']);
-            $user->load('addresses');
-
-            DB::commit();
-
-            return response()->json($user, 201);
-        } catch (\Exception $error) {
-            DB::rollBack();
-
-            return response()->json([
-                "message" => "Algo deu errado, tente novamente em alguns instantes",
-            ], 500);
-        }
+        return response()->json($user, 201);
     }
 
     public function update(Update $request)
@@ -54,17 +39,7 @@ class UserController extends Controller
             }
             $user->update($request->except('password', 'new_password'));
 
-            $relationships_keys = collect(['addresses']);
-            $relationships_keys->each(function ($relationship) use ($user, $validated) {
-                if (isset($validated[$relationship])) {
-                    $user->{$relationship}()->delete();
-                    $user->{$relationship}()->createMany($validated[$relationship]);
-                }
-            });
-
             DB::commit();
-
-            $user->load('addresses');
 
             return response()->json($user);
         } catch (\Exception $err) {

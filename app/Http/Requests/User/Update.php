@@ -29,11 +29,6 @@ class Update extends FormRequest
             'password' => 'string|min:6',
             'new_password' => 'string|min:6|required_with:password',
             'cpf' => 'regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/|unique:users,cpf',
-            'addresses' => 'array',
-            'addresses.*.street' => 'string',
-            'addresses.*.neighborhood' => 'string',
-            'addresses.*.city' => 'string',
-            'addresses.*.number' => 'string',
         ];
     }
 }

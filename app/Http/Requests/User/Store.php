@@ -28,11 +28,6 @@ class Store extends FormRequest
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
             'cpf' => 'required|regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/|unique:users,cpf',
-            'addresses' => 'required|array',
-            'addresses.*.street' => 'required|string',
-            'addresses.*.neighborhood' => 'required|string',
-            'addresses.*.city' => 'required|string',
-            'addresses.*.number' => 'required|string'
         ];
     }
 }
