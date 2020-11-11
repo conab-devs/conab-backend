@@ -30,9 +30,9 @@ class UploadController extends Controller
                 : $avatar->store('uploads');
             $user->save();
 
-            return response(['url' => $user->profile_picture]);
+            return response()->json(['url' => $user->profile_picture]);
         }
 
-        return response(['error' => 'Avatar is required and should be a valid file'], 400);
+        return response()->json(['error' => 'Avatar is required and should be a valid file'], 400);
     }
 }
