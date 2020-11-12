@@ -31,7 +31,7 @@ class ForgotPasswordHandler
 
     public function resetPassword($request)
     {
-        $arguments = ['email', 'token'];
+        $arguments = ['email', 'code'];
 
         foreach ($arguments as $argument) {
             if (!array_key_exists($argument, $request)) {
@@ -41,7 +41,7 @@ class ForgotPasswordHandler
 
         $query = $this->reset->where([
             'email' => $request['email'],
-            'token' => $request['token'],
+            'token' => $request['code'],
         ]);
 
         if (!$query->count()) {
@@ -60,14 +60,14 @@ class ForgotPasswordHandler
         $passwordRequest = $this->reset->firstWhere('email', $email);
 
         if ($passwordRequest) {
-            return $passwordRequest->token;
+            return $passwordRequest->code;
         }
 
-        $token = $this->generator->generate();
+        $code = $this->generator->generate();
 
-        $this->reset->fill(['email' => $email, 'token' => $token]);
+        $this->reset->fill(['email' => $email, 'code' => $code]);
         $this->reset->save();
 
-        return $token;
+        return $code;
     }
 }

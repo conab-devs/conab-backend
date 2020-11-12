@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Components\Auth\ForgotPasswordHandler;
-use App\Components\Auth\TokenGenerator\StringGenerator;
+use App\Components\Auth\TokenGenerator\CodeGenerator;
 use App\Exceptions\ServerError;
 use App\Exceptions\UnauthorizedException;
 use App\PasswordReset;
@@ -27,8 +27,9 @@ class ForgotPasswordTest extends TestCase
         parent::setUp();
         $this->passwordReset = Mockery::mock(PasswordReset::class);
         $this->user = Mockery::mock(User::class);
-        $this->generator = Mockery::mock(StringGenerator::class);
+        $this->generator = Mockery::mock(CodeGenerator::class);
     }
+
 
     /** @test */
     public function should_throw_error_if_email_not_passed()
@@ -39,12 +40,12 @@ class ForgotPasswordTest extends TestCase
                                         $this->user);
 
         $sut->resetPassword([
-            'token' => 'valid_token',
+            'code' => 123456,
         ]);
     }
 
     /** @test */
-    public function should_throw_error_if_token_not_passed()
+    public function should_throw_error_if_code_not_passed()
     {
         $this->expectException(ServerError::class);
         $sut = new ForgotPasswordHandler($this->passwordReset,
@@ -56,20 +57,20 @@ class ForgotPasswordTest extends TestCase
     }
 
     /** @test */
-    public function string_token_generator_should_return_token()
+    public function string_token_generator_should_return_code()
     {
-        $sut = new StringGenerator();
-        $token = $sut->generate();
-        $this->assertNotEmpty($token);
+        $sut = new CodeGenerator();
+        $code = $sut->generate();
+        $this->assertNotEmpty($code);
     }
 
     /** @test */
-    public function generate_token_should_return_password_reset_token_if_it_already_exists()
+    public function generate_token_should_return_password_reset_code_if_it_already_exists()
     {
         $queriedReset = Mockery::mock(PasswordReset::class);
         $queriedReset->shouldReceive('getAttribute')
-            ->with('token')
-            ->andReturn('existent_token');
+            ->with('code')
+            ->andReturn(123456);
         $queriedReset->shouldReceive('getAttribute')
             ->with('email')
             ->twice()
@@ -82,21 +83,22 @@ class ForgotPasswordTest extends TestCase
 
         $this->generator->shouldReceive('generate')
             ->never()
-            ->andReturn('valid_token');
+            ->andReturn(123456);
 
         $sut = new ForgotPasswordHandler($this->passwordReset,
                                         $this->generator,
                                         $this->user);
 
-        $token = $sut->generateToken($queriedReset->email);
+        $code = $sut->generateToken($queriedReset->email);
 
-        $this->assertEquals($queriedReset->token, $token);
+        $this->assertEquals($queriedReset->code, $code);
     }
 
+
     /** @test */
-    public function generate_token_should_return_token()
+    public function generate_token_should_return_code()
     {
-        $token = 'valid_token';
+        $code = 123456;
         $email = 'valid_mail@mail.com';
 
         $this->passwordReset->shouldReceive('firstWhere')
@@ -104,27 +106,28 @@ class ForgotPasswordTest extends TestCase
             ->once()
             ->andReturn(null);
         $this->passwordReset->shouldReceive('fill')
-            ->with(['email' => $email, 'token' => $token])
+            ->with(['email' => $email, 'code' => $code])
             ->once()
             ->andReturn(null);
         $this->passwordReset->shouldReceive('save')
             ->once()
             ->andReturn(1);
 
-        $this->generator->shouldReceive('generate')->once()->andReturn($token);
+        $this->generator->shouldReceive('generate')->once()->andReturn($code);
 
         $sut = new ForgotPasswordHandler($this->passwordReset,
                                         $this->generator,
                                         $this->user);
 
-        $this->assertEquals('valid_token', $sut->generateToken($email));
+        $this->assertEquals($code, $sut->generateToken($email));
     }
 
+
     /** @test */
-    public function ensure_that_reset_request_is_sent_with_valid_token_and_mail()
+    public function ensure_that_reset_request_is_sent_with_valid_code_and_mail()
     {
         $email = 'valid_mail@mail.com';
-        $token = 'valid_token';
+        $code = 123456;
 
         Mail::fake();
 
@@ -133,14 +136,14 @@ class ForgotPasswordTest extends TestCase
             ->once()
             ->andReturn(null);
         $this->passwordReset->shouldReceive('fill')
-            ->with(['email' => $email, 'token' => $token])
+            ->with(['email' => $email, 'code' => $code])
             ->once()
             ->andReturn(null);
         $this->passwordReset->shouldReceive('save')
             ->once()
             ->andReturn(1);
 
-        $this->generator->shouldReceive('generate')->once()->andReturn($token);
+        $this->generator->shouldReceive('generate')->once()->andReturn($code);
 
         $sut = new ForgotPasswordHandler($this->passwordReset,
                                         $this->generator,
@@ -148,8 +151,8 @@ class ForgotPasswordTest extends TestCase
 
         $sut->sendResetRequest($email);
 
-        Mail::assertSent(function (\App\Mail\ResetMail $mail) use ($token, $email) {
-            return $mail->token === $token && $mail->email === $email;
+        Mail::assertSent(function (\App\Mail\ResetMail $mail) use ($code, $email) {
+            return $mail->code === $code && $mail->email === $email;
         });
     }
 
@@ -166,7 +169,7 @@ class ForgotPasswordTest extends TestCase
             ->resetPassword([
                 'email' => 'invalid_email',
                 'password' => 'new_password',
-                'token' => 'valid_token',
+                'code' => 123456,
             ]);
     }
 
@@ -202,7 +205,7 @@ class ForgotPasswordTest extends TestCase
             ->resetPassword([
                 'email' => $email,
                 'password' => $newPassword,
-                'token' => 'valid_token',
+                'code' => 123456,
             ]);
     }
 }

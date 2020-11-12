@@ -3,8 +3,8 @@
 
 Reset or change your password.
 
-@component('mail::button', ['url' => $url])
-Change Password
+@component('mail::button', ['code' => $code])
+Reset Code
 @endcomponent
 
 Thanks,<br>
