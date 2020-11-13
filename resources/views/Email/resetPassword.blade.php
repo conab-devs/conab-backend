@@ -3,7 +3,7 @@
 
 Reset or change your password.
 
-['code' => $code]
+{{ $code }}
 
 Thanks,<br>
 {{ config('app.name') }}
