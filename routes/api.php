@@ -43,7 +43,6 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
 
     Route::get('/products', 'ProductController@index');
     Route::get('/products/{product}', 'ProductController@show');
-    Route::get('/products/cooperative/{cooperative}', 'ProductController@indexCooperative');
     Route::post('/products', 'ProductController@store');
     Route::delete('/products/{product}', 'ProductController@destroy');
     Route::put('/products/{product}', 'ProductController@update');
