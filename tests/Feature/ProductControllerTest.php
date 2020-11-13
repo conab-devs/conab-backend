@@ -224,11 +224,11 @@ class ProductControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_products_from_their_own_cooperative()
+    public function should_return_a_filtered_list_of_products_by_cooperative()
     {
         $cooperative = factory(Cooperative::class)->create();
 
-        $amountProduct = 3;
+        $amountProduct = 4;
 
         factory(Product::class, $amountProduct)->create([
             'cooperative_id' => $cooperative->id
@@ -239,40 +239,16 @@ class ProductControllerTest extends TestCase
         ]);
 
         $cooperativeAdmin = factory(User::class)->create([
-            'cooperative_id' => $cooperative->id,
-            'user_type' => 'ADMIN_COOP'
+            'user_type' => 'ADMIN_COOP',
+            'cooperative_id' => $cooperative->id
         ]);
 
         $response = $this->actingAs($cooperativeAdmin, 'api')
-            ->getJson("/api/products/cooperative/$cooperative->id");
+            ->getJson("/api/products", [
+                'cooperative' => $cooperative->id
+            ]);
 
         $response->assertOk();
         $this->assertCount($amountProduct, $response['data']);
-    }
-
-    /** @test */
-    public function should_return_unauthorized_when_the_user_is_not_a_cooperative_administrator()
-    {
-        $costumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
-        $admin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-
-        $cooperatives = factory(Cooperative::class, 3)->create();
-
-        $idCoopeartives = array_map(function ($cooperative) {
-            return $cooperative['id'];
-        }, $cooperatives->toArray());
-
-        factory(Product::class, 20)->create([
-            'cooperative_id' => $idCoopeartives[rand(0, 2)]
-        ]);
-
-        $costumerResponse = $this->actingAs($costumer, 'api')
-            ->getJson("/api/products/cooperative/$idCoopeartives[0]");
-        $costumerResponse->assertUnauthorized();
-
-        $AdminResponse = $this->actingAs($admin, 'api')
-            ->getJson("/api/products/cooperative/$idCoopeartives[0]");
-
-        $AdminResponse ->assertUnauthorized();
     }
 }
