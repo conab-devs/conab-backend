@@ -13,9 +13,12 @@ class AlterColumnTokenToCode extends Migration
      */
     public function up()
     {
-        Schema::table('password_resets', function (Blueprint $table) {
-            $table->dropColumn('token');
-            $table->integer('code')->nullable();
+        Schema::dropIfExists('password_resets');
+        Schema::create('password_resets', function (Blueprint $table) {
+            $table->id();
+            $table->string('email')->index();
+            $table->string('code');
+            $table->timestamps();
         });
     }
 
@@ -26,9 +29,12 @@ class AlterColumnTokenToCode extends Migration
      */
     public function down()
     {
-        Schema::table('password_resets', function (Blueprint $table) {
-            $table->dropColumn('code');
+        Schema::drop('password_resets');
+        Schema::create('password_resets', function (Blueprint $table) {
+            $table->id();
+            $table->string('email')->index();
             $table->string('token');
+            $table->timestamps();
         });
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
-/** @author Franklyn */
+/** @author feat */
 class AuthTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
@@ -58,10 +58,9 @@ class AuthTest extends TestCase
             '/api/password/reset/request',
             ['email' => $this->user->email]
         );
-
         $requestResponse->assertStatus(200);
 
-        $token = (PasswordReset::where('email', $this->user->email)->first())->token;
+        $code = (PasswordReset::where('email', $this->user->email)->first())->code;
 
         $resetResponse = $this->postJson(
             '/api/password/reset',
@@ -69,7 +68,7 @@ class AuthTest extends TestCase
                 'email' => $this->user->email,
                 'password' => 'new_password',
                 'password_confirmation' => 'new_password',
-                'token' => $token,
+                'code' => $code,
             ]
         );
         $resetResponse->assertStatus(200);

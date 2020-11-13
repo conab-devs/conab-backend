@@ -151,8 +151,8 @@ class ForgotPasswordTest extends TestCase
 
         $sut->sendResetRequest($email);
 
-        Mail::assertSent(function (\App\Mail\ResetMail $mail) use ($code, $email) {
-            return $mail->code === $code && $mail->email === $email;
+        Mail::assertSent(function (\App\Mail\ResetMail $mail) use ($code) {
+            return $mail->code === $code;
         });
     }
 

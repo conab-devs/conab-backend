@@ -3,9 +3,7 @@
 
 Reset or change your password.
 
-@component('mail::button', ['code' => $code])
-Reset Code
-@endcomponent
+['code' => $code]
 
 Thanks,<br>
 {{ config('app.name') }}

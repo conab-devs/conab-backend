@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\Components\Auth\AuthHandler;
 use App\Components\Auth\ForgotPasswordHandler;
 use App\Components\Auth\TokenGenerator\JwtGenerator;
-use App\Components\Auth\TokenGenerator\StringGenerator;
+use App\Components\Auth\TokenGenerator\CodeGenerator;
 use App\Components\Auth\TokenGenerator\TokenGenerator;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->when(ForgotPasswordHandler::class)
             ->needs(TokenGenerator::class)
-            ->give(StringGenerator::class);
+            ->give(CodeGenerator::class);
     }
 
     /**
