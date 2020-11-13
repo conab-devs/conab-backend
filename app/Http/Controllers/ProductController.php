@@ -2,35 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Cooperative;
+use App\Components\Traits\UploadFirebase;
 use App\Http\Requests\Product\StoreRequest;
 use App\Http\Requests\Product\UpdateRequest;
 use App\Product;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
+    use UploadFirebase;
+
     public function index()
     {
+
         $products = Product::with('category')
             ->paginate(5);
 
-        return response($products);
-    }
-
-    public function indexCooperative(Cooperative $cooperative)
-    {
-        if (Gate::denies('index-products-cooperative', $cooperative)) {
-            return response()->json([
-                'message' => 'Você não tem autorização a este recurso',
-            ], 401);
-        }
-
-        $products = $cooperative->products()
-            ->with('category')
-            ->paginate(5);
-
-        return response($products);
+        return response()->json($products);
     }
 
     /**
@@ -47,9 +36,13 @@ class ProductController extends Controller
         $product = new Product();
         $product->cooperative_id = $user->cooperative_id;
         $product->fill($request->all());
+        $product->photo_path = App::environment('production')
+            ? $this->uploadFileOnFirebase($request->file('photo_path'))
+            : $request->file('photo_path')->store('uploads');
+
         $product->save();
 
-        return response($product, 201);
+        return response()->json($product, 201);
     }
 
     /**
@@ -60,7 +53,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return response($product);
+        return response()->json($product);
     }
 
     /**
@@ -75,9 +68,14 @@ class ProductController extends Controller
         $request->validated();
 
         $product->fill($request->all());
+        if ($request->hasFile('photo_path') && ($photo = $request->file('photo_path'))) {
+            $product->photo_path = App::environment('production')
+                ? $this->uploadFileOnFirebase($photo)
+                : $photo->store('uploads');
+        }
         $product->save();
 
-        return response($product);
+        return response()->json($product);
     }
 
     /**
@@ -95,5 +93,7 @@ class ProductController extends Controller
         }
 
         $product->delete();
+
+        return response()->json();
     }
 }
