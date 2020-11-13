@@ -48,11 +48,26 @@ class ForgotPasswordHandler
             throw new UnauthorizedException('Nenhuma requisição de mudança de senha encontrada');
         }
 
+        $resetRequest = $query->first();
+
+        if ($this->isTheVerificationCodeExpired($resetRequest)) {
+            $resetRequest->delete();
+            throw new UnauthorizedException("O código informado é inválido.");
+        }
+
         $user = $this->user->firstWhere('email', $request['email']);
         $user->update(['password' => $request['password']]);
 
-        $resetRequest = $query->first();
         $resetRequest->delete();
+    }
+
+    private function isTheVerificationCodeExpired($passwordReset)
+    {
+        $createdAt = $passwordReset->created_at;
+        $createdAtAsDateTime = $createdAt->format('Y-m-d H:i:s');
+        $differenceInHours = now()->diffInHours($createdAtAsDateTime);
+
+        return abs($differenceInHours) > 12;
     }
 
     public function generateToken(string $email)

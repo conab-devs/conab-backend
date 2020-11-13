@@ -24,7 +24,7 @@ class AuthTest extends TestCase
         $this->credentials = [
             'email' => $this->faker()->unique()->safeEmail,
             'password' => 'valid_password',
-            'user_type' => 'ADMIN_CONAB'
+            'user_type' => 'ADMIN_CONAB',
         ];
 
         $this->user = factory(User::class)->create($this->credentials);
@@ -79,11 +79,41 @@ class AuthTest extends TestCase
     }
 
     /** @test */
+    public function should_try_to_update_user_password_with_expired_code_and_return_error()
+    {
+        $passwordReset = new \App\PasswordReset();
+        $passwordReset->fill([
+            'email' => $this->user->email,
+            'code' => 333333,
+            'created_at' => now()->subDay(),
+        ]);
+        $passwordReset->save();
+
+        $resetResponse = $this->postJson(
+            '/api/password/reset',
+            [
+                'email' => $this->user->email,
+                'password' => 'new_password',
+                'password_confirmation' => 'new_password',
+                'code' => $passwordReset->code,
+            ]
+        );
+        $resetResponse->assertStatus(401);
+        $resetResponse->assertJsonFragment([
+            "message" => "O código informado é inválido."
+        ]);
+
+        $this->assertDeleted('password_resets', [
+            'code' => $passwordReset->code,
+        ]);
+    }
+
+    /** @test */
     public function should_try_to_make_login_and_throw_error_if_credentials_invalid()
     {
         $response = $this->postJson('/api/login', [
             'email' => 'invalid_mail@mail.com',
-            'password' => 'invalid_password'
+            'password' => 'invalid_password',
         ]);
         $response->assertStatus(401);
     }

@@ -192,6 +192,10 @@ class ForgotPasswordTest extends TestCase
         $queriedReset = Mockery::mock(PasswordReset::class);
         $queriedReset->shouldReceive('delete')->once();
 
+        $queriedReset->shouldReceive('getAttribute')
+        ->with('created_at')
+        ->andReturn(now());
+
         $this->passwordReset->shouldReceive('where->count')
             ->once()
             ->andReturn(1);
