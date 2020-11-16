@@ -58,12 +58,11 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('create-product', function ($user) {
-            return $user->user_type === 'ADMIN_COOP' && $user->cooperative;
+            return $user->cooperative;
         });
 
         Gate::define('manage-product', function ($user, \App\Product $resource) {
-           return $user->user_type === 'ADMIN_COOP'
-               && $user->cooperative
+           return $user->cooperative
                && (int) $resource->cooperative_id === $user->cooperative_id;
         });
     }
