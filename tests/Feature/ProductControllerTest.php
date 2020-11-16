@@ -113,7 +113,7 @@ class ProductControllerTest extends TestCase
         ]);
 
         $cooperativeAdminResponse = $this->actingAs($cooperativeAdmin, 'api')
-            ->delete("/api/products/$product->id");
+            ->deleteJson("/api/products/$product->id");
 
         $cooperativeAdminResponse->assertStatus(200);
     }
@@ -244,9 +244,7 @@ class ProductControllerTest extends TestCase
         ]);
 
         $response = $this->actingAs($cooperativeAdmin, 'api')
-            ->getJson("/api/products", [
-                'cooperative' => $cooperative->id
-            ]);
+            ->getJson("/api/products?cooperative=$cooperative->id");
 
         $response->assertOk();
         $this->assertCount($amountProduct, $response['data']);
