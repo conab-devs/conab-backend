@@ -16,7 +16,7 @@ class Product extends Model
         'category_id',
     ];
 
-    protected $hidden = ['id', 'created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function getPhotoPathAttribute() {
         return App::environment('testing')
