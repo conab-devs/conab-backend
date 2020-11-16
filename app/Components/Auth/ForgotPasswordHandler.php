@@ -5,10 +5,9 @@ namespace App\Components\Auth;
 use App\Exceptions\ServerError;
 use App\Exceptions\UnauthorizedException;
 use App\Components\Auth\TokenGenerator\TokenGenerator;
-use App\Mail\ResetMail;
 use App\PasswordReset;
 use App\User;
-use Illuminate\Support\Facades\Mail;
+use App\Jobs\SendEmailResetRequest;
 
 class ForgotPasswordHandler
 {
@@ -26,7 +25,7 @@ class ForgotPasswordHandler
     public function sendResetRequest(string $email)
     {
         $code = $this->generateToken($email);
-        Mail::to($email)->send(new ResetMail($code));
+        SendEmailResetRequest::dispatch($email, $code)->onConnection('database');
     }
 
     public function resetPassword($request)

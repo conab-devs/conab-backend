@@ -6,9 +6,10 @@ use App\Components\Auth\ForgotPasswordHandler;
 use App\Components\Auth\TokenGenerator\CodeGenerator;
 use App\Exceptions\ServerError;
 use App\Exceptions\UnauthorizedException;
+use App\Jobs\SendEmailResetRequest;
 use App\PasswordReset;
 use App\User;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Tests\TestCase;
@@ -30,14 +31,13 @@ class ForgotPasswordTest extends TestCase
         $this->generator = Mockery::mock(CodeGenerator::class);
     }
 
-
     /** @test */
     public function should_throw_error_if_email_not_passed()
     {
         $this->expectException(ServerError::class);
         $sut = new ForgotPasswordHandler($this->passwordReset,
-                                        $this->generator,
-                                        $this->user);
+            $this->generator,
+            $this->user);
 
         $sut->resetPassword([
             'code' => 123456,
@@ -49,8 +49,8 @@ class ForgotPasswordTest extends TestCase
     {
         $this->expectException(ServerError::class);
         $sut = new ForgotPasswordHandler($this->passwordReset,
-                                        $this->generator,
-                                        $this->user);
+            $this->generator,
+            $this->user);
         $sut->resetPassword([
             'email' => 'valid_mail@mail.com',
         ]);
@@ -86,14 +86,13 @@ class ForgotPasswordTest extends TestCase
             ->andReturn(123456);
 
         $sut = new ForgotPasswordHandler($this->passwordReset,
-                                        $this->generator,
-                                        $this->user);
+            $this->generator,
+            $this->user);
 
         $code = $sut->generateToken($queriedReset->email);
 
         $this->assertEquals($queriedReset->code, $code);
     }
-
 
     /** @test */
     public function generate_token_should_return_code()
@@ -116,12 +115,11 @@ class ForgotPasswordTest extends TestCase
         $this->generator->shouldReceive('generate')->once()->andReturn($code);
 
         $sut = new ForgotPasswordHandler($this->passwordReset,
-                                        $this->generator,
-                                        $this->user);
+            $this->generator,
+            $this->user);
 
         $this->assertEquals($code, $sut->generateToken($email));
     }
-
 
     /** @test */
     public function ensure_that_reset_request_is_sent_with_valid_code_and_mail()
@@ -129,7 +127,7 @@ class ForgotPasswordTest extends TestCase
         $email = 'valid_mail@mail.com';
         $code = 123456;
 
-        Mail::fake();
+        Queue::fake();
 
         $this->passwordReset->shouldReceive('firstWhere')
             ->with('email', $email)
@@ -146,13 +144,15 @@ class ForgotPasswordTest extends TestCase
         $this->generator->shouldReceive('generate')->once()->andReturn($code);
 
         $sut = new ForgotPasswordHandler($this->passwordReset,
-                                        $this->generator,
-                                        $this->user);
+            $this->generator,
+            $this->user);
 
         $sut->sendResetRequest($email);
 
-        Mail::assertSent(function (\App\Mail\ResetMail $mail) use ($code) {
-            return $mail->code === $code;
+        Queue::assertPushed(SendEmailResetRequest::class, 1);
+
+        Queue::assertPushed(function (SendEmailResetRequest $job) use ($email, $code) {
+            return $job->code === $code && $job->mail === $email;
         });
     }
 
@@ -164,8 +164,8 @@ class ForgotPasswordTest extends TestCase
         $this->passwordReset->shouldReceive('where->count')->once()->andReturn(0);
 
         (new ForgotPasswordHandler($this->passwordReset,
-                                  $this->generator,
-                                  $this->user))
+            $this->generator,
+            $this->user))
             ->resetPassword([
                 'email' => 'invalid_email',
                 'password' => 'new_password',
@@ -193,8 +193,8 @@ class ForgotPasswordTest extends TestCase
         $queriedReset->shouldReceive('delete')->once();
 
         $queriedReset->shouldReceive('getAttribute')
-        ->with('created_at')
-        ->andReturn(now());
+            ->with('created_at')
+            ->andReturn(now());
 
         $this->passwordReset->shouldReceive('where->count')
             ->once()
@@ -204,8 +204,8 @@ class ForgotPasswordTest extends TestCase
             ->andReturn($queriedReset);
 
         (new ForgotPasswordHandler($this->passwordReset,
-                                  $this->generator,
-                                  $this->user))
+            $this->generator,
+            $this->user))
             ->resetPassword([
                 'email' => $email,
                 'password' => $newPassword,
