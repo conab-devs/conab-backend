@@ -31,7 +31,6 @@ class ProductController extends Controller
      */
     public function store(StoreRequest $request)
     {
-        $request->validated();
         $user = $request->user();
 
         $product = new Product();
@@ -66,8 +65,6 @@ class ProductController extends Controller
      */
     public function update(UpdateRequest $request, Product $product)
     {
-        $request->validated();
-
         $product->fill($request->all());
         if ($request->hasFile('photo_path') && ($photo = $request->file('photo_path'))) {
             $product->photo_path = App::environment('production')
