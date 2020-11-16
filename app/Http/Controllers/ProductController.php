@@ -15,9 +15,10 @@ class ProductController extends Controller
 
     public function index()
     {
-
-        $products = Product::with('category')
-            ->paginate(5);
+        $products = Product::query()
+            ->when(request()->cooperative, function ($query, $cooperative) {
+                $query->where('cooperative_id', '=', $cooperative);
+            })->paginate(5);
 
         return response()->json($products);
     }
