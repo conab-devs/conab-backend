@@ -183,7 +183,7 @@ class ProductControllerTest extends TestCase
         ]);
 
         $cooperative2 = factory(Cooperative::class)->create();
-        $cooperative2Admin = factory(User::class)->create([
+        $cooperativeAdmin2 = factory(User::class)->create([
             'user_type' => 'ADMIN_COOP',
             'cooperative_id' => $cooperative2->id
         ]);
@@ -196,7 +196,7 @@ class ProductControllerTest extends TestCase
             'category_id' => factory(Category::class)->create()->id
         ];
 
-        $response = $this->actingAs($cooperative2Admin, 'api')
+        $response = $this->actingAs($cooperativeAdmin2, 'api')
             ->putJson("/api/products/$product->id", $data);
 
         $response->assertStatus(401);
@@ -208,12 +208,12 @@ class ProductControllerTest extends TestCase
         $costumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $cooperatives = factory(Cooperative::class, 3)->create();
 
-        $idCoopeartives = array_map(function ($cooperative) {
+        $cooperativesIds = array_map(function ($cooperative) {
             return $cooperative['id'];
         }, $cooperatives->toArray());
 
         factory(Product::class, 20)->create([
-            'cooperative_id' => $idCoopeartives[rand(0, 2)]
+            'cooperative_id' => $cooperativesIds[rand(0, 2)]
         ]);
 
         $response = $this->actingAs($costumer, 'api')
