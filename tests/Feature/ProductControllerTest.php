@@ -212,7 +212,7 @@ class ProductControllerTest extends TestCase
             return $cooperative['id'];
         }, $cooperatives->toArray());
 
-        factory(Product::class, 20)->create([
+        factory(Product::class, 400)->create([
             'cooperative_id' => $cooperativesIds[rand(0, 2)]
         ]);
 
@@ -220,7 +220,7 @@ class ProductControllerTest extends TestCase
             ->getJson('/api/products');
 
         $response->assertOk();
-        $this->assertCount(5, $response['data']);
+        $this->assertCount(100, $response['data']);
     }
 
     /** @test */
@@ -228,13 +228,13 @@ class ProductControllerTest extends TestCase
     {
         $cooperative = factory(Cooperative::class)->create();
 
-        $amountProduct = 4;
+        $amountProduct = 40;
 
         factory(Product::class, $amountProduct)->create([
             'cooperative_id' => $cooperative->id
         ]);
 
-        factory(Product::class, 7)->create([
+        factory(Product::class, 20)->create([
             'cooperative_id' => factory(Cooperative::class)->create()->id
         ]);
 
