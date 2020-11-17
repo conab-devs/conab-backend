@@ -18,7 +18,7 @@ class ProductController extends Controller
         $products = Product::query()
             ->when(request()->cooperative, function ($query, $cooperative) {
                 $query->where('cooperative_id', '=', $cooperative);
-            })->paginate(5);
+            })->paginate(100);
 
         return response()->json($products);
     }
