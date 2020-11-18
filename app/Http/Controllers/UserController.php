@@ -12,14 +12,15 @@ class UserController extends Controller
 {
     public function show()
     {
-        return response(auth()->user());
+        $user = auth()->user();
+        return response($user->load('phones'));
     }
 
     public function store(Store $request)
     {
         $user = \App\User::create($request->validated());
 
-        \App\Phone::create(['number' => $request->input('phone')]);
+        \App\Phone::create(['number' => $request->input('phones')]);
 
         $user->load('phones');
 
@@ -41,7 +42,14 @@ class UserController extends Controller
                 $user->password = $validated['new_password'];
                 $user->save();
             }
+
             $user->update($request->except('password', 'new_password'));
+
+            $user->phones()->delete();
+
+            $user->phones()->create(['number' => $request->input('phones')]);
+
+            $user->load('phones');
 
             DB::commit();
 

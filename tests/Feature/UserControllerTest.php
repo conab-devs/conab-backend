@@ -35,7 +35,7 @@ class UserControllerTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '111.111.111-11',
-            'phone' => 123,
+            'phones' => 123,
         ]);
         $response->assertStatus(422);
     }
@@ -50,7 +50,7 @@ class UserControllerTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '111.111.111-11',
-            'phone' => [
+            'phones' => [
                 ['number' => '85 85858-8585'],
                 ['number' => '85 86428-1575'],
             ],
@@ -71,7 +71,7 @@ class UserControllerTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '111.111.111-11',
-            'phone' => [
+            'phones' => [
                 ['number' => '(11) 11111-1111'],
             ],
         ]);
@@ -234,7 +234,7 @@ class UserControllerTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '123.123.123-12',
-            'phone' => '(11) 11111-1111',
+            'phones' => '(11) 11111-1111',
         ]);
         $response->assertCreated();
         $response->assertJsonStructure([
@@ -259,6 +259,57 @@ class UserControllerTest extends TestCase
             'name' => 123456,
         ]);
         $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_string_is_not_passed_to_phone_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'phones' => 123,
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_wrong_format_phone_is_passed_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'phones' => '85 85858-8585',
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_duplicated_phone_is_passed_on_update()
+    {
+        $user = factory(\App\User::class)->create();
+        $user->phones()->create([
+            'number' => '(11) 11111-1111',
+        ]);
+
+        $response = $this->actingAs($user)->putJson("api/users", [
+            'phones' => '(11) 11111-1111',
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_get_user_phone()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $phone = $user->phones()
+            ->create(factory(\App\Phone::class)
+                    ->make()
+                    ->toArray());
+
+        $response = $this->actingAs($user)->getJson('api/users');
+
+        $response->assertJsonFragment($phone->toArray());
     }
 
     /** @test */
@@ -341,11 +392,32 @@ class UserControllerTest extends TestCase
     }
 
     /** @test */
+    public function should_update_user_without_password()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $new_informations = [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'cpf' => '123.123.123-12',
+            'phones' => '(55) 55555-5555',
+        ];
+
+        $response = $this->actingAs($user)
+            ->putJson("api/users", $new_informations);
+        $response->assertStatus(200);
+        $new_informations['phones'] = [['number' => '(55) 55555-5555']];
+        $response->assertJson($new_informations);
+    }
+
+    /** @test */
     public function should_update_user()
     {
         $user = factory(\App\User::class)->create([
             'password' => '123456',
         ]);
+
+        $user->phones()->create(['number' => '(11) 11111-1111']);
 
         $new_informations = [
             'name' => 'valid_name',
@@ -353,6 +425,7 @@ class UserControllerTest extends TestCase
             'password' => '123456',
             'new_password' => 'an_password',
             'cpf' => '123.123.123-12',
+            'phones' => '(55) 55555-5555',
         ];
 
         $response = $this->actingAs($user)
@@ -364,6 +437,8 @@ class UserControllerTest extends TestCase
             'new_password' => 'an_password',
         ]);
 
+        $expected_response['phones'] = [['number' => '(55) 55555-5555']];
+
         $response->assertJson($expected_response);
 
         $user->refresh();
@@ -371,24 +446,6 @@ class UserControllerTest extends TestCase
         $this->assertTrue(
             Hash::check($new_informations['new_password'], $user->password)
         );
-    }
-
-    /** @test */
-    public function should_update_user_without_password()
-    {
-        $user = factory(\App\User::class)->create();
-
-        $new_informations = [
-            'name' => 'valid_name',
-            'email' => 'valid_mail@mail.com',
-            'cpf' => '123.123.123-12',
-        ];
-
-        $response = $this->actingAs($user)
-            ->putJson("api/users", $new_informations);
-        $response->assertStatus(200);
-
-        $response->assertJson($new_informations);
     }
 
     /** @test */
