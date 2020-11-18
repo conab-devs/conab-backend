@@ -1,10 +1,10 @@
 @component('mail::message')
-# Reset Password
+# Recuperação de Senha
 
-Reset or change your password.
+Recupere sua senha utilizando o código abaixo.
 
 {{ $code }}
 
-Thanks,<br>
+Obrigado,<br>
 {{ config('app.name') }}
 @endcomponent
