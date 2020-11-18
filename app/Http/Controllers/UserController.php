@@ -37,7 +37,7 @@ class UserController extends Controller
         try {
             if (!empty($validated['password'])) {
                 if (!Hash::check($validated['password'], $user->password)) {
-                    return response('', 400);
+                    return response('Senha Inválida', 400);
                 }
                 $user->password = $validated['new_password'];
                 $user->save();
