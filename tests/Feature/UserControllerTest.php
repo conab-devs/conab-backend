@@ -11,6 +11,73 @@ class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** @test */
+    public function should_return_validation_error_if_no_phone_is_passed()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->postJson('api/users', [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'password' => 'valid_password',
+            'cpf' => '111.111.111-11',
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_string_is_not_passed_to_phone()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->postJson('api/users', [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'password' => 'valid_password',
+            'cpf' => '111.111.111-11',
+            'phone' => 123,
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_wrong_format_phone_are_passed()
+    {
+        $user = factory(\App\User::class)->create();
+
+        $response = $this->actingAs($user)->postJson('api/users', [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'password' => 'valid_password',
+            'cpf' => '111.111.111-11',
+            'phone' => [
+                ['number' => '85 85858-8585'],
+                ['number' => '85 86428-1575'],
+            ],
+        ]);
+        $response->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_return_validation_error_if_duplicated_phone_are_passed()
+    {
+        $user = factory(\App\User::class)->create();
+        $user->phones()->create([
+            'number' => '(11) 11111-1111',
+        ]);
+
+        $response = $this->actingAs($user)->postJson('api/users', [
+            'name' => 'valid_name',
+            'email' => 'valid_mail@mail.com',
+            'password' => 'valid_password',
+            'cpf' => '111.111.111-11',
+            'phone' => [
+                ['number' => '(11) 11111-1111'],
+            ],
+        ]);
+        $response->assertStatus(422);
+    }
+
     /**
      * @test
      *
@@ -167,14 +234,19 @@ class UserControllerTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '123.123.123-12',
+            'phone' => '(11) 11111-1111',
         ]);
         $response->assertCreated();
         $response->assertJsonStructure([
-            'name', 'email', 'cpf', 'id', 'updated_at', 'created_at',
+            'name', 'email', 'cpf', 'id', 'updated_at', 'created_at', 'phones',
         ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'valid_mail@mail.com',
+        ]);
+
+        $this->assertDatabaseHas('phones', [
+            'number' => '(11) 11111-1111',
         ]);
     }
 
@@ -272,7 +344,7 @@ class UserControllerTest extends TestCase
     public function should_update_user()
     {
         $user = factory(\App\User::class)->create([
-            'password' => '123456'
+            'password' => '123456',
         ]);
 
         $new_informations = [
@@ -338,25 +410,25 @@ class UserControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-   /** @test */
-   public function should_get_the_authenticated_user_data()
-   {
+    /** @test */
+    public function should_get_the_authenticated_user_data()
+    {
         $user = factory(\App\User::class)->create();
 
         $response = $this->actingAs($user)->getJson('api/users');
         $response->assertStatus(200);
 
         $response->assertJson($user->toArray());
-   }
+    }
 
-   /** @test */
-   public function should_allow_customers_to_delete_their_accounts_own_accounts()
-   {
+    /** @test */
+    public function should_allow_customers_to_delete_their_accounts_own_accounts()
+    {
         $user = factory(\App\User::class)->create(['user_type' => 'CUSTOMER']);
 
         $response = $this->actingAs($user)->deleteJson("api/users/$user->id");
         $response->assertStatus(204);
 
         $this->assertDeleted('users', $user->toArray());
-   }
+    }
 }

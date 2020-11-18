@@ -19,6 +19,10 @@ class UserController extends Controller
     {
         $user = \App\User::create($request->validated());
 
+        \App\Phone::create(['number' => $request->input('phone')]);
+
+        $user->load('phones');
+
         return response()->json($user, 201);
     }
 

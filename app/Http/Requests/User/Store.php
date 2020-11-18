@@ -28,6 +28,7 @@ class Store extends FormRequest
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
             'cpf' => 'required|regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/|unique:users,cpf',
+            'phone' => 'required|string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/|distinct|unique:phones,number',
         ];
     }
 }
