@@ -23,7 +23,7 @@ class UserController extends Controller
     {
         $user = User::create($request->validated());
 
-        Phone::create(['number' => $request->input('phones')]);
+        $user->phones()->create(['number' => $request->input('phones')]);
 
         if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
             $user->profile_picture = $uploader->upload($avatar);
