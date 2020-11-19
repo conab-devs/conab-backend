@@ -280,9 +280,41 @@ class ProductControllerTest extends TestCase
         $this->assertCount(2, $response['data']);
     }
 
-
+    /** @test */
     public function should_return_a_filtered_list_of_products_by_category()
     {
+        $consumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $cooperative = factory(Cooperative::class)->create();
 
+        $categories = factory(Category::class, 3)->create()->toArray();
+
+        factory(Product::class, 40)->create([
+            'category_id' => $categories[0]['id'],
+            'cooperative_id' => $cooperative->id
+        ])->toArray();
+
+        factory(Product::class, 70)->create([
+            'category_id' => $categories[1]['id'],
+            'cooperative_id' => $cooperative->id
+        ])->toArray();
+
+        factory(Product::class, 50)->create([
+            'category_id' => $categories[2]['id'],
+            'cooperative_id' => $cooperative->id
+        ])->toArray();
+
+        $category = $categories[0]['id'];
+        $response = $this->actingAs($consumer, 'api')
+            ->getJson("/api/products?category=$category");
+        $response->assertOk();
+
+        $this->assertCount(40, $response['data']);
+
+        $category = $categories[1]['id'];
+        $response = $this->actingAs($consumer, 'api')
+            ->getJson("/api/products?category=$category");
+        $response->assertOk();
+
+        $this->assertCount(70, $response['data']);
     }
 }
