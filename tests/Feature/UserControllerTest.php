@@ -52,10 +52,7 @@ class UserControllerTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '111.111.111-11',
-            'phones' => [
-                ['number' => '85 85858-8585'],
-                ['number' => '85 86428-1575'],
-            ],
+            'phones' => '85 85858-8585',
         ]);
         $response->assertStatus(422);
     }
@@ -73,9 +70,7 @@ class UserControllerTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '111.111.111-11',
-            'phones' => [
-                ['number' => '(11) 11111-1111'],
-            ],
+            'phones' => '(11) 11111-1111',
         ]);
         $response->assertStatus(422);
     }
