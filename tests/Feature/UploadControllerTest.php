@@ -21,11 +21,13 @@ class UploadControllerTest extends TestCase
 
         Storage::fake('public');
 
+        $file = UploadedFile::fake()->image('photo.png');
+
         $authenticatedRoute->postJson('/api/uploads', [
-            'avatar' => UploadedFile::fake()->image('photo.png')
+            'avatar' => $file,
         ])->assertOk()->assertJsonStructure(['url']);
 
-        Storage::disk('public')->assertExists($user->profile_picture);
+        Storage::disk('public')->assertExists('uploads/' . $file->hashName());
     }
 
     /** @test */
