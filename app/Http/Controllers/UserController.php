@@ -35,7 +35,7 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 
-    public function update(Update $request)
+    public function update(Update $request, UploadHandler $uploader)
     {
         $validated = $request->validated();
         $user = auth()->user();
@@ -51,10 +51,14 @@ class UserController extends Controller
                 $user->save();
             }
 
+            if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
+                $user->profile_picture = $uploader->upload($avatar);
+                $user->save();
+            }
+
             $user->update($request->except('password', 'new_password'));
 
             $user->phones()->delete();
-
             $user->phones()->create(['number' => $request->input('phones')]);
 
             $user->load('phones');

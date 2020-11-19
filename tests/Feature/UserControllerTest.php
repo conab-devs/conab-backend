@@ -421,6 +421,10 @@ class UserControllerTest extends TestCase
             'password' => '123456',
         ]);
 
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->image('photo.png');
+
         $user->phones()->create(['number' => '(11) 11111-1111']);
 
         $new_informations = [
@@ -430,15 +434,19 @@ class UserControllerTest extends TestCase
             'new_password' => 'an_password',
             'cpf' => '123.123.123-12',
             'phones' => '(55) 55555-5555',
+            'avatar' => $file,
         ];
 
         $response = $this->actingAs($user)
             ->putJson("api/users", $new_informations);
         $response->assertStatus(200);
 
+        Storage::disk('public')->assertExists('uploads/'. $file->hashName());
+
         $expected_response = array_diff_assoc($new_informations, [
             'password' => '123456',
             'new_password' => 'an_password',
+            'avatar' => $file
         ]);
 
         $expected_response['phones'] = [['number' => '(55) 55555-5555']];
