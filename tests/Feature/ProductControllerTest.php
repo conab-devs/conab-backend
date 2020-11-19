@@ -249,4 +249,40 @@ class ProductControllerTest extends TestCase
         $response->assertOk();
         $this->assertCount($amountProduct, $response['data']);
     }
+
+    /** @test */
+    public function should_return_a_filtered_list_of_products_by_name()
+    {
+        $consumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+
+        $names = ['Tomate', 'Mel', 'Leite de Cabra', 'Bolo de Ovos', 'Caramelo', 'Leite de Vaca'];
+
+        foreach ($names as $name) {
+            factory(Product::class)->create([
+                'name' => $name,
+                'cooperative_id' => factory(Cooperative::class)->create()->id
+            ]);
+        }
+
+        $response = $this->actingAs($consumer, 'api')
+            ->getJson("/api/products?name=ca");
+        $response->assertOk();
+        $this->assertCount(3, $response['data']);
+
+        $response = $this->actingAs($consumer, 'api')
+            ->getJson("/api/products?name=de");
+        $response->assertOk();
+        $this->assertCount(3, $response['data']);
+
+        $response = $this->actingAs($consumer, 'api')
+            ->getJson("/api/products?name=Leite%20de");
+        $response->assertOk();
+        $this->assertCount(2, $response['data']);
+    }
+
+
+    public function should_return_a_filtered_list_of_products_by_category()
+    {
+
+    }
 }
