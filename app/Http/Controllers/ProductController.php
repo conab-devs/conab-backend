@@ -20,6 +20,8 @@ class ProductController extends Controller
                 $query->where('cooperative_id', '=', $cooperative);
             })->when(request()->name, function ($query, $name) {
                 $query->where('name', 'like', "%$name%");
+            })->when(request()->category, function ($query, $category) {
+                $query->where('category_id', '=', $category);
             })->paginate(100);
 
         return response()->json($products);
