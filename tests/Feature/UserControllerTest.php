@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 /** @author User  */
@@ -229,17 +231,24 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_store_an_user()
     {
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->image('photo.png');
+
         $response = $this->postJson('api/users', [
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '123.123.123-12',
             'phones' => '(11) 11111-1111',
+            'avatar' => $file,
         ]);
         $response->assertCreated();
         $response->assertJsonStructure([
             'name', 'email', 'cpf', 'id', 'updated_at', 'created_at', 'phones',
         ]);
+
+        Storage::disk('public')->assertExists('uploads/'. $file->hashName());
 
         $this->assertDatabaseHas('users', [
             'email' => 'valid_mail@mail.com',

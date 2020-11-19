@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Components\Upload\UploadHandler;
 use App\Http\Requests\User\Store;
 use App\Http\Requests\User\Update;
+use App\User;
+use App\Phone;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -16,11 +19,16 @@ class UserController extends Controller
         return response($user->load('phones'));
     }
 
-    public function store(Store $request)
+    public function store(Store $request, UploadHandler $uploader)
     {
-        $user = \App\User::create($request->validated());
+        $user = User::create($request->validated());
 
-        \App\Phone::create(['number' => $request->input('phones')]);
+        Phone::create(['number' => $request->input('phones')]);
+
+        if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
+            $user->profile_picture = $uploader->upload($avatar);
+            $user->save();
+        }
 
         $user->load('phones');
 
