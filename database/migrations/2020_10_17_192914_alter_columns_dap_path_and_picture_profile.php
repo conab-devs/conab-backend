@@ -30,11 +30,11 @@ class AlterColumnsDapPathAndPictureProfile extends Migration
     public function down()
     {
         Schema::table('cooperatives', function (Blueprint $table) {
-            $table->string('dap_path')->unique()->change();
+            $table->string('dap_path')->change();
         });
 
         Schema::table('users', function (Blueprint $table) {
-            $table->string('profile_picture');
+            $table->string('profile_picture')->change();
         });
     }
 }
