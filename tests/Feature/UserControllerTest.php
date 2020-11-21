@@ -461,7 +461,7 @@ class UserControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_validation_error_if_repeated_password_is_sent()
+    public function should_return_validation_error_if_new_password_is_not_sent()
     {
         $user = factory(\App\User::class)->create(['password' => 'valid_pass']);
 
