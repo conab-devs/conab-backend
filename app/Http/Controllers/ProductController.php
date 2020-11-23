@@ -22,6 +22,9 @@ class ProductController extends Controller
                 $query->where('name', 'like', "%$name%");
             })->when(request()->category, function ($query, $category) {
                 $query->where('category_id', '=', $category);
+            })->when(request()->order, function ($query, $order) {
+                $order = $order == 'asc' || $order == 'desc' ? $order : 'asc';
+                $query->reorder('price', $order);
             })->paginate(100);
 
         return response()->json($products);
