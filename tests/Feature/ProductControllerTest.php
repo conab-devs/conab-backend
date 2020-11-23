@@ -291,17 +291,12 @@ class ProductControllerTest extends TestCase
         factory(Product::class, 40)->create([
             'category_id' => $categories[0]['id'],
             'cooperative_id' => $cooperative->id
-        ])->toArray();
+        ]);
 
         factory(Product::class, 70)->create([
             'category_id' => $categories[1]['id'],
             'cooperative_id' => $cooperative->id
-        ])->toArray();
-
-        factory(Product::class, 50)->create([
-            'category_id' => $categories[2]['id'],
-            'cooperative_id' => $cooperative->id
-        ])->toArray();
+        ]);
 
         $category = $categories[0]['id'];
         $response = $this->actingAs($consumer, 'api')
@@ -316,5 +311,55 @@ class ProductControllerTest extends TestCase
         $response->assertOk();
 
         $this->assertCount(70, $response['data']);
+    }
+
+    /** @test */
+    public function should_return_a_list_of_products_in_desc_order()
+    {
+        $consumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $cooperative = factory(Cooperative::class)->create()->id;
+        $category = factory(Category::class)->create()->id;
+
+        $products = factory(Product::class, 20)->create([
+            'category_id' => $category,
+            'cooperative_id' => $cooperative
+        ]);
+
+        $sorted = $products->sortByDesc(function ($product, $key) {
+            return $product->price;
+        })->values();
+
+        $response = $this->actingAs($consumer, 'api')
+            ->getJson('/api/products?order=desc');
+
+        $response->assertOk();
+        foreach ($response['data'] as $key => $product) {
+            $this->assertEquals($sorted[$key]->price, $product['price']);
+        }
+    }
+
+    /** @test */
+    public function should_return_a_list_of_products_in_asc_order()
+    {
+        $consumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $cooperative = factory(Cooperative::class)->create()->id;
+        $category = factory(Category::class)->create()->id;
+
+        $products = factory(Product::class, 20)->create([
+            'category_id' => $category,
+            'cooperative_id' => $cooperative
+        ]);
+
+        $sorted = $products->sortBy(function ($product, $key) {
+            return $product->price;
+        })->values();
+
+        $response = $this->actingAs($consumer, 'api')
+            ->getJson('/api/products?order=asc');
+
+        $response->assertOk();
+        foreach ($response['data'] as $key => $product) {
+            $this->assertEquals($sorted[$key]->price, $product['price']);
+        }
     }
 }
