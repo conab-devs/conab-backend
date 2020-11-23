@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterColumnTokenToCode extends Migration
+class AlterCodeColumnType extends Migration
 {
     /**
      * Run the migrations.
@@ -14,12 +14,9 @@ class AlterColumnTokenToCode extends Migration
     public function up()
     {
         Schema::table('password_resets', function (Blueprint $table) {
-            $table->dropColumn('token');
+            $table->integer('code')->change();
         });
 
-        Schema::table('password_resets', function (Blueprint $table) {
-            $table->string('code')->nullable();
-        });
     }
 
     /**
@@ -30,11 +27,8 @@ class AlterColumnTokenToCode extends Migration
     public function down()
     {
         Schema::table('password_resets', function (Blueprint $table) {
-            $table->dropColumn('code');
+            $table->string('code')->change();
         });
 
-        Schema::table('password_resets', function (Blueprint $table) {
-            $table->string('token')->nullable();
-        });
     }
 }
