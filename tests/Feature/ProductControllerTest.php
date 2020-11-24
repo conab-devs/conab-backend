@@ -362,4 +362,41 @@ class ProductControllerTest extends TestCase
             $this->assertEquals($sorted[$key]->price, $product['price']);
         }
     }
+
+    /** @test */
+    public function should_return_a_filtered_list_of_products_by_price_range()
+    {
+        $consumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $cooperative = factory(Cooperative::class)->create()->id;
+        $category = factory(Category::class)->create()->id;
+
+        factory(Product::class, 40)->create([
+            'category_id' => $category,
+            'cooperative_id' => $cooperative
+        ]);
+
+        $response = $this->actingAs($consumer, 'api')
+            ->getJson('/api/products?min_price=40&max_price=70');
+
+        $response->assertOk();
+        foreach ($response['data'] as $product) {
+            $this->assertTrue($product['price'] >= 40 && $product['price'] <= 70);
+        }
+
+        $response = $this->actingAs($consumer, 'api')
+            ->getJson('/api/products?min_price=80');
+
+        $response->assertOk();
+        foreach ($response['data'] as $product) {
+            $this->assertTrue($product['price'] >= 80);
+        }
+
+        $response = $this->actingAs($consumer, 'api')
+            ->getJson('/api/products?max_price=30');
+
+        $response->assertOk();
+        foreach ($response['data'] as $product) {
+            $this->assertTrue($product['price'] <= 30);
+        }
+    }
 }
