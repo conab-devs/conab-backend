@@ -2,13 +2,12 @@
 
 namespace App\Components\Auth\TokenGenerator;
 
-use Illuminate\Support\Str;
 use App\Components\Auth\TokenGenerator\TokenGenerator;
 
-class StringGenerator implements TokenGenerator
+class CodeGenerator implements TokenGenerator
 {
     public function generate(array $credentials = null)
     {
-        return Str::random(80);
+        return mt_rand(100000, 999999);
     }
 }

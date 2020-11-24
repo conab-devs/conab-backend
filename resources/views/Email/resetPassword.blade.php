@@ -1,12 +1,10 @@
 @component('mail::message')
-# Reset Password
+# Recuperação de Senha
 
-Reset or change your password.
+Recupere sua senha utilizando o código abaixo.
 
-@component('mail::button', ['url' => $url])
-Change Password
-@endcomponent
+{{ $code }}
 
-Thanks,<br>
+Obrigado,<br>
 {{ config('app.name') }}
 @endcomponent
