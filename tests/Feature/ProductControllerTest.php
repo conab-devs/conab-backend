@@ -49,7 +49,7 @@ class ProductControllerTest extends TestCase
         ]);
 
         $response = $this->actingAs($user, 'api')
-            ->get("/api/products/$product->id");
+            ->getJson("/api/products/$product->id");
 
         $response->assertOk()->assertJson($product->toArray());
     }
@@ -90,11 +90,11 @@ class ProductControllerTest extends TestCase
         ]);
 
         $conabAdminResponse = $this->actingAs($conabAdmin, 'api')
-            ->delete("/api/products/$product->id");
+            ->deleteJson("/api/products/$product->id");
         $conabAdminResponse->assertStatus(401);
 
         $costumerResponse = $this->actingAs($costumer, 'api')
-            ->delete("/api/products/$product->id");
+            ->deleteJson("/api/products/$product->id");
         $costumerResponse->assertStatus(401);
     }
 
