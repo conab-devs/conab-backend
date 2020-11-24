@@ -515,8 +515,8 @@ class AdminConabControllerTest extends TestCase
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
         $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $response = $authenticatedRoute->deleteJson("/api/conab/admins/$fakeAdmin->id");
-        $response->assertOk();
+        $response = $authenticatedRoute->deleteJson("/api/users/$fakeAdmin->id");
+        $response->assertStatus(204);
         $this->assertDatabaseMissing('users', ['id' => $fakeAdmin->id]);
     }
 
@@ -526,7 +526,7 @@ class AdminConabControllerTest extends TestCase
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
         $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
-        $response = $authenticatedRoute->deleteJson("/api/conab/admins/$customer->id");
+        $response = $authenticatedRoute->deleteJson("/api/users/$customer->id");
         $response->assertStatus(401);
     }
 
@@ -536,7 +536,7 @@ class AdminConabControllerTest extends TestCase
         $user = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $authenticatedRoute = $this->actingAs($user, 'api');
         $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $response = $authenticatedRoute->deleteJson("/api/conab/admins/$fakeAdmin->id");
+        $response = $authenticatedRoute->deleteJson("/api/users/$fakeAdmin->id");
         $response->assertStatus(401);
     }
 
@@ -566,7 +566,7 @@ class AdminConabControllerTest extends TestCase
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
         $fakeId = 10;
-        $response = $authenticatedRoute->deleteJson("/api/conab/admins/$fakeId");
+        $response = $authenticatedRoute->deleteJson("/api/users/$fakeId");
         $response->assertStatus(404);
     }
 }

@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Components\Auth\AuthHandler;
 use App\Components\Auth\ForgotPasswordHandler;
-use App\Http\Requests\Login;
-use App\Http\Requests\ResetPassword;
-use App\Http\Requests\ResetRequest;
+use App\Http\Requests\Auth\Login;
+use App\Http\Requests\Auth\ResetPassword;
+use App\Http\Requests\Auth\ResetRequest;
 use App\User;
 
 class AuthController extends Controller

@@ -18,7 +18,6 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::get('/conab/admins/{id}', 'AdminConabController@show');
     Route::post('/conab/admins', 'AdminConabController@store');
     Route::put('/conab/admins', 'AdminConabController@update');
-    Route::delete('/conab/admins/{user}', 'UserController@destroy');
 
     Route::get('cooperatives', 'CooperativeController@index');
     Route::get('cooperatives/{id}', 'CooperativeController@show');
@@ -33,13 +32,26 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::get('/cooperatives/{cooperative}/admins/{id}', 'CooperativeAdminController@show');
     Route::post('/cooperatives/{cooperative}/admins', 'CooperativeAdminController@store');
     Route::put('/cooperatives/{cooperative}/admins/{id}', 'CooperativeAdminController@update');
-    Route::delete('/users/{user}', 'UserController@destroy');
 
     Route::post('/categories', 'CategoryController@store');
     Route::get('/categories', 'CategoryController@index');
     Route::get('/categories/{category}', 'CategoryController@show');
     Route::put('/categories/{category}', 'CategoryController@update');
     Route::delete('/categories/{category}', 'CategoryController@destroy');
+
+    Route::put('/users', 'UserController@update');
+    Route::get('/users', 'UserController@show');
+    Route::delete('/users/{user}', 'UserController@destroy');
+
+
+    Route::put('/phones', 'PhoneController@update');
+    Route::post('/phones', 'PhoneController@store');
+    Route::get('/phones', 'PhoneController@index');
+
+    Route::post('/addresses', 'AddressController@store');
+    Route::put('/addresses', 'AddressController@update');
+    Route::get('/addresses', 'AddressController@index');
+
 });
 
 Route::post('/users', 'UserController@store');

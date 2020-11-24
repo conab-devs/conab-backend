@@ -2,31 +2,74 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserStore;
+use App\Components\Upload\UploadHandler;
+use App\Http\Requests\User\Store;
+use App\Http\Requests\User\Update;
+use App\User;
+use App\Phone;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function store(UserStore $request)
+    public function show()
     {
+        $user = auth()->user();
+        return response($user->load('phones'));
+    }
+
+    public function store(Store $request, UploadHandler $uploader)
+    {
+        $user = User::create($request->validated());
+
+        $user->phones()->create(['number' => $request->input('phones')]);
+
+        if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
+            $user->profile_picture = $uploader->upload($avatar);
+            $user->save();
+        }
+
+        $user->load('phones');
+
+        return response()->json($user, 201);
+    }
+
+    public function update(Update $request, UploadHandler $uploader)
+    {
+        $validated = $request->validated();
+        $user = auth()->user();
+
         DB::beginTransaction();
 
         try {
-            $validated = $request->validated();
-            $user = \App\User::create($validated);
-            $user->phones()->createMany($validated['phones']);
-            $user->addresses()->createMany($validated['addresses']);
-            $user->load('phones', 'addresses');
+            if (!empty($validated['password'])) {
+                if (!Hash::check($validated['password'], $user->password)) {
+                    return response('Senha Inválida', 400);
+                }
+                $user->password = $validated['new_password'];
+                $user->save();
+            }
+
+            if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
+                $user->profile_picture = $uploader->upload($avatar);
+                $user->save();
+            }
+
+            $user->update($request->except('password', 'new_password'));
+
+            $user->phones()->delete();
+            $user->phones()->create(['number' => $request->input('phones')]);
+
+            $user->load('phones');
 
             DB::commit();
 
-            return response()->json($user, 201);
-        } catch (\Exception $error) {
-            DB::rollBack();
-
+            return response()->json($user);
+        } catch (\Exception $err) {
+            DB::rollback();
             return response()->json([
-                "message" => "Algo deu errado, tente novamente em alguns instantes",
+                'message' => 'Algo deu errado, tente novamente em alguns instantes',
             ], 500);
         }
     }
@@ -38,6 +81,10 @@ class UserController extends Controller
         }
 
         $user->phones()->delete();
+        $user->addresses()->delete();
+
         $user->delete();
+
+        return response('', 204);
     }
 }

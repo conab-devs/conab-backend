@@ -358,7 +358,7 @@ class AdminCooperativeControllerTest extends TestCase
         $cooperative = factory(\App\Cooperative::class)->create();
         $cooperative->admins()->save($user);
         $response = $authenticatedRoute->deleteJson("/api/users/$user->id");
-        $response->assertOk();
+        $response->assertStatus(204);
         $this->assertDatabaseMissing('users', ['id' => $user->id]);
     }
 
@@ -386,7 +386,7 @@ class AdminCooperativeControllerTest extends TestCase
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
         $fakeId = 10;
-        $response = $authenticatedRoute->deleteJson("/api/conab/admins/$fakeId");
+        $response = $authenticatedRoute->deleteJson("/api/users/$fakeId");
         $response->assertStatus(404);
     }
 

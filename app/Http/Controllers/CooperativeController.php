@@ -33,7 +33,7 @@ class CooperativeController extends Controller
                 $query->where('name', 'like', "%{$name}%");
             })->paginate(10);
 
-        return response($cooperatives);
+        return response()->json($cooperatives);
     }
 
     /**
@@ -72,7 +72,7 @@ class CooperativeController extends Controller
         $cooperative->save();
         $cooperative->phones()->createMany($request->input('phones'));
 
-        return response($cooperative->load(['address', 'phones']), 201);
+        return response()->json($cooperative->load(['address', 'phones']), 201);
     }
 
     /**
@@ -85,7 +85,7 @@ class CooperativeController extends Controller
     {
         $cooperative = Cooperative::with(['address', 'phones'])->findOrFail($id);
 
-        return response($cooperative);
+        return response()->json($cooperative);
     }
 
     /**
@@ -130,7 +130,7 @@ class CooperativeController extends Controller
         $address->fill($request->all());
         $address->update();
 
-        return response(null, 204);
+        return response()->json(null, 204);
     }
 
     public function updateDap(Request $request, int $id)
@@ -150,7 +150,7 @@ class CooperativeController extends Controller
 
         $cooperative->update();
 
-        return response(null, 204);
+        return response()->json(null, 204);
     }
 
     /**
@@ -167,7 +167,7 @@ class CooperativeController extends Controller
         $cooperative->delete();
         $cooperative->address()->delete();
 
-        return response(null, 204);
+        return response()->json(null, 204);
     }
 
     private function uploadDap(UploadedFile $dap): ?string
