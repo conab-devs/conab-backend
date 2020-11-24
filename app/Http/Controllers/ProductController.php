@@ -22,6 +22,10 @@ class ProductController extends Controller
                 $query->where('name', 'like', "%$name%");
             })->when(request()->category, function ($query, $category) {
                 $query->where('category_id', '=', $category);
+            })->when((request()->max_price || request()->min_price), function ($query, $value)  {
+                $max = request()->input('max_price', PHP_INT_MAX);
+                $min = request()->input('min_price', 0);
+                $query->whereBetween('price', [$min, $max]);
             })->when(request()->order, function ($query, $order) {
                 $order = $order == 'asc' || $order == 'desc' ? $order : 'asc';
                 $query->reorder('price', $order);
