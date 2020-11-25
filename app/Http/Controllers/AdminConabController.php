@@ -6,8 +6,8 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
 use App\Components\Validators\UpdateUser;
+use Illuminate\Support\Facades\Hash;
 
 class AdminConabController extends Controller
 {
@@ -28,7 +28,7 @@ class AdminConabController extends Controller
             ['user_type', '=', 'ADMIN_CONAB'],
             ['id', '<>', $user->id]
         ])->paginate(5);
-        return response($admins, 200);
+        return response()->json($admins, 200);
     }
 
     /**
@@ -37,8 +37,8 @@ class AdminConabController extends Controller
      */
      public function show($id)
      {
-         $admin = User::with('phones')->findOrFail($id);
-        return response($admin, 200);
+        $admin = User::with('phones')->findOrFail($id);
+        return response()->json($admin, 200);
      }
 
     /**
@@ -65,7 +65,7 @@ class AdminConabController extends Controller
         $phones = $user->phones()->createMany($data['phones']);
         $userAndPhones = array_merge($user->toArray(), [ 'phones' => $phones ]);
 
-        return response($userAndPhones, 201);
+        return response()->json($userAndPhones, 201);
     }
 
     /**
@@ -99,6 +99,6 @@ class AdminConabController extends Controller
             $admin->phones()->createMany($data['phones']);
         }
 
-        return response($admin->refresh(), 200);
+        return response()->json($admin->refresh(), 200);
     }
 }

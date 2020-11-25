@@ -48,7 +48,7 @@ class AuthServiceProvider extends ServiceProvider
                 return true;
             }
 
-            if (! $user->user_type === "ADMIN_CONAB"
+            if (! ($user->user_type === "ADMIN_CONAB")
                 && ! $resource->cooperative
                 && $user->id === $resource->id
             ) {

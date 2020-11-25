@@ -5,10 +5,9 @@ namespace App\Components\Auth;
 use App\Exceptions\ServerError;
 use App\Exceptions\UnauthorizedException;
 use App\Components\Auth\TokenGenerator\TokenGenerator;
-use App\Mail\ResetMail;
 use App\PasswordReset;
 use App\User;
-use Illuminate\Support\Facades\Mail;
+use App\Jobs\SendEmailResetRequest;
 
 class ForgotPasswordHandler
 {
@@ -25,13 +24,13 @@ class ForgotPasswordHandler
 
     public function sendResetRequest(string $email)
     {
-        $token = $this->generateToken($email);
-        Mail::to($email)->send(new ResetMail($token, $email));
+        $code = $this->generateToken($email);
+        SendEmailResetRequest::dispatch($email, $code)->onConnection('database');
     }
 
     public function resetPassword($request)
     {
-        $arguments = ['email', 'token'];
+        $arguments = ['email', 'code'];
 
         foreach ($arguments as $argument) {
             if (!array_key_exists($argument, $request)) {
@@ -41,18 +40,33 @@ class ForgotPasswordHandler
 
         $query = $this->reset->where([
             'email' => $request['email'],
-            'token' => $request['token'],
+            'code' => $request['code'],
         ]);
 
         if (!$query->count()) {
             throw new UnauthorizedException('Nenhuma requisição de mudança de senha encontrada');
         }
 
+        $resetRequest = $query->first();
+
+        if ($this->isTheVerificationCodeExpired($resetRequest)) {
+            $resetRequest->delete();
+            throw new UnauthorizedException("O código informado é inválido.");
+        }
+
         $user = $this->user->firstWhere('email', $request['email']);
         $user->update(['password' => $request['password']]);
 
-        $resetRequest = $query->first();
         $resetRequest->delete();
+    }
+
+    private function isTheVerificationCodeExpired($passwordReset)
+    {
+        $createdAt = $passwordReset->created_at;
+        $createdAtAsDateTime = $createdAt->format('Y-m-d H:i:s');
+        $differenceInHours = now()->diffInHours($createdAtAsDateTime);
+
+        return abs($differenceInHours) > 12;
     }
 
     public function generateToken(string $email)
@@ -60,14 +74,14 @@ class ForgotPasswordHandler
         $passwordRequest = $this->reset->firstWhere('email', $email);
 
         if ($passwordRequest) {
-            return $passwordRequest->token;
+            return $passwordRequest->code;
         }
 
-        $token = $this->generator->generate();
+        $code = $this->generator->generate();
 
-        $this->reset->fill(['email' => $email, 'token' => $token]);
+        $this->reset->fill(['email' => $email, 'code' => $code]);
         $this->reset->save();
 
-        return $token;
+        return $code;
     }
 }

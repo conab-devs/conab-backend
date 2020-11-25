@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,7 +26,7 @@ class ResetPassword extends FormRequest
         return [
             'email' => 'required|email',
             'password' => 'required|confirmed|min:6',
-            'token' => 'required',
+            'code' => 'required|integer',
         ];
     }
 }

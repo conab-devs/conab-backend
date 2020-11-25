@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Cooperative;
-use App\Http\Requests\CooperativeAdminStore;
+use App\Http\Requests\Cooperative\Admin\Store;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Hash;
 use App\Components\Validators\UpdateUser;
+use Illuminate\Support\Facades\Hash;
 
 class CooperativeAdminController extends Controller
 {
@@ -47,7 +47,7 @@ class CooperativeAdminController extends Controller
         return response()->json($admin);
     }
 
-    public function store(CooperativeAdminStore $request, Cooperative $cooperative)
+    public function store(Store $request, Cooperative $cooperative)
     {
         if (Gate::denies('manage-cooperative-admin')) {
             return response()->json([
@@ -92,12 +92,14 @@ class CooperativeAdminController extends Controller
         $validator = new UpdateUser();
         $data = $validator->execute($request, $admin);
 
-        DB::transaction(function () use (&$admin, $data, $request) {
+        try {
+            DB::beginTransaction();
+
             $admin->update($request->except('password', 'new_password', 'phones'));
 
             if (!empty($data['password'])) {
                 if (!Hash::check($data['password'], $admin->password)) {
-                    return response('Senha inválida.', 400);
+                    return response('', 400);
                 }
                 $admin->password = $data['new_password'];
             }
@@ -108,8 +110,15 @@ class CooperativeAdminController extends Controller
                 $admin->phones()->delete();
                 $admin->phones()->createMany($data['phones']);
             }
-        });
 
-        return response($admin->refresh(), 200);
+            DB::commit();
+
+            return response()->json($admin);
+        } catch (\Exception $error) {
+            DB::rollback();
+            return response()->json([
+                'message' => 'Algo deu errado, tente novamente em alguns instantes'
+            ], 500);
+        }
     }
 }
