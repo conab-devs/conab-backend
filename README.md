@@ -53,7 +53,7 @@ siga o [guia inícial](https://laravel.com/docs/7.x/database).
 > Em ambiente de _produção/desenvolvimento_ está sendo utilizado o **Postgres** e para o ambiente de
 > _teste_ o **SQLite**.
 
-##### Configurar o STMP
+##### Configurar o SMTP
 
 Adicionar as seguintes variaveis de ambiente:
 
@@ -98,7 +98,7 @@ FIREBASE_CLIENT_X509_CERT_URL=
 $ php artisan migrate
 ```
 
-##### Efetuar a seed
+##### Efetuar o seed
 
 Esse comando adicionará um usuário com email **"adminconab@email.com"** e senha **"123456"**.
 
