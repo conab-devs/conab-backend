@@ -18,12 +18,12 @@ Antes de executar a aplicação é necessário efetuar alguns comandos:
 $ composer install
 ```
 
-##### Faça uma cópia do arquivo .env.example.
+##### Faça uma cópia do arquivo .env.example
 ```shell script
 $ cp .env.example .env
 ```
 
-##### Gere a chave da aplicação.
+##### Gere a chave da aplicação
 ```shell script
 $ php artisan key:generate
 ```
@@ -90,7 +90,8 @@ FIREBASE_AUTH_PROVIDER_X509_CERT_URL=
 FIREBASE_CLIENT_X509_CERT_URL=
 ```
 
-> Em ambiente de desenvolviemnto/teste é utilizado o local storage.
+Em ambiente de desenvolviemnto/teste é utilizado o local storage. Por isso é preciso definir o link 
+lógico da pasta "storage" para a "public", utilizando o comando ```php artisan storage:link```.
 
 ##### Efetuar a migração
 
