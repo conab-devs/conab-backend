@@ -3,27 +3,34 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Category;
 use Illuminate\Support\Facades\Gate;
+
+use App\Category;
+use App\Http\Requests\Category\StoreRequest;
+use App\Http\Requests\Category\UpdateRequest;
 
 class CategoryController extends Controller
 {
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index()
     {
         return response()->json(Category::all(), 200);
     }
 
-    public function show(\App\Category $category)
+    /**
+     * @param Category $category
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(Category $category)
     {
         return response()->json($category, 200);
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|unique:categories',
-            'description' => 'string'
-        ]);
+        $validated = $request->validated();
 
         if (Gate::denies('admin-conab')) {
             return response()->json([
@@ -37,12 +44,9 @@ class CategoryController extends Controller
         return response()->json($category, 201);
     }
 
-    public function update(Request $request, \App\Category $category)
+    public function update(UpdateRequest $request, Category $category)
     {
-        $validated = $request->validate([
-            'name' => 'string|unique:categories',
-            'description' => 'string'
-        ]);
+        $validated = $request->validated();
 
         if (Gate::denies('admin-conab')) {
             return response()->json([
@@ -55,7 +59,7 @@ class CategoryController extends Controller
         return response()->json($category, 200);
     }
 
-    public function destroy(\App\Category $category)
+    public function destroy(Category $category)
     {
         if (Gate::denies('admin-conab')) {
             return response()->json([
