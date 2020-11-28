@@ -8,11 +8,14 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
+/** @group user */
 class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    /**
+     * @test
+     */
     public function should_return_validation_error_if_no_phone_is_passed()
     {
         $user = factory(\App\User::class)->create();
@@ -23,6 +26,7 @@ class UserControllerTest extends TestCase
             'password' => 'valid_password',
             'cpf' => '111.111.111-11',
         ]);
+
         $response->assertStatus(422);
     }
 

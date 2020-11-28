@@ -23,12 +23,19 @@ class StoreRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:6',
-            'cpf' => 'required|regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/|unique:users,cpf',
-            'phones' => 'required|string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/|distinct|unique:phones,number',
-        ];
+        $path = $this->path();
+
+        switch ($path) {
+            case 'api/users':
+                return [
+                    'name' => 'required|string',
+                    'email' => 'required|email|unique:users',
+                    'password' => 'required|string|min:6',
+                    'cpf' => 'required|regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/|unique:users,cpf',
+                    'phones' => 'required|string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/|distinct|unique:phones,number',
+                ];
+            default:
+                return [];
+        }
     }
 }
