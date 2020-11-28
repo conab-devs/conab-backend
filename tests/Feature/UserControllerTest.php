@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
-/** @author User  */
 class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
