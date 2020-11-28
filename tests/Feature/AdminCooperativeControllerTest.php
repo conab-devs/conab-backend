@@ -414,7 +414,8 @@ class AdminCooperativeControllerTest extends TestCase
 
         $dataWithOnlyEmail = ['email' => 'updated@email.com'];
         $response = $authenticatedRoute->putJson(
-            "/api/cooperatives/$cooperative->id/admins/$admin->id", $dataWithOnlyEmail
+            "/api/cooperatives/$cooperative->id/admins/$admin->id",
+            $dataWithOnlyEmail
         );
         $response->assertOk()->assertJsonFragment(['email' => $dataWithOnlyEmail['email']]);
 

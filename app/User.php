@@ -43,9 +43,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->attributes['password'];
     }
 
-    public function getProfilePictureAttribute() {
-        if (
-            App::environment('testing')
+    public function getProfilePictureAttribute()
+    {
+        if (App::environment('testing')
             || $this->attributes['profile_picture'] === null
         ) {
             return $this->attributes['profile_picture'];
@@ -63,7 +63,8 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo('App\Cooperative');
     }
 
-    public function phones() {
+    public function phones()
+    {
         return $this->belongsToMany('App\Phone', 'user_phones');
     }
 

@@ -349,7 +349,6 @@ class AdminConabControllerTest extends TestCase
         $response->assertOk();
         $this->assertDatabaseHas('phones', ['number' => '(11) 11111-1111']);
         $this->assertDatabaseHas('phones', ['number' => '(22) 22222-2222']);
-
     }
 
     /** @test */

@@ -21,7 +21,8 @@ class CooperativeAdminController extends Controller
             ], 401);
         }
         return response()->json(
-            $cooperative->admins()->with('phones')->paginate(5), 200
+            $cooperative->admins()->with('phones')->paginate(5),
+            200
         );
     }
 
@@ -40,7 +41,8 @@ class CooperativeAdminController extends Controller
 
         if (!$admin) {
             return response()->json(
-                'Administrador da cooperativa não encontrado', 404
+                'Administrador da cooperativa não encontrado',
+                404
             );
         }
 

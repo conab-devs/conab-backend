@@ -34,7 +34,8 @@ class Cooperative extends Model
         return $this->hasMany('App\Product');
     }
 
-    public function getDapUrlAttribute() {
+    public function getDapUrlAttribute()
+    {
         if (App::environment(['local','testing'])) {
             return Storage::url($this->attributes['dap_path']);
         }

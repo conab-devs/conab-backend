@@ -15,7 +15,8 @@ class Phone extends Model
         return $this->belongsToMany('App\Cooperative', 'cooperative_phones');
     }
   
-    public function users() {
+    public function users()
+    {
         return $this->belongsToMany('App\User', 'user_phones');
     }
 }

@@ -63,5 +63,3 @@ Route::post('/users', 'UserController@store');
 Route::post('/login', 'AuthController@login');
 Route::post('/password/reset/request', 'AuthController@sendResetPasswordRequest');
 Route::post('/password/reset', 'AuthController@resetPassword');
-
-

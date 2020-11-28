@@ -62,7 +62,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('manage-product', function ($user, \App\Product $resource) {
-           return $user->cooperative
+            return $user->cooperative
                && (int) $resource->cooperative_id === $user->cooperative_id;
         });
     }

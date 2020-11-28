@@ -174,7 +174,9 @@ class CooperativeController extends Controller
      */
     private function uploadDap(UploadedFile $dap): ?string
     {
-        if (!$dap->isValid()) return null;
+        if (!$dap->isValid()) {
+            return null;
+        }
 
         return App::environment('production')
             ? $this->uploadFileOnFirebase($dap)

@@ -18,7 +18,8 @@ class Product extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function getPhotoPathAttribute() {
+    public function getPhotoPathAttribute()
+    {
         return App::environment('testing')
             || App::environment('production')
             || $this->attributes['photo_path'] === null
