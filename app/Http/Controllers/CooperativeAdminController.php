@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Cooperative;
-use App\Http\Requests\Cooperative\Admin\StoreRequest;
-use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use App\Components\Validators\UpdateUser;
 use Illuminate\Support\Facades\Hash;
+use App\User;
+use App\Cooperative;
+use App\Http\Requests\Cooperative\Admin\StoreRequest;
+use App\Components\Validators\UpdateUser;
 
 class CooperativeAdminController extends Controller
 {

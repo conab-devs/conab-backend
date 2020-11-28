@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Address;
-use App\Cooperative;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Address;
+use App\Cooperative;
 use App\Components\Traits\UploadFirebase;
 
 class CooperativeController extends Controller
@@ -21,10 +21,8 @@ class CooperativeController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
      * @param Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
@@ -37,10 +35,8 @@ class CooperativeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
@@ -62,7 +58,7 @@ class CooperativeController extends Controller
             ?: $this->uploadDap($request->file('dap_path'));
 
         if (!$cooperative->dap_path) {
-            return response('Falha ao enviar o DAP', 400);
+            return response()->json('Falha ao enviar o DAP', 400);
         }
 
         $address = Address::create($request->only(['city', 'street', 'neighborhood', 'number']));
@@ -76,10 +72,8 @@ class CooperativeController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(int $id)
     {
@@ -88,12 +82,12 @@ class CooperativeController extends Controller
         return response()->json($cooperative);
     }
 
+
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function update(Request $request, int $id)
     {
@@ -133,6 +127,12 @@ class CooperativeController extends Controller
         return response()->json(null, 204);
     }
 
+
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function updateDap(Request $request, int $id)
     {
         $cooperative = Cooperative::findOrFail($id);
@@ -145,7 +145,7 @@ class CooperativeController extends Controller
             ?: $this->uploadDap($request->file('dap_path'));
 
         if (!$cooperative->dap_path) {
-            return response('Falha ao enviar o DAP', 400);
+            return response()->json('Falha ao enviar o DAP', 400);
         }
 
         $cooperative->update();
@@ -154,10 +154,8 @@ class CooperativeController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(int $id)
     {
@@ -170,6 +168,10 @@ class CooperativeController extends Controller
         return response()->json(null, 204);
     }
 
+    /**
+     * @param UploadedFile $dap
+     * @return string|null
+     */
     private function uploadDap(UploadedFile $dap): ?string
     {
         if (!$dap->isValid()) return null;

@@ -2,22 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
 use App\User;
 use App\Components\Upload\UploadHandler;
 use App\Http\Requests\User\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show()
     {
         $user = auth()->user();
-        return response($user->load('phones'));
+        return response()->json($user->load('phones'));
     }
 
+    /**
+     * @param StoreRequest $request
+     * @param UploadHandler $uploader
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(StoreRequest $request, UploadHandler $uploader)
     {
         $user = User::create($request->validated());
@@ -34,6 +42,12 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 
+
+    /**
+     * @param UpdateRequest $request
+     * @param UploadHandler $uploader
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(UpdateRequest $request, UploadHandler $uploader)
     {
         $validated = $request->validated();
@@ -44,7 +58,7 @@ class UserController extends Controller
         try {
             if (!empty($validated['password'])) {
                 if (!Hash::check($validated['password'], $user->password)) {
-                    return response('Senha Inválida', 400);
+                    return response()->json('Senha Inválida', 400);
                 }
                 $user->password = $validated['new_password'];
                 $user->save();
@@ -73,6 +87,12 @@ class UserController extends Controller
         }
     }
 
+
+    /**
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function destroy(\App\User $user)
     {
         if (Gate::denies('destroy-user', $user)) {
@@ -84,6 +104,6 @@ class UserController extends Controller
 
         $user->delete();
 
-        return response('', 204);
+        return response()->json(null, 204);
     }
 }
