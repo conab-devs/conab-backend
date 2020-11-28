@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Components\Upload\UploadHandler;
-use App\Http\Requests\User\Store;
-use App\Http\Requests\User\Update;
 use App\User;
-use App\Phone;
+use App\Components\Upload\UploadHandler;
+use App\Http\Requests\User\StoreRequest;
+use App\Http\Requests\User\UpdateRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +18,7 @@ class UserController extends Controller
         return response($user->load('phones'));
     }
 
-    public function store(Store $request, UploadHandler $uploader)
+    public function store(StoreRequest $request, UploadHandler $uploader)
     {
         $user = User::create($request->validated());
 
@@ -35,7 +34,7 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 
-    public function update(Update $request, UploadHandler $uploader)
+    public function update(UpdateRequest $request, UploadHandler $uploader)
     {
         $validated = $request->validated();
         $user = auth()->user();
