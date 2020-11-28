@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Address\StoreRequest;
+use App\Http\Requests\Address\UpdateRequest;
 
 class AddressController extends Controller
 {
@@ -12,15 +13,9 @@ class AddressController extends Controller
         return response()->json($user->addresses()->get());
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $validated = $request->validate([
-            'addresses' => 'required|array',
-            'addresses.*.street' => 'required|string',
-            'addresses.*.neighborhood' => 'required|string',
-            'addresses.*.city' => 'required|string',
-            'addresses.*.number' => 'required|string'
-        ]);
+        $validated = $request->validated();
 
         $user = auth()->user();
 
@@ -30,15 +25,9 @@ class AddressController extends Controller
         return response()->json($addresses, 201);
     }
 
-    public function update(Request $request)
+    public function update(UpdateRequest $request)
     {
-        $validated = $request->validate([
-            'addresses' => 'array',
-            'addresses.*.street' => 'string',
-            'addresses.*.neighborhood' => 'string',
-            'addresses.*.city' => 'string',
-            'addresses.*.number' => 'string',
-        ]);
+        $validated = $request->validated();
 
         $user = auth()->user();
         $user->addresses()->delete();
