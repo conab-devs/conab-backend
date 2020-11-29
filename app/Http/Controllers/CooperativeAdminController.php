@@ -78,7 +78,7 @@ class CooperativeAdminController extends Controller
         return response()->json($adminInformations, 201);
     }
 
-    public function update(Request $request, Cooperative $cooperative, $id)
+    public function update(Request $request, Cooperative $cooperative, int $id)
     {
         $admin = $cooperative->admins()
             ->with('phones')

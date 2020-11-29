@@ -20,6 +20,8 @@ class UserController extends Controller
 
     public function store(StoreRequest $request, UploadHandler $uploader)
     {
+        // TODO: Unificar ConabAdminController, CooperativeAdminController e UserController.
+
         $userData = $request->except('phones');
         $user = User::create($userData);
 
