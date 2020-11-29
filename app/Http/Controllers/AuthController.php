@@ -11,13 +11,6 @@ use App\User;
 
 class AuthController extends Controller
 {
-    /**
-     * @param LoginRequest $request
-     * @param AuthHandler $handler
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \App\Exceptions\ServerError
-     * @throws \App\Exceptions\UnauthorizedException
-     */
     public function login(LoginRequest $request, AuthHandler $handler)
     {
         $user = User::where('email', $request->input('email'))->first();
@@ -31,11 +24,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * @param SendResetPasswordRequest $request
-     * @param ForgotPasswordHandler $handler
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function sendResetPasswordRequest(SendResetPasswordRequest $request, ForgotPasswordHandler $handler)
     {
         User::where('email', $request->input('email'))->firstOrFail();
@@ -45,13 +33,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * @param ResetPasswordRequest $request
-     * @param ForgotPasswordHandler $handler
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \App\Exceptions\ServerError
-     * @throws \App\Exceptions\UnauthorizedException
-     */
     public function resetPassword(ResetPasswordRequest $request, ForgotPasswordHandler $handler)
     {
         $handler->resetPassword($request->all());

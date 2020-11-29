@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Gate;
 use App\Components\Traits\UploadFirebase;
 use App\Http\Requests\Product\StoreRequest;
 use App\Http\Requests\Product\UpdateRequest;
 use App\Product;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
@@ -34,12 +34,6 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(StoreRequest $request)
     {
         $user = $request->user();
@@ -56,24 +50,11 @@ class ProductController extends Controller
         return response()->json($product, 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show(Product $product)
     {
         return response()->json($product);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdateRequest $request, Product $product)
     {
         $product->fill($request->all());
@@ -87,12 +68,6 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Product $product)
     {
         if (Gate::denies('manage-product', $product)) {

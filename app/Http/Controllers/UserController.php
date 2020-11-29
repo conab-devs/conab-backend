@@ -12,20 +12,12 @@ use App\Http\Requests\User\UpdateRequest;
 
 class UserController extends Controller
 {
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show()
     {
         $user = auth()->user();
         return response()->json($user->load('phones'));
     }
 
-    /**
-     * @param StoreRequest $request
-     * @param UploadHandler $uploader
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(StoreRequest $request, UploadHandler $uploader)
     {
         $userData = $request->except('phones');
@@ -44,12 +36,6 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 
-
-    /**
-     * @param UpdateRequest $request
-     * @param UploadHandler $uploader
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update(UpdateRequest $request, UploadHandler $uploader)
     {
         $validated = $request->validated();
@@ -89,12 +75,6 @@ class UserController extends Controller
         }
     }
 
-
-    /**
-     * @param User $user
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
-     */
     public function destroy(\App\User $user)
     {
         if (Gate::denies('destroy-user', $user)) {

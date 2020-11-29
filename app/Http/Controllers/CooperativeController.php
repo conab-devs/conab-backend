@@ -20,10 +20,6 @@ class CooperativeController extends Controller
         $this->middleware('only-admin-conab');
     }
 
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function index(Request $request)
     {
         $cooperatives = Cooperative::with(['address', 'phones'])
@@ -34,10 +30,6 @@ class CooperativeController extends Controller
         return response()->json($cooperatives);
     }
 
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -71,10 +63,6 @@ class CooperativeController extends Controller
         return response()->json($cooperative->load(['address', 'phones']), 201);
     }
 
-    /**
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show(int $id)
     {
         $cooperative = Cooperative::with(['address', 'phones'])->findOrFail($id);
@@ -82,13 +70,6 @@ class CooperativeController extends Controller
         return response()->json($cooperative);
     }
 
-
-    /**
-     * @param Request $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function update(Request $request, int $id)
     {
         $cooperative = Cooperative::findOrFail($id);
@@ -127,12 +108,6 @@ class CooperativeController extends Controller
         return response()->json(null, 204);
     }
 
-
-    /**
-     * @param Request $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function updateDap(Request $request, int $id)
     {
         $cooperative = Cooperative::findOrFail($id);
@@ -153,10 +128,6 @@ class CooperativeController extends Controller
         return response()->json(null, 204);
     }
 
-    /**
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function destroy(int $id)
     {
         $cooperative = Cooperative::findOrFail($id);
@@ -168,10 +139,6 @@ class CooperativeController extends Controller
         return response()->json(null, 204);
     }
 
-    /**
-     * @param UploadedFile $dap
-     * @return string|null
-     */
     private function uploadDap(UploadedFile $dap): ?string
     {
         if (!$dap->isValid()) {

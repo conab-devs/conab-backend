@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\User\StoreRequest;
-use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Components\Validators\UpdateUser;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use App\User;
+use App\Http\Requests\User\StoreRequest;
+use App\Components\Validators\UpdateUser;
 
-/** @group */
 class ConabAdminController extends Controller
 {
     public function __construct()
@@ -17,9 +16,6 @@ class ConabAdminController extends Controller
         $this->middleware('only-admin-conab');
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function index()
     {
         $user = Auth::user();
@@ -30,21 +26,12 @@ class ConabAdminController extends Controller
         return response()->json($admins, 200);
     }
 
-    /**
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show(int $id)
     {
         $admin = User::with('phones')->findOrFail($id);
         return response()->json($admin, 200);
     }
 
-    /**
-     * @param StoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(StoreRequest $request)
     {
         $data = $request->validated();
@@ -60,10 +47,6 @@ class ConabAdminController extends Controller
         return response()->json($userAndPhones, 201);
     }
 
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update(Request $request)
     {
         $admin = User::with('phones')->findOrFail(Auth::id());
