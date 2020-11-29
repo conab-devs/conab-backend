@@ -9,8 +9,8 @@ use Tests\TestCase;
 use App\User;
 use App\Phone;
 
-/*Integration Tests For Routes Related with AdminConabController*/
-class AdminConabControllerTest extends TestCase
+/** @group conab_admins */
+class ConabAdminControllerTest extends TestCase
 {
     use RefreshDatabase;
 

@@ -28,9 +28,11 @@ class UserController extends Controller
      */
     public function store(StoreRequest $request, UploadHandler $uploader)
     {
-        $user = User::create($request->validated());
+        $userData = $request->except('phones');
+        $user = User::create($userData);
 
-        $user->phones()->create(['number' => $request->input('phones')]);
+        $phoneNumber = $request->input('phones')[0];
+        $user->phones()->create($phoneNumber);
 
         if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
             $user->profile_picture = $uploader->upload($avatar);

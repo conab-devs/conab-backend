@@ -2,22 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
- */
-
 Route::group(['middleware' => ['auth:api', 'bindings']], function () {
-    Route::get('/conab/admins', 'AdminConabController@index');
-    Route::get('/conab/admins/{id}', 'AdminConabController@show');
-    Route::post('/conab/admins', 'AdminConabController@store');
-    Route::put('/conab/admins', 'AdminConabController@update');
+    Route::get('/conab/admins', 'ConabAdminController@index');
+    Route::get('/conab/admins/{id}', 'ConabAdminController@show');
+    Route::post('/conab/admins', 'ConabAdminController@store');
+    Route::put('/conab/admins', 'ConabAdminController@update');
 
     Route::get('cooperatives', 'CooperativeController@index');
     Route::get('cooperatives/{id}', 'CooperativeController@show');

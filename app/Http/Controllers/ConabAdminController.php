@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\User\StoreRequest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use App\Components\Validators\UpdateUser;
 use Illuminate\Support\Facades\Hash;
 
-class AdminConabController extends Controller
+/** @group */
+class ConabAdminController extends Controller
 {
     public function __construct()
     {
@@ -40,20 +41,13 @@ class AdminConabController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param StoreRequest $request
      * @return \Illuminate\Http\JsonResponse
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $data = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'email' => 'required|email',
-            'cpf' => 'required|regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/|unique:users,cpf',
-            'phones' => 'required|array',
-            'phones.*.number' =>
-                'required|string|regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/|distinct|unique:phones,number'
-        ])->validate();
+        $data = $request->validated();
 
         $user = new User();
         $user->fill($data);

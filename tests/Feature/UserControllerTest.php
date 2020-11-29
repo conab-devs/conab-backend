@@ -7,8 +7,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
+use App\User;
 
-/** @group user */
+/** @group users */
 class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
@@ -16,9 +17,9 @@ class UserControllerTest extends TestCase
     /**
      * @test
      */
-    public function should_return_validation_error_if_no_phone_is_passed()
+    public function should_return_validation_error_if_no_phones_is_passed()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->postJson('api/users', [
             'name' => 'valid_name',
@@ -31,9 +32,9 @@ class UserControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_validation_error_if_string_is_not_passed_to_phone()
+    public function should_return_validation_error_if_array_is_not_passed_to_phones()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->postJson('api/users', [
             'name' => 'valid_name',
@@ -46,24 +47,24 @@ class UserControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_validation_error_if_wrong_format_phone_are_passed()
+    public function should_return_validation_error_if_wrong_format_phone_number_are_passed()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->postJson('api/users', [
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '111.111.111-11',
-            'phones' => '85 85858-8585',
+            'phones' => [['number' => '85 85858-8585']],
         ]);
         $response->assertStatus(422);
     }
 
     /** @test */
-    public function should_return_validation_error_if_duplicated_phone_are_passed()
+    public function should_return_validation_error_if_duplicated_phone_numbers_are_passed()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
         $user->phones()->create([
             'number' => '(11) 11111-1111',
         ]);
@@ -73,7 +74,7 @@ class UserControllerTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '111.111.111-11',
-            'phones' => '(11) 11111-1111',
+            'phones' => [['number' => '(11) 11111-1111']],
         ]);
         $response->assertStatus(422);
     }
@@ -131,7 +132,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_email_already_exists()
     {
-        factory(\App\User::class)->create(['email' => 'valid_mail@mail.com']);
+        factory(User::class)->create(['email' => 'valid_mail@mail.com']);
 
         $response = $this->postJson('api/users', [
             'name' => 'valid_name',
@@ -215,7 +216,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_existing_cpf_is_passed()
     {
-        factory(\App\User::class)->create(['cpf' => '123.123.123-12']);
+        factory(User::class)->create(['cpf' => '123.123.123-12']);
 
         $response = $this->postJson('api/users', [
             'name' => 'valid_name',
@@ -238,7 +239,7 @@ class UserControllerTest extends TestCase
             'email' => 'valid_mail@mail.com',
             'password' => 'valid_password',
             'cpf' => '123.123.123-12',
-            'phones' => '(11) 11111-1111',
+            'phones' => [['number' => '(11) 11111-1111']],
             'avatar' => $file,
         ]);
         $response->assertCreated();
@@ -260,7 +261,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_integer_is_passed_on_name_on_update()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->putJson("api/users", [
             'name' => 123456,
@@ -271,7 +272,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_string_is_not_passed_to_phone_on_update()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->putJson("api/users", [
             'phones' => 123,
@@ -282,7 +283,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_wrong_format_phone_is_passed_on_update()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->putJson("api/users", [
             'phones' => '85 85858-8585',
@@ -293,7 +294,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_duplicated_phone_is_passed_on_update()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
         $user->phones()->create([
             'number' => '(11) 11111-1111',
         ]);
@@ -307,7 +308,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_get_user_phone()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $phone = $user->phones()
             ->create(factory(\App\Phone::class)
@@ -322,7 +323,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_invalid_email_is_passed_on_update()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->putJson("api/users", [
             'email' => 'invalid_email',
@@ -333,7 +334,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_email_already_exists_on_update()
     {
-        $user = factory(\App\User::class)->create([
+        $user = factory(User::class)->create([
             'email' => 'valid_mail@mail.com',
         ]);
 
@@ -346,7 +347,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_integer_password_is_passed_on_update()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->putJson("api/users", [
             'password' => 123456,
@@ -357,7 +358,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_password_length_is_lesser_than_6_on_update()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->putJson("api/users", [
             'password' => '1234',
@@ -368,7 +369,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_integer_cpf_is_passed_on_update()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->putJson("api/users", [
             'cpf' => 1234,
@@ -379,7 +380,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_cpf_with_wrong_format_is_passed_on_update()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->putJson("api/users", [
             'cpf' => '1234',
@@ -390,7 +391,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_existing_cpf_is_passed_on_update()
     {
-        $user = factory(\App\User::class)->create(['cpf' => '123.123.123-12']);
+        $user = factory(User::class)->create(['cpf' => '123.123.123-12']);
 
         $response = $this->actingAs($user)->putJson("api/users", [
             'cpf' => '123.123.123-12',
@@ -401,7 +402,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_update_user_without_password()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $new_informations = [
             'name' => 'valid_name',
@@ -420,7 +421,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_update_user()
     {
-        $user = factory(\App\User::class)->create([
+        $user = factory(User::class)->create([
             'password' => '123456',
         ]);
 
@@ -466,7 +467,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_new_password_is_not_sent()
     {
-        $user = factory(\App\User::class)->create(['password' => 'valid_pass']);
+        $user = factory(User::class)->create(['password' => 'valid_pass']);
 
         $older_password = 'valid_pass';
 
@@ -485,7 +486,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_get_the_authenticated_user_data()
     {
-        $user = factory(\App\User::class)->create();
+        $user = factory(User::class)->create();
 
         $response = $this->actingAs($user)->getJson('api/users');
         $response->assertStatus(200);
@@ -496,7 +497,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_allow_customers_to_delete_their_accounts_own_accounts()
     {
-        $user = factory(\App\User::class)->create(['user_type' => 'CUSTOMER']);
+        $user = factory(User::class)->create(['user_type' => 'CUSTOMER']);
 
         $response = $this->actingAs($user)->deleteJson("api/users/$user->id");
         $response->assertStatus(204);

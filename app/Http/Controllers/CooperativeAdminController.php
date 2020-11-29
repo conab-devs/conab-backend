@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use App\User;
 use App\Cooperative;
-use App\Http\Requests\Cooperative\Admin\StoreRequest;
+use App\Http\Requests\User\StoreRequest;
 use App\Components\Validators\UpdateUser;
 
 class CooperativeAdminController extends Controller

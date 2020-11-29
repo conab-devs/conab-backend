@@ -2,13 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Cooperative;
-use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\User;
 use App\Phone;
+use App\Cooperative;
 
-class AdminCooperativeControllerTest extends TestCase
+/** @group coop_admins */
+class CooperativeAdminControllerTest extends TestCase
 {
     use RefreshDatabase;
 
