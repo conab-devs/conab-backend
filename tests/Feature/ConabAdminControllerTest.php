@@ -513,29 +513,32 @@ class ConabAdminControllerTest extends TestCase
     {
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
-        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $response = $authenticatedRoute->deleteJson("/api/users/$fakeAdmin->id");
+        $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $authenticatedRoute->deleteJson("/api/users/$conabAdmin->id");
         $response->assertStatus(204);
-        $this->assertDatabaseMissing('users', ['id' => $fakeAdmin->id]);
+        $this->assertDatabaseMissing('users', ['id' => $conabAdmin->id]);
     }
 
     /** @test */
-    public function should_return_unauthorized_if_admin_conab_try_to_delete_customer()
+    public function should_return_unauthorized_if_conab_admin_try_to_delete_customer()
     {
-        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $authenticatedRoute = $this->actingAs($user, 'api');
-        $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($conabAdmin, 'api');
+        $customer = factory(User::class)->create([
+            'user_type' => 'CUSTOMER',
+            'cooperative_id' => null
+        ]);
         $response = $authenticatedRoute->deleteJson("/api/users/$customer->id");
         $response->assertStatus(401);
     }
 
     /** @test */
-    public function should_return_unauthorized_if_customer_try_to_delete_an_admin_conab()
+    public function should_return_unauthorized_if_customer_try_to_delete_a_conab_admin()
     {
-        $user = factory(User::class)->create(['user_type' => 'CUSTOMER']);
-        $authenticatedRoute = $this->actingAs($user, 'api');
-        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $response = $authenticatedRoute->deleteJson("/api/users/$fakeAdmin->id");
+        $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $authenticatedRoute = $this->actingAs($customer, 'api');
+        $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $authenticatedRoute->deleteJson("/api/users/$conabAdmin->id");
         $response->assertStatus(401);
     }
 

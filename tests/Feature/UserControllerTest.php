@@ -497,7 +497,10 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_allow_customers_to_delete_their_accounts_own_accounts()
     {
-        $user = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $user = factory(User::class)->create([
+            'user_type' => 'CUSTOMER',
+            'cooperative_id' => null
+        ]);
 
         $response = $this->actingAs($user)->deleteJson("api/users/$user->id");
         $response->assertStatus(204);
