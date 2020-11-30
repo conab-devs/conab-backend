@@ -77,7 +77,7 @@ class UserController extends Controller
         }
     }
 
-    public function destroy(\App\User $user)
+    public function destroy(User $user)
     {
         if (Gate::denies('destroy-user', $user)) {
             return response()->json('Você não tem autorização a este recurso', 401);

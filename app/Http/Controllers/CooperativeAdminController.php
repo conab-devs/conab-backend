@@ -50,25 +50,27 @@ class CooperativeAdminController extends Controller
             ], 401);
         }
 
-        $adminInformations = array_merge($request->validated(), [
+        $coopAdminInformation = array_merge($request->validated(), [
             'password' => $request->cpf,
             'user_type' => 'ADMIN_COOP',
         ]);
 
+        DB::beginTransaction();
+
         try {
-            DB::transaction(function () use (&$adminInformations, $cooperative) {
-                $user = User::create($adminInformations);
-                $cooperative->admins()->save($user);
-                $user->phones()->createMany($adminInformations['phones']);
-                $adminInformations = $user->loadMissing('phones');
-            });
+            $user = User::create($coopAdminInformation);
+            $cooperative->admins()->save($user);
+            $user->phones()->createMany($coopAdminInformation['phones']);
+            $coopAdminInformation = $user->loadMissing('phones');
+
+            DB::commit();
         } catch (\Exception $err) {
             return response()->json([
-                "message" => "Algo deu errado, tente novamente em alguns instantes",
+                'message' => 'Algo deu errado, tente novamente em alguns instantes',
             ], 500);
         }
 
-        return response()->json($adminInformations, 201);
+        return response()->json($coopAdminInformation, 201);
     }
 
     public function update(Request $request, Cooperative $cooperative, int $id)
