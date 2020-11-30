@@ -61,16 +61,16 @@ class CooperativeAdminController extends Controller
             $user = User::create($coopAdminInformation);
             $cooperative->admins()->save($user);
             $user->phones()->createMany($coopAdminInformation['phones']);
-            $coopAdminInformation = $user->loadMissing('phones');
 
             DB::commit();
+
+            return response()->json($user->load(['phones']), 201);
+
         } catch (\Exception $err) {
             return response()->json([
                 'message' => 'Algo deu errado, tente novamente em alguns instantes',
             ], 500);
         }
-
-        return response()->json($coopAdminInformation, 201);
     }
 
     public function update(Request $request, Cooperative $cooperative, int $id)

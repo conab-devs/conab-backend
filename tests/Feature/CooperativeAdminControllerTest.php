@@ -67,16 +67,16 @@ class CooperativeAdminControllerTest extends TestCase
     }
 
     /** @test */
-    public function admin_conab_should_get_the_right_admin_based_on_his_id()
+    public function conab_admin_should_get_the_right_admin_based_on_his_id()
     {
         $cooperative = factory(Cooperative::class)->create();
-        $admin = factory(User::class)->make(['user_type' => 'ADMIN_COOP']);
-        $cooperative->admins()->save($admin);
+        $coopAdmin = factory(User::class)->make(['user_type' => 'ADMIN_COOP']);
+        $cooperative->admins()->save($coopAdmin);
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $response = $this->actingAs($user, 'api')
-            ->getJson("/api/cooperatives/$cooperative->id/admins/$admin->id");
+            ->getJson("/api/cooperatives/$cooperative->id/admins/$coopAdmin->id");
         $response->assertOK();
-        $response->assertJson($admin->toArray());
+        $response->assertJson($coopAdmin->toArray());
     }
 
     /** @test */

@@ -14,9 +14,7 @@ class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @test
-     */
+    /** @test */
     public function should_return_validation_error_if_no_phones_is_passed()
     {
         $user = factory(User::class)->create();
@@ -79,11 +77,7 @@ class UserControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    /**
-     * @test
-     *
-     * User's store controller action
-     */
+    /** @test */
     public function should_return_validation_error_if_no_name_is_passed()
     {
         $response = $this->postJson('api/users', [
@@ -249,13 +243,9 @@ class UserControllerTest extends TestCase
 
         Storage::disk('public')->assertExists('uploads/'. $file->hashName());
 
-        $this->assertDatabaseHas('users', [
-            'email' => 'valid_mail@mail.com',
-        ]);
+        $this->assertDatabaseHas('users', ['email' => 'valid_mail@mail.com']);
 
-        $this->assertDatabaseHas('phones', [
-            'number' => '(11) 11111-1111',
-        ]);
+        $this->assertDatabaseHas('phones', ['number' => '(11) 11111-1111']);
     }
 
     /** @test */
@@ -263,9 +253,7 @@ class UserControllerTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->actingAs($user)->putJson("api/users", [
-            'name' => 123456,
-        ]);
+        $response = $this->actingAs($user)->putJson("api/users", ['name' => 123456]);
         $response->assertStatus(422);
     }
 
@@ -309,14 +297,9 @@ class UserControllerTest extends TestCase
     public function should_get_user_phone()
     {
         $user = factory(User::class)->create();
-
-        $phone = $user->phones()
-            ->create(factory(\App\Phone::class)
-                    ->make()
-                    ->toArray());
+        $phone = $user->phones()->create(factory(\App\Phone::class)->make()->toArray());
 
         $response = $this->actingAs($user)->getJson('api/users');
-
         $response->assertJsonFragment($phone->toArray());
     }
 
