@@ -28,6 +28,7 @@ class ProductControllerTest extends TestCase
             'price' => 9.99,
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
+            'unit_of_measure' => 'kg',
             'category_id' => factory(Category::class)->create()->id
         ];
 
@@ -65,6 +66,7 @@ class ProductControllerTest extends TestCase
             'price' => 9.99,
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
+            'unit_of_measure' => 'kg',
             'category_id' => factory(Category::class)->create()->id
         ];
 
@@ -136,6 +138,7 @@ class ProductControllerTest extends TestCase
             'price' => 9.99,
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
+            'unit_of_measure' => 'kg',
             'category_id' => factory(Category::class)->create()->id
         ];
 
@@ -161,6 +164,7 @@ class ProductControllerTest extends TestCase
             'price' => 9.99,
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
+            'unit_of_measure' => 'kg',
             'category_id' => factory(Category::class)->create()->id
         ];
 
@@ -193,6 +197,7 @@ class ProductControllerTest extends TestCase
             'price' => 9.99,
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
+            'unit_of_measure' => 'kg',
             'category_id' => factory(Category::class)->create()->id
         ];
 

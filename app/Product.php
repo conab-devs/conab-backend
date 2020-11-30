@@ -13,6 +13,7 @@ class Product extends Model
         'price',
         'photo_path',
         'estimated_delivery_time',
+        'unit_of_measure',
         'category_id',
     ];
 
