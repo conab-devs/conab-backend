@@ -93,7 +93,7 @@ class CooperativeAdminControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_unauthorized_on_show_if_cooperative_admin_try_to_show_others_informations()
+    public function should_return_unauthorized_on_show_if_cooperative_admin_try_to_show_others_information()
     {
         $cooperative = factory(Cooperative::class)->create();
         $coopAdmin1 = factory(User::class)->create([
