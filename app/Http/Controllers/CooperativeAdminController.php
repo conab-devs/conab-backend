@@ -31,19 +31,12 @@ class CooperativeAdminController extends Controller
         $admin = $cooperative->admins()
             ->with('phones')
             ->where('id', $id)
-            ->first();
+            ->firstOrFail();
 
         if (Gate::denies('manage-cooperative-admin', $admin)) {
             return response()->json([
                 'message' => 'Você não tem autorização a este recurso',
             ], 401);
-        }
-
-        if (!$admin) {
-            return response()->json(
-                'Administrador da cooperativa não encontrado',
-                404
-            );
         }
 
         return response()->json($admin);
@@ -80,10 +73,7 @@ class CooperativeAdminController extends Controller
 
     public function update(Request $request, Cooperative $cooperative, int $id)
     {
-        $admin = $cooperative->admins()
-            ->with('phones')
-            ->where('id', $id)
-            ->first();
+        $admin = $cooperative->admins()->with('phones')->where('id', $id)->first();
 
         if (Gate::denies('manage-cooperative-admin', $admin)) {
             return response()->json([

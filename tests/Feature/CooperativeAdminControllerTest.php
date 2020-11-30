@@ -96,12 +96,17 @@ class CooperativeAdminControllerTest extends TestCase
     public function should_return_unauthorized_on_show_if_cooperative_admin_try_to_show_others_informations()
     {
         $cooperative = factory(Cooperative::class)->create();
-        $user = factory(User::class)->create([
+        $coopAdmin1 = factory(User::class)->create([
             'user_type' => 'ADMIN_COOP',
+            'cooperative_id' => $cooperative->id
+        ]);
+        $coopAdmin2 = factory(User::class)->create([
+            'user_type' => 'ADMIN_COOP',
+            'cooperative_id' => $cooperative->id
         ]);
 
-        $response = $this->actingAs($user, 'api')
-            ->getJson("/api/cooperatives/$cooperative->id/admins/22");
+        $response = $this->actingAs($coopAdmin1, 'api')
+            ->getJson("/api/cooperatives/$cooperative->id/admins/$coopAdmin2->id");
         $response->assertStatus(401);
     }
 
