@@ -55,9 +55,9 @@ class CooperativeAdminController extends Controller
             'user_type' => 'ADMIN_COOP',
         ]);
 
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             $user = User::create($coopAdminInformation);
             $cooperative->admins()->save($user);
             $user->phones()->createMany($coopAdminInformation['phones']);
@@ -67,6 +67,7 @@ class CooperativeAdminController extends Controller
             return response()->json($user->load(['phones']), 201);
 
         } catch (\Exception $err) {
+            DB::rollback();
             return response()->json([
                 'message' => 'Algo deu errado, tente novamente em alguns instantes',
             ], 500);
