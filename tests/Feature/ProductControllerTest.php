@@ -52,7 +52,10 @@ class ProductControllerTest extends TestCase
         $response = $this->actingAs($user, 'api')
             ->getJson("/api/products/$product->id");
 
+        $expectedProductStructure = array_keys($product->toArray());
+        array_push($expectedProductStructure, 'cooperative');
         $response->assertOk()->assertJson($product->toArray());
+        $response->assertJsonStructure($expectedProductStructure);
     }
 
     /** @test */
