@@ -13,7 +13,7 @@ class ConabAdminController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('only-admin-conab');
+        $this->middleware('only-conab-admins');
     }
 
     public function index()
