@@ -12,6 +12,7 @@ $factory->define(Product::class, function (Faker $faker) {
         'price' => $faker->randomFloat(2, 0, 100),
         'photo_path' => UploadedFile::fake()->image($faker->sha256().'.png'),
         'estimated_delivery_time' => $faker->randomDigitNot(0),
-        'category_id' => factory(\App\Category::class)
+        'category_id' => factory(\App\Category::class),
+        'cooperative_id' => factory(\App\Cooperative::class),
     ];
 });
