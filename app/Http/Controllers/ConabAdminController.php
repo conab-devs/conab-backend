@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\Http\Requests\User\StoreRequest;
-use App\Components\Validators\UpdateUser;
+use App\Http\Requests\User\UpdateRequest;
 
 class ConabAdminController extends Controller
 {
@@ -61,31 +60,39 @@ class ConabAdminController extends Controller
         }
     }
 
-    public function update(Request $request)
+    public function update(UpdateRequest $request)
     {
-        $admin = User::with('phones')->findOrFail(Auth::id());
+        $userData = $request->validated();
+        $user = $request->user();
 
-        $validator = new UpdateUser();
-        $data = $validator->execute($request, $admin);
+        try {
+            DB::beginTransaction();
 
-        $admin->name = $data['name'] ?? $admin->name;
-        $admin->email = $data['email'] ?? $admin->email;
-        $admin->cpf = $data['cpf'] ?? $admin->cpf;
+            $user->fill($userData);
 
-        if (!empty($data['password'])) {
-            if (!Hash::check($data['password'], $admin->password)) {
-                return response()->json('', 400);
+            if (!empty($userData['password'])) {
+                if (!Hash::check($userData['password'], $user->password)) {
+                    return response()->json('Senha inválida', 400);
+                }
+                $user->password = $userData['new_password'];
             }
-            $admin->password = $data['new_password'];
+
+            if (!empty($userData['phones'])) {
+                $user->phones()->delete();
+                $user->phones()->createMany($userData['phones']);
+            }
+
+            $user->save();
+            $user->load(['phones']);
+
+            DB::commit();
+
+            return response()->json($user, 200);
+        } catch (\Exception $err) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Algo deu errado, tente novamente em alguns instantes'
+            ], 500);
         }
-
-        $admin->save();
-
-        if (!empty($data['phones'])) {
-            $admin->phones()->delete();
-            $admin->phones()->createMany($data['phones']);
-        }
-
-        return response()->json($admin->refresh(), 200);
     }
 }

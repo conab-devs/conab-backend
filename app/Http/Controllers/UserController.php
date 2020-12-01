@@ -70,7 +70,7 @@ class UserController extends Controller
             $user->save();
 
             $user->phones()->delete();
-            $user->phones()->create(['number' => $request->input('phones')]);
+            $user->phones()->createMany($request->input('phones'));
 
             $user->load('phones');
 

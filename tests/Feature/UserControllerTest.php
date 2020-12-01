@@ -374,11 +374,10 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_return_validation_error_if_existing_cpf_is_passed_on_update()
     {
-        $user = factory(User::class)->create(['cpf' => '123.123.123-12']);
+        $firstUser = factory(User::class)->create();
+        $secondUser = factory(User::class)->create(['cpf' => '123.123.123-12']);
 
-        $response = $this->actingAs($user)->putJson("api/users", [
-            'cpf' => '123.123.123-12',
-        ]);
+        $response = $this->actingAs($firstUser)->putJson("api/users", ['cpf' => $secondUser->cpf]);
         $response->assertStatus(422);
     }
 
@@ -387,18 +386,17 @@ class UserControllerTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $new_informations = [
+        $new_information = [
             'name' => 'valid_name',
             'email' => 'valid_mail@mail.com',
             'cpf' => '123.123.123-12',
-            'phones' => '(55) 55555-5555',
+            'phones' => [['number' => '(55) 55555-5555']],
         ];
 
         $response = $this->actingAs($user)
-            ->putJson("api/users", $new_informations);
+            ->putJson("api/users", $new_information);
         $response->assertStatus(200);
-        $new_informations['phones'] = [['number' => '(55) 55555-5555']];
-        $response->assertJson($new_informations);
+        $response->assertJson($new_information);
     }
 
     /** @test */
@@ -420,12 +418,11 @@ class UserControllerTest extends TestCase
             'password' => '123456',
             'new_password' => 'an_password',
             'cpf' => '123.123.123-12',
-            'phones' => '(55) 55555-5555',
+            'phones' => [['number' => '(55) 55555-5555']],
             'avatar' => $file,
         ];
 
-        $response = $this->actingAs($user)
-            ->putJson("api/users", $new_informations);
+        $response = $this->actingAs($user)->putJson("api/users", $new_informations);
         $response->assertStatus(200);
 
         Storage::disk('public')->assertExists('uploads/'. $file->hashName());
@@ -436,15 +433,10 @@ class UserControllerTest extends TestCase
             'avatar' => $file
         ]);
 
-        $expected_response['phones'] = [['number' => '(55) 55555-5555']];
-
         $response->assertJson($expected_response);
 
         $user->refresh();
-
-        $this->assertTrue(
-            Hash::check($new_informations['new_password'], $user->password)
-        );
+        $this->assertTrue(Hash::check($new_informations['new_password'], $user->password));
     }
 
     /** @test */
