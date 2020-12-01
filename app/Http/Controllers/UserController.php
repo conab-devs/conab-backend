@@ -20,20 +20,18 @@ class UserController extends Controller
 
     public function store(StoreRequest $request, UploadHandler $uploader)
     {
-        $userData = $request->except('phones');
+        $validatedData = $request->validated();
 
         try {
             DB::beginTransaction();
 
-            $user = User::create($userData);
-            $phoneNumber = $request->input('phones')[0];
+            $user = new User();
+            $user->fill($validatedData);
+            $user->profile_picture = $uploader->upload($validatedData['avatar']);
+            $user->save();
+
+            $phoneNumber = $validatedData['phones'][0];
             $user->phones()->create($phoneNumber);
-
-            if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
-                $user->profile_picture = $uploader->upload($avatar);
-                $user->save();
-            }
-
             $user->load('phones');
 
             DB::commit();

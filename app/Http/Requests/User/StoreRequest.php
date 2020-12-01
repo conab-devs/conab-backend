@@ -19,10 +19,12 @@ class StoreRequest extends FormRequest
         return [
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email',
+            'password' => 'string',
             'cpf' => 'required|regex:' . self::CPF_REGEX . '|unique:users,cpf',
             'phones' => 'required|array',
+            'avatar' => 'image',
             'phones.*.number' => 'required|string|regex:'
-                . self::PHONE_NUMBER_REGEX . '|distinct|unique:phones,number',
+                . self::PHONE_NUMBER_REGEX . '|distinct|unique:phones,number'
         ];
     }
 }
