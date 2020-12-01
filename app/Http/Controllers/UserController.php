@@ -20,22 +20,31 @@ class UserController extends Controller
 
     public function store(StoreRequest $request, UploadHandler $uploader)
     {
-        // TODO: Unificar ConabAdminController, CooperativeAdminController e UserController.
-
         $userData = $request->except('phones');
-        $user = User::create($userData);
 
-        $phoneNumber = $request->input('phones')[0];
-        $user->phones()->create($phoneNumber);
+        try {
+            DB::beginTransaction();
 
-        if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
-            $user->profile_picture = $uploader->upload($avatar);
-            $user->save();
+            $user = User::create($userData);
+            $phoneNumber = $request->input('phones')[0];
+            $user->phones()->create($phoneNumber);
+
+            if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
+                $user->profile_picture = $uploader->upload($avatar);
+                $user->save();
+            }
+
+            $user->load('phones');
+
+            DB::commit();
+
+            return response()->json($user, 201);
+        } catch (\Exception $err) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Algo deu errado, tente novamente em alguns instantes'
+            ], 500);
         }
-
-        $user->load('phones');
-
-        return response()->json($user, 201);
     }
 
     public function update(UpdateRequest $request, UploadHandler $uploader)
@@ -43,23 +52,22 @@ class UserController extends Controller
         $validated = $request->validated();
         $user = auth()->user();
 
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             if (!empty($validated['password'])) {
                 if (!Hash::check($validated['password'], $user->password)) {
                     return response()->json('Senha Inválida', 400);
                 }
                 $user->password = $validated['new_password'];
-                $user->save();
             }
 
             if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
                 $user->profile_picture = $uploader->upload($avatar);
-                $user->save();
             }
 
-            $user->update($request->except('password', 'new_password'));
+            $user->fill($request->except('password', 'new_password'));
+            $user->save();
 
             $user->phones()->delete();
             $user->phones()->create(['number' => $request->input('phones')]);
@@ -68,7 +76,7 @@ class UserController extends Controller
 
             DB::commit();
 
-            return response()->json($user);
+            return response()->json($user, 200);
         } catch (\Exception $err) {
             DB::rollback();
             return response()->json([

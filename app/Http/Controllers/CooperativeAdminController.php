@@ -61,11 +61,11 @@ class CooperativeAdminController extends Controller
             $user = User::create($coopAdminInformation);
             $cooperative->admins()->save($user);
             $user->phones()->createMany($coopAdminInformation['phones']);
+            $user->load(['phones']);
 
             DB::commit();
 
-            return response()->json($user->load(['phones']), 201);
-
+            return response()->json($user, 201);
         } catch (\Exception $err) {
             DB::rollback();
             return response()->json([
@@ -76,7 +76,10 @@ class CooperativeAdminController extends Controller
 
     public function update(Request $request, Cooperative $cooperative, int $id)
     {
-        $admin = $cooperative->admins()->with('phones')->where('id', $id)->first();
+        $admin = $cooperative->admins()
+            ->with('phones')
+            ->where('id', $id)
+            ->first();
 
         if (Gate::denies('manage-cooperative-admin', $admin)) {
             return response()->json([
@@ -94,7 +97,7 @@ class CooperativeAdminController extends Controller
 
             if (!empty($data['password'])) {
                 if (!Hash::check($data['password'], $admin->password)) {
-                    return response('', 400);
+                    return response('Senha inválida', 400);
                 }
                 $admin->password = $data['new_password'];
             }

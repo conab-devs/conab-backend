@@ -471,6 +471,7 @@ class CooperativeAdminControllerTest extends TestCase
             'user_type' => 'ADMIN_COOP',
             'password' => '123456'
         ]);
+
         $cooperative->admins()->save($admin);
 
         $dataWithOnlyName = ['name' => 'updated_name'];
