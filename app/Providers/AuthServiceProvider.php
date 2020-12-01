@@ -19,7 +19,7 @@ class AuthServiceProvider extends ServiceProvider
             }
 
             if ($resource) {
-                return $user->id === $resource->id && $user->cooperative;
+                return $user->id === $resource->id;
             }
 
             return false;

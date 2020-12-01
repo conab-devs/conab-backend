@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use App\User;
 use App\Cooperative;
 use App\Http\Requests\User\StoreRequest;
-use App\Components\Validators\UpdateUser;
+use App\Http\Requests\User\UpdateRequest;
 
 class CooperativeAdminController extends Controller
 {
@@ -74,40 +74,29 @@ class CooperativeAdminController extends Controller
         }
     }
 
-    public function update(Request $request, Cooperative $cooperative, int $id)
+    public function update(UpdateRequest $request)
     {
-        $admin = $cooperative->admins()
-            ->with('phones')
-            ->where('id', $id)
-            ->first();
-
-        if (Gate::denies('manage-cooperative-admin', $admin)) {
-            return response()->json([
-                'message' => 'Você não tem autorização a este recurso',
-            ], 401);
-        }
-
-        $validator = new UpdateUser();
-        $data = $validator->execute($request, $admin);
+        $admin = $request->user();
+        $validatedData = $request->validated();
 
         try {
             DB::beginTransaction();
 
-            $admin->update($request->except('password', 'new_password', 'phones'));
+            $admin->fill($validatedData);
 
-            if (!empty($data['password'])) {
-                if (!Hash::check($data['password'], $admin->password)) {
-                    return response('Senha inválida', 400);
+            if (!empty($validatedData['password'])) {
+                if (!Hash::check($validatedData['password'], $admin->password)) {
+                    return response()->json('Senha inválida', 400);
                 }
-                $admin->password = $data['new_password'];
+                $admin->password = $validatedData['new_password'];
+            }
+
+            if (!empty($validatedData['phones'])) {
+                $admin->phones()->delete();
+                $admin->phones()->createMany($validatedData['phones']);
             }
 
             $admin->save();
-
-            if (!empty($data['phones'])) {
-                $admin->phones()->delete();
-                $admin->phones()->createMany($data['phones']);
-            }
 
             DB::commit();
 

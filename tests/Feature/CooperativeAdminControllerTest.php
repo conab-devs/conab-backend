@@ -459,7 +459,7 @@ class CooperativeAdminControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_unauthorized_if_user_is_not_the_resource_owner_on_update()
+    public function should_return_forbidden_if_user_is_not_the_resource_owner_on_update()
     {
         $user = factory(User::class)
             ->create(['password' => '123456', 'user_type' => 'ADMIN_COOP']);
@@ -479,7 +479,7 @@ class CooperativeAdminControllerTest extends TestCase
             "/api/cooperatives/$cooperative->id/admins/$admin->id",
             $dataWithOnlyName
         );
-        $response->assertStatus(401);
+        $response->assertStatus(403);
     }
 
     /** @test */
