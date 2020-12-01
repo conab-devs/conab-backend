@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use App\User;
 use App\Phone;
@@ -115,6 +117,10 @@ class CooperativeAdminControllerTest extends TestCase
     {
         $cooperative = factory(Cooperative::class)->create();
         $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        Storage::fake('public');
+        $file = UploadedFile::fake()->image('photo.png');
+
         $data = [
             'name' => 'any_name',
             'email' => 'any@email.com',
@@ -123,14 +129,17 @@ class CooperativeAdminControllerTest extends TestCase
                 ['number' => '(99) 99999-9999'],
                 ['number' => '(88) 88888-8888'],
             ],
+            'avatar' => $file
         ];
         $response = $this->actingAs($authenticatedUser, 'api')
             ->postJson("/api/cooperatives/$cooperative->id/admins", $data);
-        $response->assertStatus(201)
-            ->assertJson($data);
-        $this->assertDatabaseHas('users', [
-            'cooperative_id' => $cooperative->id,
-        ]);
+
+        $response->assertStatus(201)->assertJsonStructure([ 'name', 'email', 'cpf', 'phones' ]);
+
+        Storage::disk('public')->assertExists('uploads/'. $file->hashName());
+        $this->assertDatabaseHas('users', [ 'cooperative_id' => $cooperative->id ]);
+        $this->assertDatabaseHas('phones', $data['phones'][0]);
+        $this->assertDatabaseHas('phones', $data['phones'][1]);
     }
 
     /** @test */
@@ -146,6 +155,7 @@ class CooperativeAdminControllerTest extends TestCase
                 ['number' => '(99) 99999-9999'],
                 ['number' => '(88) 88888-8888'],
             ],
+            'avatar' => UploadedFile::fake()->image('photo.png')
         ];
         $response = $this->actingAs($authenticatedUser, 'api')
             ->postJson("/api/cooperatives/$cooperative->id/admins", $data);

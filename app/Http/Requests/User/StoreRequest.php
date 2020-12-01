@@ -22,7 +22,7 @@ class StoreRequest extends FormRequest
             'password' => 'string',
             'cpf' => 'required|regex:' . self::CPF_REGEX . '|unique:users,cpf',
             'phones' => 'required|array',
-            'avatar' => 'image',
+            'avatar' => 'required|image',
             'phones.*.number' => 'required|string|regex:'
                 . self::PHONE_NUMBER_REGEX . '|distinct|unique:phones,number'
         ];

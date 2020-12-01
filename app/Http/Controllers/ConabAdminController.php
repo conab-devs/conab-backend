@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Components\Upload\UploadHandler;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +33,7 @@ class ConabAdminController extends Controller
         return response()->json($admin, 200);
     }
 
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request, UploadHandler $uploader)
     {
         $validatedData = $request->validated();
         $userData = array_merge($validatedData, [
@@ -45,7 +46,9 @@ class ConabAdminController extends Controller
 
             $user = new User();
             $user->fill($userData);
+            $user->profile_picture = $uploader->upload($validatedData['avatar']);
             $user->save();
+
             $user->phones()->createMany($validatedData['phones']);
             $user->load(['phones']);
 

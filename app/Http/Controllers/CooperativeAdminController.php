@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Components\Upload\UploadHandler;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -41,7 +42,7 @@ class CooperativeAdminController extends Controller
         return response()->json($admin);
     }
 
-    public function store(StoreRequest $request, Cooperative $cooperative)
+    public function store(StoreRequest $request, Cooperative $cooperative, UploadHandler $uploader)
     {
         if (Gate::denies('manage-cooperative-admin')) {
             return response()->json([
@@ -58,7 +59,9 @@ class CooperativeAdminController extends Controller
             DB::beginTransaction();
 
             $user = User::create($coopAdminInformation);
+            $user->profile_picture = $uploader->upload($coopAdminInformation['avatar']);
             $cooperative->admins()->save($user);
+
             $user->phones()->createMany($coopAdminInformation['phones']);
             $user->load(['phones']);
 
