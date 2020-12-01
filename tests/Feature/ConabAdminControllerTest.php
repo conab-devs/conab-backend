@@ -107,7 +107,7 @@ class ConabAdminControllerTest extends TestCase
         $response = $this->actingAs($authenticatedUser, 'api')
             ->postJson('/api/conab/admins', $data);
         $response->assertStatus(201)
-            ->assertJsonFragment($data);
+            ->assertJsonStructure([ 'name', 'email', 'cpf', 'phones' ]);
     }
 
     /** @test */

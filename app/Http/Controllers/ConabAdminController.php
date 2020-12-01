@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\User;
@@ -34,17 +35,30 @@ class ConabAdminController extends Controller
 
     public function store(StoreRequest $request)
     {
-        $data = $request->validated();
+        $validatedData = $request->validated();
+        $userData = array_merge($validatedData, [
+            'password' => $validatedData['cpf'],
+            'user_type' => 'CONAB_ADMIN'
+        ]);
 
-        $user = new User();
-        $user->fill($data);
-        $user->password = $data['cpf'];
-        $user->user_type = 'ADMIN_CONAB';
-        $user->save();
-        $phones = $user->phones()->createMany($data['phones']);
-        $userAndPhones = array_merge($user->toArray(), [ 'phones' => $phones ]);
+        try {
+            DB::beginTransaction();
 
-        return response()->json($userAndPhones, 201);
+            $user = new User();
+            $user->fill($userData);
+            $user->save();
+            $user->phones()->createMany($validatedData['phones']);
+            $user->load(['phones']);
+
+            DB::commit();
+
+            return response()->json($user, 201);
+        } catch (\Exception $err) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Algo deu errado, tente novamente em alguns instantes'
+            ], 500);
+        }
     }
 
     public function update(Request $request)
