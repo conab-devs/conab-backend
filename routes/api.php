@@ -9,11 +9,11 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::put('/conab/admins', 'ConabAdminController@update');
 
     Route::get('cooperatives', 'CooperativeController@index');
-    Route::get('cooperatives/{id}', 'CooperativeController@show');
+    Route::get('cooperatives/{cooperative}', 'CooperativeController@show');
     Route::post('cooperatives', 'CooperativeController@store');
-    Route::delete('cooperatives/{id}', 'CooperativeController@destroy');
-    Route::put('cooperatives/{id}', 'CooperativeController@update');
-    Route::patch('cooperatives/{id}', 'CooperativeController@updateDap');
+    Route::delete('cooperatives/{cooperative}', 'CooperativeController@destroy');
+    Route::put('cooperatives/{cooperative}', 'CooperativeController@update');
+    Route::patch('cooperatives/{cooperative}', 'CooperativeController@updateDap');
 
     Route::post('/uploads', 'UploadController@store');
 

@@ -31,6 +31,13 @@ class CooperativeController extends Controller
         return response()->json($cooperatives);
     }
 
+    public function show(int $id)
+    {
+        $cooperative = Cooperative::with(['address', 'phones'])->findOrFail($id);
+
+        return response()->json($cooperative);
+    }
+
     public function store(StoreRequest $request)
     {
         $cooperative = new Cooperative();
@@ -53,17 +60,8 @@ class CooperativeController extends Controller
         return response()->json($cooperative, 201);
     }
 
-    public function show(int $id)
+    public function update(Request $request, Cooperative $cooperative)
     {
-        $cooperative = Cooperative::with(['address', 'phones'])->findOrFail($id);
-
-        return response()->json($cooperative);
-    }
-
-    public function update(Request $request, int $id)
-    {
-        $cooperative = Cooperative::findOrFail($id);
-
         Validator::make($request->all(), [
             'name' => [
                 'bail',
@@ -98,10 +96,8 @@ class CooperativeController extends Controller
         return response()->json(null, 204);
     }
 
-    public function updateDap(Request $request, int $id)
+    public function updateDap(Request $request, Cooperative $cooperative)
     {
-        $cooperative = Cooperative::findOrFail($id);
-
         $request->validate([
             'dap_path' => 'required|mimetypes:application/pdf',
         ]);
@@ -118,10 +114,8 @@ class CooperativeController extends Controller
         return response()->json(null, 204);
     }
 
-    public function destroy(int $id)
+    public function destroy(Cooperative $cooperative)
     {
-        $cooperative = Cooperative::findOrFail($id);
-
         $cooperative->phones()->delete();
         $cooperative->delete();
         $cooperative->address()->delete();
