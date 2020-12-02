@@ -11,6 +11,7 @@ use App\Address;
 use App\Cooperative;
 use App\Components\Traits\UploadFirebase;
 use App\Http\Requests\Cooperative\StoreRequest;
+use App\Http\Requests\Cooperative\UpdateRequest;
 
 class CooperativeController extends Controller
 {
@@ -60,27 +61,8 @@ class CooperativeController extends Controller
         return response()->json($cooperative, 201);
     }
 
-    public function update(Request $request, Cooperative $cooperative)
+    public function update(UpdateRequest $request, Cooperative $cooperative)
     {
-        Validator::make($request->all(), [
-            'name' => [
-                'bail',
-                Rule::unique('cooperatives', 'name')->ignore($cooperative->id),
-                'max:100'
-            ],
-            'phones' => 'array',
-            'phones.*.number' => [
-                'distinct',
-                Rule::unique('phones')->whereNotIn('id', $cooperative->phones->modelKeys()),
-                'regex:/(\(\d{2}\)\ \d{4,5}\-\d{4})/',
-                'max:15'
-            ],
-            'city' => 'max:100',
-            'street' => 'max:100',
-            'neighborhood' => 'max:100',
-            'number' => 'max:10',
-        ])->validate();
-
         $cooperative->name = $request->input('name');
         $cooperative->update();
 
