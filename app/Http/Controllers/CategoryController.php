@@ -11,28 +11,16 @@ use App\Http\Requests\Category\UpdateRequest;
 
 class CategoryController extends Controller
 {
-
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function index()
     {
         return response()->json(Category::all(), 200);
     }
 
-    /**
-     * @param Category $category
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function show(Category $category)
     {
         return response()->json($category, 200);
     }
 
-    /**
-     * @param StoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(StoreRequest $request)
     {
         $validated = $request->validated();
@@ -49,11 +37,6 @@ class CategoryController extends Controller
         return response()->json($category, 201);
     }
 
-    /**
-     * @param UpdateRequest $request
-     * @param Category $category
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function update(UpdateRequest $request, Category $category)
     {
         $validated = $request->validated();
@@ -69,11 +52,6 @@ class CategoryController extends Controller
         return response()->json($category, 200);
     }
 
-    /**
-     * @param Category $category
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
-     */
     public function destroy(Category $category)
     {
         if (Gate::denies('admin-conab')) {
@@ -83,6 +61,6 @@ class CategoryController extends Controller
         }
 
         $category->delete();
-        return response()->json([], 204);
+        return response()->json(null, 204);
     }
 }

@@ -9,6 +9,9 @@ use App\Cooperative;
 
 class UpdateRequest extends FormRequest
 {
+    const CPF_REGEX = "/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/";
+    const PHONE_NUMBER_REGEX = "/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/";
+
     public function authorize()
     {
         $path = $this->path();
@@ -33,7 +36,7 @@ class UpdateRequest extends FormRequest
             'name' => 'string',
             'email' => 'string|email|unique:users,email',
             'cpf' => [
-                'regex:/^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}/',
+                'regex:' . self::CPF_REGEX,
                 Rule::unique('users')->ignore($user->id),
             ],
             'password' => 'string',
@@ -42,7 +45,7 @@ class UpdateRequest extends FormRequest
             'phones.*.number' => [
                 'string',
                 'distinct',
-                'regex:/^\([0-9]{2}\) [0-9]{5}\-[0-9]{4}/',
+                'regex:' . self::PHONE_NUMBER_REGEX,
                 Rule::unique('phones')->where(function ($query) use ($user) {
                     $phonesId = [];
                     foreach ($user->phones as $phone) {
