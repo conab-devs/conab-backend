@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 use App\Address;
 use App\Cooperative;
 use App\Components\Traits\UploadFirebase;
+use App\Http\Requests\Cooperative\StoreRequest;
 
 class CooperativeController extends Controller
 {
@@ -30,20 +31,8 @@ class CooperativeController extends Controller
         return response()->json($cooperatives);
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $request->validate([
-            'name' => 'bail|required|unique:cooperatives|max:100',
-            'dap_path' => 'required|mimetypes:application/pdf',
-            'phones' => 'required|array',
-            'phones.*.number' =>
-                'required|distinct|regex:/(\(\d{2}\)\ \d{4,5}\-\d{4})/|unique:phones,number|max:15',
-            'city' => 'required|max:100',
-            'street' => 'required|max:100',
-            'neighborhood' => 'required|max:100',
-            'number' => 'required|max:10',
-        ]);
-
         $cooperative = new Cooperative();
 
         $cooperative->dap_path = !$request->hasFile('dap_path')
