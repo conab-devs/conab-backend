@@ -21,6 +21,6 @@ class UploadController extends Controller
             return response()->json(['url' => $user->profile_picture]);
         }
 
-        return response()->json(['error' => 'Avatar is required and should be a valid file'], 400);
+        return response()->json(['message' => 'Avatar é obrigatório e deve ser um image válida'], 400);
     }
 }

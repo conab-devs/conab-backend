@@ -121,7 +121,7 @@ class ProductControllerTest extends TestCase
         $cooperativeAdminResponse = $this->actingAs($cooperativeAdmin, 'api')
             ->deleteJson("/api/products/$product->id");
 
-        $cooperativeAdminResponse->assertStatus(200);
+        $cooperativeAdminResponse->assertStatus(204);
     }
 
     /** @test */
