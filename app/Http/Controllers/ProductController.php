@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Components\Upload\UploadHandler;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
 use App\Components\Traits\UploadFirebase;
@@ -55,13 +56,11 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
-    public function update(UpdateRequest $request, Product $product)
+    public function update(UpdateRequest $request, Product $product, UploadHandler $uploader)
     {
         $product->fill($request->all());
         if ($request->hasFile('photo_path') && ($photo = $request->file('photo_path'))) {
-            $product->photo_path = App::environment('production')
-                ? $this->uploadFileOnFirebase($photo)
-                : $photo->store('uploads');
+            $product->photo_path = $uploader->upload($photo);
         }
         $product->save();
 

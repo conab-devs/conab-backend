@@ -47,17 +47,17 @@ class UserController extends Controller
 
     public function update(UpdateRequest $request, UploadHandler $uploader)
     {
-        $validated = $request->validated();
+        $validatedData = $request->validated();
         $user = auth()->user();
 
         try {
             DB::beginTransaction();
 
-            if (!empty($validated['password'])) {
-                if (!Hash::check($validated['password'], $user->password)) {
+            if (!empty($validatedData['password'])) {
+                if (!Hash::check($validatedData['password'], $user->password)) {
                     return response()->json('Senha Inválida', 400);
                 }
-                $user->password = $validated['new_password'];
+                $user->password = $validatedData['new_password'];
             }
 
             if ($request->hasFile('avatar') && ($avatar = $request->file('avatar'))->isValid()) {
