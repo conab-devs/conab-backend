@@ -15,12 +15,11 @@ class AddressController extends Controller
 
     public function store(StoreRequest $request)
     {
-        $validated = $request->validated();
+        $validatedData = $request->validated();
 
         $user = auth()->user();
-
         $addresses = $user->addresses()
-            ->createMany($validated['addresses']);
+            ->createMany($validatedData['addresses']);
 
         return response()->json($addresses, 201);
     }
