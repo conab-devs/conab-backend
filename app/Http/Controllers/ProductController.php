@@ -57,9 +57,10 @@ class ProductController extends Controller
 
     public function update(UpdateRequest $request, Product $product, UploadHandler $uploader)
     {
-        $product->fill($request->all());
-        if ($request->hasFile('photo_path') && ($photo = $request->file('photo_path'))) {
-            $product->photo_path = $uploader->upload($photo);
+        $validatedData = $request->validated();
+        $product->fill($validatedData);
+        if ($request->hasFile('photo_path')) {
+            $product->photo_path = $uploader->upload($validatedData['photo_path']);
         }
         $product->save();
 
