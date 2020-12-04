@@ -35,16 +35,15 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request, UploadHandler $uploader)
     {
         $user = $request->user();
+        $validatedData = $request->validated();
 
         $product = new Product();
         $product->cooperative_id = $user->cooperative_id;
-        $product->fill($request->all());
-        $product->photo_path = App::environment('production')
-            ? $this->uploadFileOnFirebase($request->file('photo_path'))
-            : $request->file('photo_path')->store('uploads');
+        $product->fill($validatedData);
+        $product->photo_path = $uploader->upload($validatedData['photo_path']);
 
         $product->save();
 

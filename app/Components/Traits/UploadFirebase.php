@@ -3,9 +3,9 @@
 
 namespace App\Components\Traits;
 
-use App\Components\FirebaseStorageAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use App\Components\FirebaseStorageAdapter;
 
 trait UploadFirebase
 {

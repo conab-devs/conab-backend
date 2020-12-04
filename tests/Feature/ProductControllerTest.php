@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
+/** @group products */
 class ProductControllerTest extends TestCase
 {
     use RefreshDatabase;
