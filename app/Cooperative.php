@@ -6,6 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @OA\Schema(
+ *     schema="Cooperative",
+ *     type="obejct",
+ *     @OA\Property(
+ *        property="name",
+ *        description="Nome da cooperative"
+ *    ),
+ *    @OA\Property(
+ *        property="dap_path",
+ *        description="URL do arquivo DAP"
+ *    ),
+ *    @OA\Property(
+ *        property="address_id",
+ *        description="Id do endereço da cooperativa"
+ *    )
+ * )
+ */
 class Cooperative extends Model
 {
     protected $fillable = ['name', 'dap_path'];

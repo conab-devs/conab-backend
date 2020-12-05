@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\App;
@@ -9,24 +11,45 @@ use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     @OA\Property(
+ *         property="name",
+ *         type="string",
+ *         description="Nome do usuário"
+ *     ),
+ *     @OA\Property(
+ *         property="email",
+ *         type="string",
+ *         description="Email do usuário"
+ *     ),
+ *     @OA\Property(
+ *         property="cpf",
+ *         type="string",
+ *         description="CPF do usuário no formato XXX.XXX.XXX-XX"
+ *     ),
+ *     @OA\Property(
+ *         property="user_type",
+ *         type="string",
+ *         description="Tipo do usuário (ADMIN_COOP, ADMIN_CONAB ou CUSTOMER)"
+ *     ),
+ *     @OA\Property(
+ *         property="profile_picture",
+ *         type="string",
+ *         description="URL da foto de perfil do usuário"
+ *     ),
+ * )
+ */
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'name', 'email', 'password', 'cpf', 'user_type'
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password',
     ];
@@ -43,7 +66,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->attributes['password'];
     }
 
-    public function getProfilePictureAttribute()
+    public function getProfilePictureAttribute(): string
     {
         if (App::environment('testing')
             || $this->attributes['profile_picture'] === null
@@ -58,12 +81,12 @@ class User extends Authenticatable implements JWTSubject
         return Storage::url($this->attributes['profile_picture']);
     }
 
-    public function cooperative()
+    public function cooperative(): BelongsTo
     {
         return $this->belongsTo('App\Cooperative');
     }
 
-    public function phones()
+    public function phones(): BelongsToMany
     {
         return $this->belongsToMany('App\Phone', 'user_phones');
     }
