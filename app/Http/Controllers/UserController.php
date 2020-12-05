@@ -18,6 +18,22 @@ class UserController extends Controller
         return response()->json($user->load('phones'));
     }
 
+    /**
+     * @OA\Post(
+     *     path="/users",
+     *     operationId="store",
+     *     summary="Registra um novo usuário",
+     *     description="Retorna os dados do usuário registrado",
+     *
+     *     @OA\Response(
+     *         response=201,
+     *         description="Created",
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(response=500, description="Server Error"),
+     *     @OA\Response(response=422, description="Bad request")
+     * )
+     */
     public function store(StoreRequest $request, UploadHandler $uploader)
     {
         $validatedData = $request->validated();

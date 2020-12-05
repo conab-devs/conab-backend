@@ -1,0 +1,157 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Conarket",
+        "description": "API RESTFul do projeto conarket",
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/users": {
+            "post": {
+                "summary": "Registra um novo usuário",
+                "description": "Retorna os dados do usuário registrado",
+                "operationId": "store",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    },
+                    "422": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Address": {
+                "properties": {
+                    "street": {
+                        "description": "Rua do endereço"
+                    },
+                    "neighborhood": {
+                        "description": "Bairro do endereço"
+                    },
+                    "city": {
+                        "description": "Cidade do endereço"
+                    },
+                    "number": {
+                        "description": "Número do endereço"
+                    }
+                },
+                "type": "obejct"
+            },
+            "Cart": {
+                "properties": {
+                    "total_price": {
+                        "description": "Preço total dos items dentro do carrinho de compras"
+                    },
+                    "closed_at": {},
+                    "is_closed": {},
+                    "user_id": {
+                        "description": "ID do usuário dono do carrinho de compras"
+                    }
+                },
+                "type": "obejct"
+            },
+            "Category": {
+                "properties": {
+                    "name": {
+                        "description": "Nome da categoria"
+                    },
+                    "description": {
+                        "description": "Descrição da categoria"
+                    }
+                },
+                "type": "obejct"
+            },
+            "Cooperative": {
+                "properties": {
+                    "name": {
+                        "description": "Nome da cooperative"
+                    },
+                    "dap_path": {
+                        "description": "URL do arquivo DAP"
+                    },
+                    "address_id": {
+                        "description": "Id do endereço da cooperativa"
+                    }
+                },
+                "type": "obejct"
+            },
+            "Phone": {
+                "properties": {
+                    "number": {
+                        "description": "Número do telefone"
+                    }
+                },
+                "type": "obejct"
+            },
+            "Product": {
+                "properties": {
+                    "name": {
+                        "description": "Nome do produto"
+                    },
+                    "price": {
+                        "description": "Preço do produto"
+                    },
+                    "photo_path": {
+                        "description": "Foto do produto"
+                    },
+                    "estimated_delivery_time": {
+                        "description": "Tempo estimado de entrega do produto em dias"
+                    },
+                    "category_id": {
+                        "description": "Id da categoria que o produto pertence"
+                    },
+                    "cooperative_id": {
+                        "description": "Id da cooperativa que o produto pertence"
+                    }
+                },
+                "type": "obejct"
+            },
+            "User": {
+                "properties": {
+                    "name": {
+                        "description": "Nome do usuário",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Email do usuário",
+                        "type": "string"
+                    },
+                    "cpf": {
+                        "description": "CPF do usuário no formato XXX.XXX.XXX-XX",
+                        "type": "string"
+                    },
+                    "user_type": {
+                        "description": "Tipo do usuário (ADMIN_COOP, ADMIN_CONAB ou CUSTOMER)",
+                        "type": "string"
+                    },
+                    "profile_picture": {
+                        "description": "URL da foto de perfil do usuário",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "security": [
+        []
+    ]
+}
