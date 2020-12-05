@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @OA\Schema(
  *     schema="Phone",
- *     type="obejct",
+ *     type="object",
  *     @OA\Property(
  *        property="number",
+ *        type="string",
  *        description="Número do telefone"
  *    )
  * )

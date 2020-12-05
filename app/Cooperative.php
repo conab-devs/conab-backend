@@ -9,17 +9,20 @@ use Illuminate\Support\Facades\Storage;
 /**
  * @OA\Schema(
  *     schema="Cooperative",
- *     type="obejct",
+ *     type="object",
  *     @OA\Property(
  *        property="name",
+ *        type="string",
  *        description="Nome da cooperative"
  *    ),
  *    @OA\Property(
  *        property="dap_path",
+ *        type="string",
  *        description="URL do arquivo DAP"
  *    ),
  *    @OA\Property(
  *        property="address_id",
+ *        type="integer",
  *        description="Id do endereço da cooperativa"
  *    )
  * )

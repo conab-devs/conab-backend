@@ -7,13 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @OA\Schema(
  *     schema="Category",
- *     type="obejct",
+ *     type="object",
  *     @OA\Property(
  *        property="name",
+ *        type="string",
  *        description="Nome da categoria"
  *    ),
  *    @OA\Property(
  *        property="description",
+ *        type="string",
  *        description="Descrição da categoria"
  *    )
  * )
