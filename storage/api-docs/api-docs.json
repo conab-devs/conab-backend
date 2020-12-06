@@ -10,8 +10,307 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/users": {
+        "/products": {
+            "get": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Retornar uma lista de produtos",
+                "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "cooperative",
+                        "in": "query",
+                        "description": "Id da cooperativa",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Nome do produto",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "Id da categoria dos produtos",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "max_price",
+                        "in": "query",
+                        "description": "Valor máximo dos produtos",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    {
+                        "name": "min_price",
+                        "in": "query",
+                        "description": "Valor mínimo dos produtos",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    {
+                        "name": "order",
+                        "in": "query",
+                        "description": "Ordenação dos produtos desc ou asc",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "desc|asc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Product"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            },
             "post": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Registra um novo produto",
+                "operationId": "store",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocess Entity"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/products/{productId}": {
+            "get": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Retorna um produto pelo ID",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "Id do produto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Atualiza os dados do produto",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "Id do produto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Exclui os dados do produto",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "Id do produto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Retorna o usuário autenticado",
+                "operationId": "show",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "UserAndPhones",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        {
+                                            "properties": {
+                                                "phones": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Phone"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Atualiza os dados do usuário autenticado",
+                "description": "Retorna os dados do usuário atualizado",
+                "operationId": "update",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "UserAndPhones",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        {
+                                            "properties": {
+                                                "phones": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Phone"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Usuários"
+                ],
                 "summary": "Registra um novo usuário",
                 "description": "Retorna os dados do usuário registrado",
                 "operationId": "store",
@@ -21,16 +320,66 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "schema": "UserAndPhones",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        {
+                                            "properties": {
+                                                "phones": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Phone"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
                                 }
                             }
                         }
                     },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
                     "500": {
                         "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/users/{userId}": {
+            "delete": {
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Excluir o usuário pelo ID",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "Id do usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
                     },
-                    "422": {
-                        "description": "Bad request"
+                    "401": {
+                        "description": "Unathorizated"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Server Error"
                     }
                 }
             }
@@ -41,88 +390,112 @@
             "Address": {
                 "properties": {
                     "street": {
-                        "description": "Rua do endereço"
+                        "description": "Rua do endereço",
+                        "type": "string"
                     },
                     "neighborhood": {
-                        "description": "Bairro do endereço"
+                        "description": "Bairro do endereço",
+                        "type": "string"
                     },
                     "city": {
-                        "description": "Cidade do endereço"
+                        "description": "Cidade do endereço",
+                        "type": "string"
                     },
                     "number": {
-                        "description": "Número do endereço"
+                        "description": "Número do endereço",
+                        "type": "string"
                     }
                 },
-                "type": "obejct"
+                "type": "object"
             },
             "Cart": {
                 "properties": {
                     "total_price": {
-                        "description": "Preço total dos items dentro do carrinho de compras"
+                        "description": "Preço total dos items dentro do carrinho de compras",
+                        "type": "float"
                     },
-                    "closed_at": {},
-                    "is_closed": {},
+                    "closed_at": {
+                        "type": "date-time"
+                    },
+                    "is_closed": {
+                        "type": "boolean"
+                    },
                     "user_id": {
-                        "description": "ID do usuário dono do carrinho de compras"
+                        "description": "ID do usuário dono do carrinho de compras",
+                        "type": "integer"
                     }
                 },
-                "type": "obejct"
+                "type": "object"
             },
             "Category": {
                 "properties": {
                     "name": {
-                        "description": "Nome da categoria"
+                        "description": "Nome da categoria",
+                        "type": "string"
                     },
                     "description": {
-                        "description": "Descrição da categoria"
+                        "description": "Descrição da categoria",
+                        "type": "string"
                     }
                 },
-                "type": "obejct"
+                "type": "object"
             },
             "Cooperative": {
                 "properties": {
                     "name": {
-                        "description": "Nome da cooperative"
+                        "description": "Nome da cooperative",
+                        "type": "string"
                     },
                     "dap_path": {
-                        "description": "URL do arquivo DAP"
+                        "description": "URL do arquivo DAP",
+                        "type": "string"
                     },
                     "address_id": {
-                        "description": "Id do endereço da cooperativa"
+                        "description": "Id do endereço da cooperativa",
+                        "type": "integer"
                     }
                 },
-                "type": "obejct"
+                "type": "object"
             },
             "Phone": {
                 "properties": {
                     "number": {
-                        "description": "Número do telefone"
+                        "description": "Número do telefone",
+                        "type": "string"
                     }
                 },
-                "type": "obejct"
+                "type": "object"
             },
             "Product": {
                 "properties": {
                     "name": {
-                        "description": "Nome do produto"
+                        "description": "Nome do produto",
+                        "type": "string"
                     },
                     "price": {
-                        "description": "Preço do produto"
+                        "description": "Preço do produto",
+                        "type": "number",
+                        "format": "float"
                     },
                     "photo_path": {
-                        "description": "Foto do produto"
+                        "description": "Foto do produto",
+                        "type": "string"
                     },
                     "estimated_delivery_time": {
-                        "description": "Tempo estimado de entrega do produto em dias"
+                        "description": "Tempo estimado de entrega do produto em dias",
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "category_id": {
-                        "description": "Id da categoria que o produto pertence"
+                        "description": "Id da categoria que o produto pertence",
+                        "type": "integer"
                     },
                     "cooperative_id": {
-                        "description": "Id da cooperativa que o produto pertence"
+                        "description": "Id da cooperativa que o produto pertence",
+                        "type": "integer"
                     }
                 },
-                "type": "obejct"
+                "type": "object"
             },
             "User": {
                 "properties": {
@@ -148,6 +521,15 @@
                     }
                 },
                 "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "JWT": {
+                "type": "apiKey",
+                "description": "Token JWT",
+                "name": "Authorization",
+                "in": "header",
+                "bearerFormat": "Bearer <Token>"
             }
         }
     },
