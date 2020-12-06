@@ -379,21 +379,21 @@ class CooperativeAdminControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_forbidden_if_admin_coop_try_to_destroy_someones_account()
+    public function should_return_unathorizated_if_admin_coop_try_to_destroy_someones_account()
     {
         $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $admin = factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
         $authenticatedRoute = $this->actingAs($admin, 'api');
         $response = $authenticatedRoute->deleteJson("/api/users/$customer->id");
-        $response->assertStatus(403);
+        $response->assertStatus(401);
 
         $adminConab = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $adminConabDestroyResponse = $authenticatedRoute->deleteJson("/api/users/$adminConab->id");
-        $adminConabDestroyResponse->assertStatus(403);
+        $adminConabDestroyResponse->assertStatus(401);
 
         $adminCoop = factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
         $adminCoopDestroyResponse = $authenticatedRoute->deleteJson("/api/users/$adminCoop->id");
-        $adminCoopDestroyResponse->assertStatus(403);
+        $adminCoopDestroyResponse->assertStatus(401);
     }
 
     /** @test */

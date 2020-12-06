@@ -532,7 +532,7 @@ class ConabAdminControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_forbidden_if_conab_admin_try_to_delete_customer()
+    public function should_return_unathorizated_if_conab_admin_try_to_delete_customer()
     {
         $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($conabAdmin, 'api');
@@ -541,37 +541,37 @@ class ConabAdminControllerTest extends TestCase
             'cooperative_id' => null
         ]);
         $response = $authenticatedRoute->deleteJson("/api/users/$customer->id");
-        $response->assertStatus(403);
+        $response->assertStatus(401);
     }
 
     /** @test */
-    public function should_return_forbidden_if_customer_try_to_delete_a_conab_admin()
+    public function should_return_unathorizated_if_customer_try_to_delete_a_conab_admin()
     {
         $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $authenticatedRoute = $this->actingAs($customer, 'api');
         $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $response = $authenticatedRoute->deleteJson("/api/users/$conabAdmin->id");
-        $response->assertStatus(403);
+        $response->assertStatus(401);
     }
 
     /** @test */
-    public function should_return_forbidden_if_customer_try_to_destroy_admin_coop()
+    public function should_return_unathorizated_if_customer_try_to_destroy_admin_coop()
     {
         $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $admin = factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
         $authenticatedRoute = $this->actingAs($customer, 'api');
         $response = $authenticatedRoute->deleteJson("/api/users/$admin->id");
-        $response->assertStatus(403);
+        $response->assertStatus(401);
     }
 
     /** @test */
-    public function should_return_forbidden_if_customer_try_to_destroy_other_customer_account()
+    public function should_return_unathorizated_if_customer_try_to_destroy_other_customer_account()
     {
         $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $anotherCustomer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $authenticatedRoute = $this->actingAs($customer, 'api');
         $response = $authenticatedRoute->deleteJson("/api/users/$anotherCustomer->id");
-        $response->assertStatus(403);
+        $response->assertStatus(401);
     }
 
     /** @test */
