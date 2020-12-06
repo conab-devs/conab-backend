@@ -3,17 +3,80 @@
 namespace App\Http\Controllers;
 
 use App\Components\Upload\UploadHandler;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
-use App\Components\Traits\UploadFirebase;
 use App\Http\Requests\Product\StoreRequest;
 use App\Http\Requests\Product\UpdateRequest;
 use App\Product;
 
 class ProductController extends Controller
 {
-    use UploadFirebase;
-
+    /**
+     * @OA\Get(
+     *     path="/products",
+     *     operationId="index",
+     *     summary="Retornar uma lista de produtos",
+     *     tags={"Produtos"},
+     *
+     *     @OA\Parameter(
+     *         name="cooperative",
+     *         description="Id da cooperativa",
+     *         required=false,
+     *         in="query",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="name",
+     *         description="Nome do produto",
+     *         required=false,
+     *         in="query",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="category",
+     *         description="Id da categoria dos produtos",
+     *         required=false,
+     *         in="query",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="max_price",
+     *         description="Valor máximo dos produtos",
+     *         required=false,
+     *         in="query",
+     *         @OA\Schema(type="number", format="float")
+     *     ),
+     *     @OA\Parameter(
+     *         name="min_price",
+     *         description="Valor mínimo dos produtos",
+     *         required=false,
+     *         in="query",
+     *         @OA\Schema(type="number", format="float")
+     *     ),
+     *     @OA\Parameter(
+     *         name="order",
+     *         description="Ordenação dos produtos desc ou asc",
+     *         required=false,
+     *         in="query",
+     *         @OA\Schema(type="string", format="desc|asc")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="data",
+     *                     type="array",
+     *                     @OA\Items(ref="#/components/schemas/Product")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function index()
     {
         $products = Product::query()
@@ -35,6 +98,22 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/products",
+     *     operationId="store",
+     *     summary="Registra um novo produto",
+     *     tags={"Produtos"},
+     *
+     *     @OA\Response(
+     *         response=201,
+     *         description="Created",
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *     @OA\Response(response=422, description="Unprocess Entity"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function store(StoreRequest $request, UploadHandler $uploader)
     {
         $user = $request->user();
@@ -50,11 +129,57 @@ class ProductController extends Controller
         return response()->json($product, 201);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/products/{productId}",
+     *     operationId="show",
+     *     summary="Retorna um produto pelo ID",
+     *     tags={"Produtos"},
+     *
+     *     @OA\Parameter(
+     *         name="productId",
+     *         description="Id do produto",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function show(Product $product)
     {
         return response()->json($product);
     }
 
+    /**
+     * @OA\Put(
+     *     path="/products/{productId}",
+     *     operationId="update",
+     *     summary="Atualiza os dados do produto",
+     *     tags={"Produtos"},
+     *
+     *     @OA\Parameter(
+     *         name="productId",
+     *         description="Id do produto",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function update(UpdateRequest $request, Product $product, UploadHandler $uploader)
     {
         $validatedData = $request->validated();
@@ -67,6 +192,26 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/products/{productId}",
+     *     operationId="destroy",
+     *     summary="Exclui os dados do produto",
+     *     tags={"Produtos"},
+     *
+     *     @OA\Parameter(
+     *         name="productId",
+     *         description="Id do produto",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(response=204, description="No content"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function destroy(Product $product)
     {
         if (Gate::denies('manage-product', $product)) {

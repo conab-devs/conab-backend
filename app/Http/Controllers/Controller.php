@@ -18,6 +18,14 @@ use Illuminate\Routing\Controller as BaseController;
  *     )
  * )
  *
+ * @OA\SecurityScheme(
+ *     type="apiKey",
+ *     description="Token JWT",
+ *     name="Authorization",
+ *     in="header",
+ *     securityScheme="JWT",
+ *     bearerFormat="Bearer <Token>"
+ * )
  */
 class Controller extends BaseController
 {

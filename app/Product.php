@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\Storage;
  *    ),
  *     @OA\Property(
  *        property="price",
- *        type="float",
+ *        type="number",
+ *        format="float",
  *        description="Preço do produto"
  *    ),
  *     @OA\Property(
@@ -27,7 +28,8 @@ use Illuminate\Support\Facades\Storage;
  *    ),
  *    @OA\Property(
  *        property="estimated_delivery_time",
- *        type="date-time",
+ *        type="string",
+ *        format="date-time",
  *        description="Tempo estimado de entrega do produto em dias"
  *    ),
  *    @OA\Property(

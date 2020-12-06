@@ -17,6 +17,7 @@ class UserController extends Controller
      *     path="/users",
      *     operationId="show",
      *     summary="Retorna o usuário autenticado",
+     *     tags={"Usuários"},
      *
      *     @OA\Response(
      *         response=200,
@@ -53,6 +54,7 @@ class UserController extends Controller
      *     operationId="store",
      *     summary="Registra um novo usuário",
      *     description="Retorna os dados do usuário registrado",
+     *     tags={"Usuários"},
      *
      *     @OA\Response(
      *         response=201,
@@ -111,6 +113,7 @@ class UserController extends Controller
      *     operationId="update",
      *     summary="Atualiza os dados do usuário autenticado",
      *     description="Retorna os dados do usuário atualizado",
+     *     tags={"Usuários"},
      *
      *     @OA\Response(
      *         response=200,
@@ -132,6 +135,7 @@ class UserController extends Controller
      *             )
      *         )
      *     ),
+     *     @OA\Response(response=400, description="Bad Request"),
      *     @OA\Response(response=422, description="Unprocessable Entity"),
      *     @OA\Response(response=500, description="Server Error")
      * )
@@ -179,19 +183,18 @@ class UserController extends Controller
      *     path="/users/{userId}",
      *     operationId="destroy",
      *     summary="Excluir o usuário pelo ID",
+     *     tags={"Usuários"},
      *
      *     @OA\Parameter(
      *          name="userId",
      *          description="Id do usuário",
      *          required=true,
      *          in="path",
-     *          @OA\Schema(
-     *              type="integer"
-     *          )
+     *          @OA\Schema(type="integer")
      *      ),
      *
      *     @OA\Response(response=204, description="No Content"),
-     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=401, description="Unathorizated"),
      *     @OA\Response(response=404, description="Not found"),
      *     @OA\Response(response=500, description="Server Error")
      * )
@@ -199,7 +202,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         if (Gate::denies('destroy-user', $user)) {
-            return response()->json('Você não tem autorização a este recurso', 403);
+            return response()->json('Você não tem autorização a este recurso', 401);
         }
 
         $user->phones()->delete();
