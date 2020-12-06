@@ -12,6 +12,35 @@ use App\Http\Requests\User\UpdateRequest;
 
 class UserController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/users",
+     *     operationId="show",
+     *     summary="Retorna o usuário autenticado",
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="UserAndPhones",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/User"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function show()
     {
         $user = auth()->user();
@@ -28,10 +57,25 @@ class UserController extends Controller
      *     @OA\Response(
      *         response=201,
      *         description="Created",
-     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="UserAndPhones",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/User"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
      *     ),
-     *     @OA\Response(response=500, description="Server Error"),
-     *     @OA\Response(response=422, description="Bad request")
+     *     @OA\Response(response=422, description="Unprocessable Entity"),
+     *     @OA\Response(response=500, description="Server Error")
      * )
      */
     public function store(StoreRequest $request, UploadHandler $uploader)
@@ -61,6 +105,37 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * @OA\Put(
+     *     path="/users",
+     *     operationId="update",
+     *     summary="Atualiza os dados do usuário autenticado",
+     *     description="Retorna os dados do usuário atualizado",
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="UserAndPhones",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/User"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=422, description="Unprocessable Entity"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function update(UpdateRequest $request, UploadHandler $uploader)
     {
         $validatedData = $request->validated();
@@ -99,10 +174,32 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/users/{userId}",
+     *     operationId="destroy",
+     *     summary="Excluir o usuário pelo ID",
+     *
+     *     @OA\Parameter(
+     *          name="userId",
+     *          description="Id do usuário",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *
+     *     @OA\Response(response=204, description="No Content"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Not found"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function destroy(User $user)
     {
         if (Gate::denies('destroy-user', $user)) {
-            return response()->json('Você não tem autorização a este recurso', 401);
+            return response()->json('Você não tem autorização a este recurso', 403);
         }
 
         $user->phones()->delete();
