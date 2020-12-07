@@ -25,7 +25,7 @@ class UserController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 schema="UserAndPhones",
+     *                 schema="UserResponse",
      *                 allOf={
      *                     @OA\Schema(ref="#/components/schemas/User"),
      *                     @OA\Schema(
@@ -63,7 +63,7 @@ class UserController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 schema="UserAndPhones",
+     *                 schema="UserRequest",
      *                 allOf={
      *                     @OA\Schema(ref="#/components/schemas/User"),
      *                     @OA\Schema(
@@ -84,7 +84,7 @@ class UserController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 schema="UserAndPhones",
+     *                 schema="UserResponse",
      *                 allOf={
      *                     @OA\Schema(ref="#/components/schemas/User"),
      *                     @OA\Schema(
@@ -144,7 +144,7 @@ class UserController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 schema="UserAndPhones",
+     *                 schema="UserRequest",
      *                 allOf={
      *                     @OA\Schema(ref="#/components/schemas/User"),
      *                     @OA\Schema(
@@ -165,7 +165,7 @@ class UserController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 schema="UserAndPhones",
+     *                 schema="UserResponse",
      *                 allOf={
      *                     @OA\Schema(ref="#/components/schemas/User"),
      *                     @OA\Schema(

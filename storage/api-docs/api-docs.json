@@ -10,6 +10,297 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/cooperatives": {
+            "get": {
+                "tags": [
+                    "Cooperativas"
+                ],
+                "summary": "Retorna uma lista de cooperativas",
+                "operationId": "index",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "CooperativeResponse",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Cooperative"
+                                        },
+                                        {
+                                            "properties": {
+                                                "phones": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Phone"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "addresses": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Address"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Cooperativas"
+                ],
+                "summary": "Registra uma nova cooperativa",
+                "operationId": "store",
+                "requestBody": {
+                    "request": "Cooperative",
+                    "description": "Objeto da cooperativa",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "schema": "CooperativeRequest",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Cooperative"
+                                    },
+                                    {
+                                        "properties": {
+                                            "phones": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/components/schemas/Phone"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/Address"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "CooperativeResponse",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Cooperative"
+                                        },
+                                        {
+                                            "properties": {
+                                                "phones": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Phone"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "address": {
+                                                    "type": "obejct"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "400": {
+                        "description": "Bad Eequest"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/cooperatives/{cooperativeId}": {
+            "get": {
+                "tags": [
+                    "Cooperativas"
+                ],
+                "summary": "Retorna uma cooperativa especifica",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "cooperativeId",
+                        "in": "path",
+                        "description": "Id da cooperativa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "CooperativeResponse",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Cooperative"
+                                        },
+                                        {
+                                            "properties": {
+                                                "phones": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Phone"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "addresses": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Address"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Cooperativas"
+                ],
+                "summary": "Atualiza uma cooperativa",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "cooperativeId",
+                        "in": "path",
+                        "description": "Id da cooperativa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "request": "Cooperative",
+                    "description": "Objeto da cooperativa",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "schema": "CooperativeRequest",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Cooperative"
+                                    },
+                                    {
+                                        "properties": {
+                                            "phones": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/components/schemas/Phone"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/Address"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "Not Content"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Cooperativas"
+                ],
+                "summary": "Exclui uma cooperativa",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "cooperativeId",
+                        "in": "path",
+                        "description": "Id da cooperativa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Not Content"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
         "/products": {
             "get": {
                 "tags": [
@@ -260,7 +551,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "schema": "UserAndPhones",
+                                    "schema": "UserResponse",
                                     "allOf": [
                                         {
                                             "$ref": "#/components/schemas/User"
@@ -300,7 +591,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "schema": "UserAndPhones",
+                                "schema": "UserRequest",
                                 "allOf": [
                                     {
                                         "$ref": "#/components/schemas/User"
@@ -327,7 +618,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "schema": "UserAndPhones",
+                                    "schema": "UserResponse",
                                     "allOf": [
                                         {
                                             "$ref": "#/components/schemas/User"
@@ -373,7 +664,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "schema": "UserAndPhones",
+                                "schema": "UserRequest",
                                 "allOf": [
                                     {
                                         "$ref": "#/components/schemas/User"
@@ -400,7 +691,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "schema": "UserAndPhones",
+                                    "schema": "UserResponse",
                                     "allOf": [
                                         {
                                             "$ref": "#/components/schemas/User"

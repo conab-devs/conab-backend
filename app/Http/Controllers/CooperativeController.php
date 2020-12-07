@@ -22,6 +22,43 @@ class CooperativeController extends Controller
         $this->middleware('only-admin-conab');
     }
 
+    /**
+     * @OA\Get(
+     *     path="/cooperatives",
+     *     operationId="index",
+     *     summary="Retorna uma lista de cooperativas",
+     *     tags={"Cooperativas"},
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="CooperativeResponse",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/Cooperative"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     ),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="addresses",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Address")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function index(Request $request)
     {
         $cooperatives = Cooperative::with(['address', 'phones'])
@@ -32,6 +69,52 @@ class CooperativeController extends Controller
         return response()->json($cooperatives);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/cooperatives/{cooperativeId}",
+     *     operationId="show",
+     *     summary="Retorna uma cooperativa especifica",
+     *     tags={"Cooperativas"},
+     *
+     *     @OA\Parameter(
+     *         name="cooperativeId",
+     *         description="Id da cooperativa",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="CooperativeResponse",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/Cooperative"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     ),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="addresses",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Address")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function show(int $id)
     {
         $cooperative = Cooperative::with(['address', 'phones'])->findOrFail($id);
@@ -39,6 +122,68 @@ class CooperativeController extends Controller
         return response()->json($cooperative);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/cooperatives",
+     *     operationId="store",
+     *     summary="Registra uma nova cooperativa",
+     *     tags={"Cooperativas"},
+     *
+     *     @OA\RequestBody(
+     *         request="Cooperative",
+     *         description="Objeto da cooperativa",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 schema="CooperativeRequest",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/Cooperative"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     ),
+     *                     @OA\Schema(ref="#/components/schemas/Address")
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=201,
+     *         description="Created",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="CooperativeResponse",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/Cooperative"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     ),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="address",
+     *                             type="obejct",
+     *                             @OA\Schema(ref="#/components/schemas/Address")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=422, description="Unprocessable Entity"),
+     *     @OA\Response(response=400, description="Bad Eequest"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function store(StoreRequest $request)
     {
         $cooperative = new Cooperative();
@@ -61,6 +206,50 @@ class CooperativeController extends Controller
         return response()->json($cooperative, 201);
     }
 
+    /**
+     * @OA\Put(
+     *     path="/cooperatives/{cooperativeId}",
+     *     operationId="update",
+     *     summary="Atualiza uma cooperativa",
+     *     tags={"Cooperativas"},
+     *
+     *     @OA\Parameter(
+     *         name="cooperativeId",
+     *         description="Id da cooperativa",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         request="Cooperative",
+     *         description="Objeto da cooperativa",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="CooperativeRequest",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/Cooperative"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     ),
+     *                     @OA\Schema(ref="#/components/schemas/Address")
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(response=204, description="Not Content"),
+     *     @OA\Response(response=422, description="Unprocessable Entity"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function update(UpdateRequest $request, Cooperative $cooperative)
     {
         $cooperative->name = $request->input('name');
@@ -96,6 +285,26 @@ class CooperativeController extends Controller
         return response()->json(null, 204);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/cooperatives/{cooperativeId}",
+     *     operationId="destroy",
+     *     summary="Exclui uma cooperativa",
+     *     tags={"Cooperativas"},
+     *
+     *     @OA\Parameter(
+     *         name="cooperativeId",
+     *         description="Id da cooperativa",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(response=204, description="Not Content"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function destroy(Cooperative $cooperative)
     {
         $cooperative->phones()->delete();
