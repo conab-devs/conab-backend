@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  *     @OA\Property(
  *        property="number",
  *        type="string",
- *        description="Número do telefone"
+ *        description="Número do telefone no formato (99) 99999-9999"
  *    )
  * )
  */

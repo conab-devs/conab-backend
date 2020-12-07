@@ -56,6 +56,28 @@ class UserController extends Controller
      *     description="Retorna os dados do usuário registrado",
      *     tags={"Usuários"},
      *
+     *     @OA\RequestBody(
+     *         request="Usuário",
+     *         description="Objeto de usuário",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="UserAndPhones",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/User"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *
      *     @OA\Response(
      *         response=201,
      *         description="Created",
@@ -114,6 +136,28 @@ class UserController extends Controller
      *     summary="Atualiza os dados do usuário autenticado",
      *     description="Retorna os dados do usuário atualizado",
      *     tags={"Usuários"},
+     *
+     *     @OA\RequestBody(
+     *         request="Usuário",
+     *         description="Objeto de usuário",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="UserAndPhones",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/User"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
      *
      *     @OA\Response(
      *         response=200,

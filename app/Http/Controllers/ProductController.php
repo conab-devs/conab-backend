@@ -105,6 +105,13 @@ class ProductController extends Controller
      *     summary="Registra um novo produto",
      *     tags={"Produtos"},
      *
+     *     @OA\RequestBody(
+     *         request="Produto",
+     *         description="Objeto de produto",
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
+     *     ),
+     *
      *     @OA\Response(
      *         response=201,
      *         description="Created",
@@ -170,6 +177,13 @@ class ProductController extends Controller
      *         required=true,
      *         in="path",
      *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         request="Produto",
+     *         description="Objeto de produto",
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Product")
      *     ),
      *
      *     @OA\Response(
