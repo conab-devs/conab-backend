@@ -41,6 +41,71 @@ use Illuminate\Support\Facades\Storage;
  *         description="URL da foto de perfil do usuário"
  *     ),
  * )
+ *
+ * @OA\Schema(
+ *     schema="UserStoreRequest",
+ *     type="object",
+ *     @OA\Property(
+ *         property="name",
+ *         type="string",
+ *         description="Nome do usuário"
+ *     ),
+ *     @OA\Property(
+ *         property="email",
+ *         type="string",
+ *         description="Email do usuário"
+ *     ),
+ *     @OA\Property(
+ *         property="password",
+ *         type="string",
+ *         description="Senha do usuário"
+ *     ),
+ *     @OA\Property(
+ *         property="cpf",
+ *         type="string",
+ *         description="CPF do usuário no formato XXX.XXX.XXX-XX"
+ *     ),
+ *     @OA\Property(
+ *         property="profile_picture",
+ *         type="string",
+ *         description="URL da foto de perfil do usuário"
+ *     ),
+ * )
+ *
+ * @OA\Schema(
+ *     schema="UserUpdateRequest",
+ *     type="object",
+ *     @OA\Property(
+ *         property="name",
+ *         type="string",
+ *         description="Nome do usuário"
+ *     ),
+ *     @OA\Property(
+ *         property="email",
+ *         type="string",
+ *         description="Email do usuário"
+ *     ),
+ *     @OA\Property(
+ *         property="password",
+ *         type="string",
+ *         description="Senha do usuário"
+ *     ),
+ *     @OA\Property(
+ *         property="new_password",
+ *         type="string",
+ *         description="Nova senha do usuário"
+ *     ),
+ *     @OA\Property(
+ *         property="cpf",
+ *         type="string",
+ *         description="CPF do usuário no formato XXX.XXX.XXX-XX"
+ *     ),
+ *     @OA\Property(
+ *         property="profile_picture",
+ *         type="string",
+ *         description="URL da foto de perfil do usuário"
+ *     ),
+ * )
  */
 class User extends Authenticatable implements JWTSubject
 {

@@ -11,43 +11,6 @@ use App\Components\Traits\UploadFirebase;
 use App\Http\Requests\Cooperative\StoreRequest;
 use App\Http\Requests\Cooperative\UpdateRequest;
 
-/**
- * @OA\Schema(
- *     schema="CooperativeRequest",
- *     type="object",
- *     @OA\Property(
- *         property="name",
- *         type="string",
- *         description="Nome da cooperativa"
- *     ),
- *     @OA\Property(
- *         property="dap_path",
- *         type="string",
- *         format="base64",
- *         description="Arquivo do DAP no format PDF"
- *     ),
- *     @OA\Property(
- *         property="city",
- *         type="string",
- *         description="Cidade da cooperativa"
- *     ),
- *     @OA\Property(
- *         property="street",
- *         type="string",
- *         description="Rua da cooperativa"
- *     ),
- *     @OA\Property(
- *         property="neighborhood",
- *         type="string",
- *         description="Bairro da cooperativa"
- *     ),
- *     @OA\Property(
- *         property="number",
- *         type="string",
- *         description="Número do endereço da cooperativa"
- *     ),
- * )
- */
 class CooperativeController extends Controller
 {
     use UploadFirebase;

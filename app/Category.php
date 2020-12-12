@@ -24,6 +24,21 @@ use Illuminate\Database\Eloquent\Model;
  *        description="Descrição da categoria"
  *    )
  * )
+ *
+ * @OA\Schema(
+ *     schema="CategoryRequest",
+ *     type="object",
+ *     @OA\Property(
+ *        property="name",
+ *        type="string",
+ *        description="Nome da categoria"
+ *    ),
+ *    @OA\Property(
+ *        property="description",
+ *        type="string",
+ *        description="Descrição da categoria"
+ *    )
+ * )
  */
 class Category extends Model
 {

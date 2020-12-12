@@ -9,22 +9,6 @@ use App\Category;
 use App\Http\Requests\Category\StoreRequest;
 use App\Http\Requests\Category\UpdateRequest;
 
-/**
- * @OA\Schema(
- *     schema="CategoryRequest",
- *     type="object",
- *     @OA\Property(
- *        property="name",
- *        type="string",
- *        description="Nome da categoria"
- *    ),
- *    @OA\Property(
- *        property="description",
- *        type="string",
- *        description="Descrição da categoria"
- *    )
- * )
- */
 class CategoryController extends Controller
 {
     /**
