@@ -5,14 +5,49 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use App\Address;
 use App\Cooperative;
 use App\Components\Traits\UploadFirebase;
 use App\Http\Requests\Cooperative\StoreRequest;
 use App\Http\Requests\Cooperative\UpdateRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="CooperativeRequest",
+ *     type="object",
+ *     @OA\Property(
+ *         property="name",
+ *         type="string",
+ *         description="Nome da cooperativa"
+ *     ),
+ *     @OA\Property(
+ *         property="dap_path",
+ *         type="string",
+ *         format="base64",
+ *         description="Arquivo do DAP no format PDF"
+ *     ),
+ *     @OA\Property(
+ *         property="city",
+ *         type="string",
+ *         description="Cidade da cooperativa"
+ *     ),
+ *     @OA\Property(
+ *         property="street",
+ *         type="string",
+ *         description="Rua da cooperativa"
+ *     ),
+ *     @OA\Property(
+ *         property="neighborhood",
+ *         type="string",
+ *         description="Bairro da cooperativa"
+ *     ),
+ *     @OA\Property(
+ *         property="number",
+ *         type="string",
+ *         description="Número do endereço da cooperativa"
+ *     ),
+ * )
+ */
 class CooperativeController extends Controller
 {
     use UploadFirebase;
@@ -138,7 +173,7 @@ class CooperativeController extends Controller
      *             @OA\Schema(
      *                 schema="CooperativeRequest",
      *                 allOf={
-     *                     @OA\Schema(ref="#/components/schemas/Cooperative"),
+     *                     @OA\Schema(ref="#/components/schemas/CooperativeRequest"),
      *                     @OA\Schema(
      *                         @OA\Property(
      *                             property="phones",
@@ -230,7 +265,7 @@ class CooperativeController extends Controller
      *             @OA\Schema(
      *                 schema="CooperativeRequest",
      *                 allOf={
-     *                     @OA\Schema(ref="#/components/schemas/Cooperative"),
+     *                     @OA\Schema(ref="#/components/schemas/CooperativeRequest"),
      *                     @OA\Schema(
      *                         @OA\Property(
      *                             property="phones",
@@ -267,6 +302,44 @@ class CooperativeController extends Controller
         return response()->json(null, 204);
     }
 
+    /**
+     * @OA\Patch(
+     *     path="/cooperatives/{cooperativeId}",
+     *     operationId="updateDap",
+     *     summary="Atualiza o DAP da cooperativa",
+     *     tags={"Cooperativas"},
+     *
+     *     @OA\Parameter(
+     *         name="cooperativeId",
+     *         description="Id da cooperativa",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         request="DAP",
+     *         description="Arquivo DAP da cooperativa",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="dap_path",
+     *                     type="string",
+     *                     format="base64",
+     *                     description="Arquivo do DAP no format PDF"
+     *                 ),
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(response=204, description="Not Content"),
+     *     @OA\Response(response=422, description="Unprocessable Entity"),
+     *     @OA\Response(response=400, description="Bad Request"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function updateDap(Request $request, Cooperative $cooperative)
     {
         $request->validate([
