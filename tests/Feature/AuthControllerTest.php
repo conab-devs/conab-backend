@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 /** @author feat */
-class AuthTest extends TestCase
+class AuthControllerTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
