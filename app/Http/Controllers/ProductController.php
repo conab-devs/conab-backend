@@ -191,6 +191,8 @@ class ProductController extends Controller
      *         description="OK",
      *         @OA\JsonContent(ref="#/components/schemas/Product")
      *     ),
+     *     @OA\Response(response=422, description="Unprocessable Entity"),
+     *     @OA\Response(response=404, description="Not Found"),
      *     @OA\Response(response=500, description="Server Error")
      * )
      */
@@ -222,7 +224,8 @@ class ProductController extends Controller
      *     ),
      *
      *     @OA\Response(response=204, description="No content"),
-     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     @OA\Response(response=401, description="Unathorized"),
      *     @OA\Response(response=500, description="Server Error")
      * )
      */

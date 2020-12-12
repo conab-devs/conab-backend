@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Model;
  *     schema="Category",
  *     type="object",
  *     @OA\Property(
+ *        property="id",
+ *        type="integer",
+ *        description="Id da categoria"
+ *    ),
+ *     @OA\Property(
  *        property="name",
  *        type="string",
  *        description="Nome da categoria"
