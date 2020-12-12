@@ -115,7 +115,7 @@ class AuthController extends Controller
      * @OA\Post(
      *     path="/password/reset/request",
      *     operationId="sendResetPasswordRequest",
-     *     summary="Envia uma requisição de mudança de email",
+     *     summary="Requisição de mudança de email",
      *     tags={"Autenticação"},
      *
      *     @OA\RequestBody(
@@ -154,7 +154,7 @@ class AuthController extends Controller
      * @OA\Post(
      *     path="/password/reset",
      *     operationId="resetPassword",
-     *     summary="Requisiçao para envia os dados da nova senha",
+     *     summary="Requisição para envia os dados da nova senha",
      *     tags={"Autenticação"},
      *
      *     @OA\RequestBody(
