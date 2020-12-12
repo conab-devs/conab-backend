@@ -127,6 +127,11 @@ $ php artisan route:list
 $ php artisan test
 ```
 
+### Documentação da API
+
+#### Gerar
+Para gerar a documentação da API utilize o comando ```php artisan l5-swagger:generate```. Com isso a 
+documentação estará disponível no endereço ```http://localhost:8000/api/documentation```.
 ### Outras informações
 
 Mais informações podem ser encontradas na [documentação](https://laravel.com/docs/7.x) do laravel. 
