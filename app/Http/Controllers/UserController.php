@@ -10,6 +10,32 @@ use App\Components\Upload\UploadHandler;
 use App\Http\Requests\User\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
 
+/**
+ * @OA\Schema(
+ *     schema="UserRequest",
+ *     type="object",
+ *     @OA\Property(
+ *         property="name",
+ *         type="string",
+ *         description="Nome do usuário"
+ *     ),
+ *     @OA\Property(
+ *         property="email",
+ *         type="string",
+ *         description="Email do usuário"
+ *     ),
+ *     @OA\Property(
+ *         property="cpf",
+ *         type="string",
+ *         description="CPF do usuário no formato XXX.XXX.XXX-XX"
+ *     ),
+ *     @OA\Property(
+ *         property="profile_picture",
+ *         type="string",
+ *         description="URL da foto de perfil do usuário"
+ *     ),
+ * )
+ */
 class UserController extends Controller
 {
     /**
@@ -65,7 +91,7 @@ class UserController extends Controller
      *             @OA\Schema(
      *                 schema="UserRequest",
      *                 allOf={
-     *                     @OA\Schema(ref="#/components/schemas/User"),
+     *                     @OA\Schema(ref="#/components/schemas/UserRequest"),
      *                     @OA\Schema(
      *                         @OA\Property(
      *                             property="phones",
@@ -146,7 +172,7 @@ class UserController extends Controller
      *             @OA\Schema(
      *                 schema="UserRequest",
      *                 allOf={
-     *                     @OA\Schema(ref="#/components/schemas/User"),
+     *                     @OA\Schema(ref="#/components/schemas/UserRequest"),
      *                     @OA\Schema(
      *                         @OA\Property(
      *                             property="phones",
