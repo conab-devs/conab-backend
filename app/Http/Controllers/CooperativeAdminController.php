@@ -13,6 +13,51 @@ use App\Http\Requests\User\UpdateRequest;
 
 class CooperativeAdminController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/cooperatives/{cooperativeId}/admins",
+     *     operationId="index",
+     *     summary="Retorna uma lista de administradores da cooperativa",
+     *     tags={"Administradores da Cooperativa"},
+     *
+     *     @OA\Parameter(
+     *         name="cooperativeId",
+     *         description="Id da cooperativa",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="data",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         allOf={
+     *                             @OA\Schema(ref="#/components/schemas/User"),
+     *                             @OA\Schema(
+     *                                 @OA\Property(
+     *                                     property="phones",
+     *                                     type="array",
+     *                                     @OA\Items(ref="#/components/schemas/Phone")
+     *                                 )
+     *                             )
+     *                         }
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unathorized"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function index(Cooperative $cooperative)
     {
         if (Gate::denies('manage-cooperative-admin')) {
@@ -26,6 +71,54 @@ class CooperativeAdminController extends Controller
         );
     }
 
+    /**
+     * @OA\Get(
+     *     path="/cooperatives/{cooperativeId}/admins/{userId}",
+     *     operationId="show",
+     *     summary="Retorna um administrador da cooperativa",
+     *     tags={"Administradores da Cooperativa"},
+     *
+     *     @OA\Parameter(
+     *         name="cooperativeId",
+     *         description="Id da cooperativa",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="userId",
+     *         description="Id do administrador",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="UserResponse",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/User"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unathorized"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function show(Cooperative $cooperative, $id)
     {
         $admin = $cooperative->admins()
@@ -42,6 +135,70 @@ class CooperativeAdminController extends Controller
         return response()->json($admin);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/cooperatives/{cooperative}/admins",
+     *     operationId="store",
+     *     summary="Registra um novo administrador",
+     *     description="Retorna os dados do administrador registrado",
+     *     tags={"Administradores da Cooperativa"},
+     *
+     *     @OA\Parameter(
+     *         name="cooperativeId",
+     *         description="Id da cooperativa",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         request="Administrador",
+     *         description="Objeto de usuário",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="UserRequest",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/UserStoreRequest"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=201,
+     *         description="Created",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="UserResponse",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/User"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=422, description="Unprocessable Entity"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     @OA\Response(response=401, description="Unathorized"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function store(StoreRequest $request, Cooperative $cooperative, UploadHandler $uploader)
     {
         if (Gate::denies('manage-cooperative-admin')) {
@@ -76,6 +233,78 @@ class CooperativeAdminController extends Controller
         }
     }
 
+    /**
+     * @OA\Put(
+     *     path="/cooperatives/{cooperative}/admins/{userId}",
+     *     operationId="update",
+     *     summary="Atualiza os dados do administrador da cooperativa",
+     *     description="Retorna os dados do administrador atualizado",
+     *     tags={"Administradores da Cooperativa"},
+     *
+     *     @OA\Parameter(
+     *         name="cooperativeId",
+     *         description="Id da cooperativa",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="userId",
+     *         description="Id do administrador",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         request="Administrador",
+     *         description="Objeto de usuário",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="UserRequest",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/UserUpdateRequest"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="UserResponse",
+     *                 allOf={
+     *                     @OA\Schema(ref="#/components/schemas/User"),
+     *                     @OA\Schema(
+     *                         @OA\Property(
+     *                             property="phones",
+     *                             type="array",
+     *                             @OA\Items(ref="#/components/schemas/Phone")
+     *                         )
+     *                     )
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Bad Request"),
+     *     @OA\Response(response=401, description="Unathorized"),
+     *     @OA\Response(response=422, description="Unprocessable Entity"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function update(UpdateRequest $request)
     {
         $admin = $request->user();
