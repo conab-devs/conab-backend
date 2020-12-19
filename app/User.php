@@ -31,6 +31,10 @@ class User extends Authenticatable implements JWTSubject
         'password',
     ];
 
+    protected $appends = [
+        'isProvider'
+    ];
+
     public function setPasswordAttribute($value)
     {
         if ($value !== null) {
@@ -56,6 +60,11 @@ class User extends Authenticatable implements JWTSubject
         }
 
         return Storage::url($this->attributes['profile_picture']);
+    }
+
+    public function getIsProviderAttribute()
+    {
+        return $this->cooperative()->first() !== null;
     }
 
     public function cooperative()

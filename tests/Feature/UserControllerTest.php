@@ -399,6 +399,9 @@ class UserControllerTest extends TestCase
     public function should_update_user_without_password()
     {
         $user = factory(\App\User::class)->create();
+        $cooperative = factory(\App\Cooperative::class)->create();
+
+        $user->cooperative()->associate($cooperative);
 
         $new_informations = [
             'name' => 'valid_name',
@@ -411,6 +414,7 @@ class UserControllerTest extends TestCase
             ->putJson("api/users", $new_informations);
         $response->assertStatus(200);
         $new_informations['phones'] = [['number' => '(55) 55555-5555']];
+        $new_informations['isProvider'] = true;
         $response->assertJson($new_informations);
     }
 
