@@ -37,6 +37,10 @@ class ProductControllerTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonFragment($data);
+
+        $response->assertJson([
+            "cooperative" => $cooperative->toArray()
+        ]);
     }
 
     /** @test */
