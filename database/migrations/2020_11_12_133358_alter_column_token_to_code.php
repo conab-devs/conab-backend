@@ -18,7 +18,7 @@ class AlterColumnTokenToCode extends Migration
         });
 
         Schema::table('password_resets', function (Blueprint $table) {
-            $table->string('code')->nullable();
+            $table->integer('code')->nullable();
         });
     }
 
