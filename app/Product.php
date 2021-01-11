@@ -51,11 +51,14 @@ class Product extends Model
         'price',
         'photo_path',
         'estimated_delivery_time',
+        'unit_of_measure',
         'category_id',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
 
+    protected $with = ['cooperative'];
+  
     public function getPhotoPathAttribute()
     {
         return App::environment('testing')

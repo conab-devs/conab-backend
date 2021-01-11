@@ -29,6 +29,7 @@ class ProductControllerTest extends TestCase
             'price' => 9.99,
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
+            'unit_of_measure' => 'kg',
             'category_id' => factory(Category::class)->create()->id
         ];
 
@@ -52,7 +53,10 @@ class ProductControllerTest extends TestCase
         $response = $this->actingAs($user, 'api')
             ->getJson("/api/products/$product->id");
 
+        $expectedProductStructure = array_keys($product->toArray());
+        array_push($expectedProductStructure, 'cooperative');
         $response->assertOk()->assertJson($product->toArray());
+        $response->assertJsonStructure($expectedProductStructure);
     }
 
     /** @test */
@@ -72,6 +76,7 @@ class ProductControllerTest extends TestCase
             'price' => 9.99,
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
+            'unit_of_measure' => 'kg',
             'category_id' => factory(Category::class)->create()->id
         ];
 
@@ -143,6 +148,7 @@ class ProductControllerTest extends TestCase
             'price' => 9.99,
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
+            'unit_of_measure' => 'kg',
             'category_id' => factory(Category::class)->create()->id
         ];
 
@@ -168,6 +174,7 @@ class ProductControllerTest extends TestCase
             'price' => 9.99,
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
+            'unit_of_measure' => 'kg',
             'category_id' => factory(Category::class)->create()->id
         ];
 
@@ -200,6 +207,7 @@ class ProductControllerTest extends TestCase
             'price' => 9.99,
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
+            'unit_of_measure' => 'kg',
             'category_id' => factory(Category::class)->create()->id
         ];
 

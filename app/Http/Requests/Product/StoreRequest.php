@@ -5,6 +5,7 @@ namespace App\Http\Requests\Product;
 use App\Http\Requests\FormRequestTrait;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
@@ -23,6 +24,11 @@ class StoreRequest extends FormRequest
             'photo_path' => 'required|image',
             'estimated_delivery_time' => 'required|integer',
             'category_id' => 'required|exists:App\Category,id',
+            'unit_of_measure' => [
+                'required',
+                'string',
+                Rule::in('kg', 'unit'),
+            ],
         ];
     }
 }
