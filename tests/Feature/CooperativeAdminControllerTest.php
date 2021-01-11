@@ -2,13 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Cooperative;
-use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
+use App\User;
 use App\Phone;
+use App\Cooperative;
 
-class AdminCooperativeControllerTest extends TestCase
+/** @group coop_admins */
+class CooperativeAdminControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -66,16 +69,16 @@ class AdminCooperativeControllerTest extends TestCase
     }
 
     /** @test */
-    public function admin_conab_should_get_the_right_admin_based_on_his_id()
+    public function conab_admin_should_get_the_right_admin_based_on_his_id()
     {
         $cooperative = factory(Cooperative::class)->create();
-        $admin = factory(User::class)->make(['user_type' => 'ADMIN_COOP']);
-        $cooperative->admins()->save($admin);
+        $coopAdmin = factory(User::class)->make(['user_type' => 'ADMIN_COOP']);
+        $cooperative->admins()->save($coopAdmin);
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $response = $this->actingAs($user, 'api')
-            ->getJson("/api/cooperatives/$cooperative->id/admins/$admin->id");
+            ->getJson("/api/cooperatives/$cooperative->id/admins/$coopAdmin->id");
         $response->assertOK();
-        $response->assertJson($admin->toArray());
+        $response->assertJson($coopAdmin->toArray());
     }
 
     /** @test */
@@ -92,15 +95,20 @@ class AdminCooperativeControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_unauthorized_on_show_if_cooperative_admin_try_to_show_others_informations()
+    public function should_return_unauthorized_on_show_if_cooperative_admin_try_to_show_others_information()
     {
         $cooperative = factory(Cooperative::class)->create();
-        $user = factory(User::class)->create([
+        $coopAdmin1 = factory(User::class)->create([
             'user_type' => 'ADMIN_COOP',
+            'cooperative_id' => $cooperative->id
+        ]);
+        $coopAdmin2 = factory(User::class)->create([
+            'user_type' => 'ADMIN_COOP',
+            'cooperative_id' => $cooperative->id
         ]);
 
-        $response = $this->actingAs($user, 'api')
-            ->getJson("/api/cooperatives/$cooperative->id/admins/22");
+        $response = $this->actingAs($coopAdmin1, 'api')
+            ->getJson("/api/cooperatives/$cooperative->id/admins/$coopAdmin2->id");
         $response->assertStatus(401);
     }
 
@@ -109,6 +117,10 @@ class AdminCooperativeControllerTest extends TestCase
     {
         $cooperative = factory(Cooperative::class)->create();
         $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        Storage::fake('public');
+        $file = UploadedFile::fake()->image('photo.png');
+
         $data = [
             'name' => 'any_name',
             'email' => 'any@email.com',
@@ -117,14 +129,17 @@ class AdminCooperativeControllerTest extends TestCase
                 ['number' => '(99) 99999-9999'],
                 ['number' => '(88) 88888-8888'],
             ],
+            'avatar' => $file
         ];
         $response = $this->actingAs($authenticatedUser, 'api')
             ->postJson("/api/cooperatives/$cooperative->id/admins", $data);
-        $response->assertStatus(201)
-            ->assertJson($data);
-        $this->assertDatabaseHas('users', [
-            'cooperative_id' => $cooperative->id,
-        ]);
+
+        $response->assertStatus(201)->assertJsonStructure([ 'name', 'email', 'cpf', 'phones' ]);
+
+        Storage::disk('public')->assertExists('uploads/'. $file->hashName());
+        $this->assertDatabaseHas('users', [ 'cooperative_id' => $cooperative->id ]);
+        $this->assertDatabaseHas('phones', $data['phones'][0]);
+        $this->assertDatabaseHas('phones', $data['phones'][1]);
     }
 
     /** @test */
@@ -140,6 +155,7 @@ class AdminCooperativeControllerTest extends TestCase
                 ['number' => '(99) 99999-9999'],
                 ['number' => '(88) 88888-8888'],
             ],
+            'avatar' => UploadedFile::fake()->image('photo.png')
         ];
         $response = $this->actingAs($authenticatedUser, 'api')
             ->postJson("/api/cooperatives/$cooperative->id/admins", $data);
@@ -363,7 +379,7 @@ class AdminCooperativeControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_unauthorized_if_admin_coop_try_to_destroy_someones_account()
+    public function should_return_unathorizated_if_admin_coop_try_to_destroy_someones_account()
     {
         $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $admin = factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
@@ -414,7 +430,8 @@ class AdminCooperativeControllerTest extends TestCase
 
         $dataWithOnlyEmail = ['email' => 'updated@email.com'];
         $response = $authenticatedRoute->putJson(
-            "/api/cooperatives/$cooperative->id/admins/$admin->id", $dataWithOnlyEmail
+            "/api/cooperatives/$cooperative->id/admins/$admin->id",
+            $dataWithOnlyEmail
         );
         $response->assertOk()->assertJsonFragment(['email' => $dataWithOnlyEmail['email']]);
 
@@ -452,7 +469,7 @@ class AdminCooperativeControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_unauthorized_if_user_is_not_the_resource_owner_on_update()
+    public function should_return_forbidden_if_user_is_not_the_resource_owner_on_update()
     {
         $user = factory(User::class)
             ->create(['password' => '123456', 'user_type' => 'ADMIN_COOP']);
@@ -464,6 +481,7 @@ class AdminCooperativeControllerTest extends TestCase
             'user_type' => 'ADMIN_COOP',
             'password' => '123456'
         ]);
+
         $cooperative->admins()->save($admin);
 
         $dataWithOnlyName = ['name' => 'updated_name'];
@@ -471,7 +489,7 @@ class AdminCooperativeControllerTest extends TestCase
             "/api/cooperatives/$cooperative->id/admins/$admin->id",
             $dataWithOnlyName
         );
-        $response->assertStatus(401);
+        $response->assertStatus(403);
     }
 
     /** @test */

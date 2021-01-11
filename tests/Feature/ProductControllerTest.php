@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
+/** @group products */
 class ProductControllerTest extends TestCase
 {
     use RefreshDatabase;
@@ -61,8 +62,14 @@ class ProductControllerTest extends TestCase
     /** @test */
     public function should_deny_product_create_to_users_who_are_not_cooperative_administrators()
     {
-        $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $costumer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $conabAdmin = factory(User::class)->create([
+            'user_type' => 'ADMIN_CONAB',
+            'cooperative_id' => null
+        ]);
+        $costumer = factory(User::class)->create([
+            'user_type' => 'CUSTOMER',
+            'cooperative_id' => null
+        ]);
 
         $data = [
             'name' => 'any_name',
@@ -120,7 +127,7 @@ class ProductControllerTest extends TestCase
         $cooperativeAdminResponse = $this->actingAs($cooperativeAdmin, 'api')
             ->deleteJson("/api/products/$product->id");
 
-        $cooperativeAdminResponse->assertStatus(200);
+        $cooperativeAdminResponse->assertStatus(204);
     }
 
     /** @test */

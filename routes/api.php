@@ -2,29 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
- */
-
 Route::group(['middleware' => ['auth:api', 'bindings']], function () {
-    Route::get('/conab/admins', 'AdminConabController@index');
-    Route::get('/conab/admins/{id}', 'AdminConabController@show');
-    Route::post('/conab/admins', 'AdminConabController@store');
-    Route::put('/conab/admins', 'AdminConabController@update');
+    Route::get('/conab/admins', 'ConabAdminController@index');
+    Route::get('/conab/admins/{id}', 'ConabAdminController@show');
+    Route::post('/conab/admins', 'ConabAdminController@store');
+    Route::put('/conab/admins', 'ConabAdminController@update');
 
     Route::get('cooperatives', 'CooperativeController@index');
-    Route::get('cooperatives/{id}', 'CooperativeController@show');
+    Route::get('cooperatives/{cooperative}', 'CooperativeController@show');
     Route::post('cooperatives', 'CooperativeController@store');
-    Route::delete('cooperatives/{id}', 'CooperativeController@destroy');
-    Route::put('cooperatives/{id}', 'CooperativeController@update');
-    Route::patch('cooperatives/{id}', 'CooperativeController@updateDap');
+    Route::delete('cooperatives/{cooperative}', 'CooperativeController@destroy');
+    Route::put('cooperatives/{cooperative}', 'CooperativeController@update');
+    Route::patch('cooperatives/{cooperative}', 'CooperativeController@updateDap');
 
     Route::post('/uploads', 'UploadController@store');
 
@@ -63,5 +52,3 @@ Route::post('/users', 'UserController@store');
 Route::post('/login', 'AuthController@login');
 Route::post('/password/reset/request', 'AuthController@sendResetPasswordRequest');
 Route::post('/password/reset', 'AuthController@resetPassword');
-
-

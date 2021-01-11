@@ -35,9 +35,11 @@ class ForgotPasswordTest extends TestCase
     public function should_throw_error_if_email_not_passed()
     {
         $this->expectException(ServerError::class);
-        $sut = new ForgotPasswordHandler($this->passwordReset,
+        $sut = new ForgotPasswordHandler(
+            $this->passwordReset,
             $this->generator,
-            $this->user);
+            $this->user
+        );
 
         $sut->resetPassword([
             'code' => 123456,
@@ -48,9 +50,11 @@ class ForgotPasswordTest extends TestCase
     public function should_throw_error_if_code_not_passed()
     {
         $this->expectException(ServerError::class);
-        $sut = new ForgotPasswordHandler($this->passwordReset,
+        $sut = new ForgotPasswordHandler(
+            $this->passwordReset,
             $this->generator,
-            $this->user);
+            $this->user
+        );
         $sut->resetPassword([
             'email' => 'valid_mail@mail.com',
         ]);
@@ -85,9 +89,11 @@ class ForgotPasswordTest extends TestCase
             ->never()
             ->andReturn(123456);
 
-        $sut = new ForgotPasswordHandler($this->passwordReset,
+        $sut = new ForgotPasswordHandler(
+            $this->passwordReset,
             $this->generator,
-            $this->user);
+            $this->user
+        );
 
         $code = $sut->generateToken($queriedReset->email);
 
@@ -114,9 +120,11 @@ class ForgotPasswordTest extends TestCase
 
         $this->generator->shouldReceive('generate')->once()->andReturn($code);
 
-        $sut = new ForgotPasswordHandler($this->passwordReset,
+        $sut = new ForgotPasswordHandler(
+            $this->passwordReset,
             $this->generator,
-            $this->user);
+            $this->user
+        );
 
         $this->assertEquals($code, $sut->generateToken($email));
     }
@@ -143,9 +151,11 @@ class ForgotPasswordTest extends TestCase
 
         $this->generator->shouldReceive('generate')->once()->andReturn($code);
 
-        $sut = new ForgotPasswordHandler($this->passwordReset,
+        $sut = new ForgotPasswordHandler(
+            $this->passwordReset,
             $this->generator,
-            $this->user);
+            $this->user
+        );
 
         $sut->sendResetRequest($email);
 
@@ -163,9 +173,11 @@ class ForgotPasswordTest extends TestCase
 
         $this->passwordReset->shouldReceive('where->count')->once()->andReturn(0);
 
-        (new ForgotPasswordHandler($this->passwordReset,
+        (new ForgotPasswordHandler(
+            $this->passwordReset,
             $this->generator,
-            $this->user))
+            $this->user
+        ))
             ->resetPassword([
                 'email' => 'invalid_email',
                 'password' => 'new_password',
@@ -203,9 +215,11 @@ class ForgotPasswordTest extends TestCase
             ->once()
             ->andReturn($queriedReset);
 
-        (new ForgotPasswordHandler($this->passwordReset,
+        (new ForgotPasswordHandler(
+            $this->passwordReset,
             $this->generator,
-            $this->user))
+            $this->user
+        ))
             ->resetPassword([
                 'email' => $email,
                 'password' => $newPassword,

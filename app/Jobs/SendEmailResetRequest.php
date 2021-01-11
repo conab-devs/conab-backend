@@ -7,8 +7,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Mail\ResetMail;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetMail;
 
 class SendEmailResetRequest implements ShouldQueue
 {
@@ -17,11 +17,6 @@ class SendEmailResetRequest implements ShouldQueue
     public $mail;
     public $code;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
     public function __construct(string $mail, int $code)
     {
         $this->mail = $mail;
