@@ -39,14 +39,14 @@ class UploadControllerTest extends TestCase
         Storage::fake('public');
         $authenticatedRoute->postJson('/api/uploads', ['avatar' => null])
             ->assertStatus(400)
-            ->assertJson(['error' => 'Avatar is required and should be a valid file']);
+            ->assertJson(['message' => 'Avatar é obrigatório e deve ser um image válida']);
 
         $authenticatedRoute->postJson('/api/uploads', ['avatar' => 'file'])
             ->assertStatus(400)
-            ->assertJson(['error' => 'Avatar is required and should be a valid file']);
+            ->assertJson(['message' => 'Avatar é obrigatório e deve ser um image válida']);
 
         $authenticatedRoute->postJson('/api/uploads', ['avatar' => 1])
             ->assertStatus(400)
-            ->assertJson(['error' => 'Avatar is required and should be a valid file']);
+            ->assertJson(['message' => 'Avatar é obrigatório e deve ser um image válida']);
     }
 }

@@ -29,6 +29,7 @@ $factory->define(User::class, function (Faker $faker) {
         'password' => $faker->password(),
         'cpf' => $faker->cpf,
         'user_type' => $roles[rand(0, 1)],
+        'cooperative_id' => factory(\App\Cooperative::class)
     ];
 });
 

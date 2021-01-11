@@ -4,29 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Components\Upload\UploadHandler;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\User;
-use App\Cooperative;
 use App\Http\Requests\User\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
 
-class CooperativeAdminController extends Controller
+class ConabAdminController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('only-conab-admins');
+    }
+
     /**
      * @OA\Get(
-     *     path="/cooperatives/{cooperativeId}/admins",
+     *     path="/conab/admins",
      *     operationId="index",
-     *     summary="Retorna uma lista de administradores da cooperativa",
-     *     tags={"Administradores da Cooperativa"},
-     *
-     *     @OA\Parameter(
-     *         name="cooperativeId",
-     *         description="Id da cooperativa",
-     *         required=true,
-     *         in="path",
-     *         @OA\Schema(type="integer")
-     *     ),
+     *     summary="Retorna todos os administradores da Conab",
+     *     tags={"Administradores da Conab"},
      *
      *     @OA\Response(
      *         response=200,
@@ -54,41 +50,29 @@ class CooperativeAdminController extends Controller
      *         )
      *     ),
      *     @OA\Response(response=401, description="Unathorized"),
-     *     @OA\Response(response=404, description="Not Found"),
      *     @OA\Response(response=500, description="Server Error")
      * )
      */
-    public function index(Cooperative $cooperative)
+    public function index()
     {
-        if (Gate::denies('manage-cooperative-admin')) {
-            return response()->json([
-                'message' => 'Você não tem autorização a este recurso',
-            ], 401);
-        }
-        return response()->json(
-            $cooperative->admins()->with('phones')->paginate(5),
-            200
-        );
+        $user = Auth::user();
+        $admins = User::with('phones')->where([
+            ['user_type', '=', 'ADMIN_CONAB'],
+            ['id', '<>', $user->id]
+        ])->paginate(5);
+        return response()->json($admins, 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/cooperatives/{cooperativeId}/admins/{userId}",
+     *     path="/conab/admins/{userId}",
      *     operationId="show",
-     *     summary="Retorna um administrador da cooperativa",
-     *     tags={"Administradores da Cooperativa"},
-     *
-     *     @OA\Parameter(
-     *         name="cooperativeId",
-     *         description="Id da cooperativa",
-     *         required=true,
-     *         in="path",
-     *         @OA\Schema(type="integer")
-     *     ),
+     *     summary="Retorna um administrador pelo ID",
+     *     tags={"Administradores da Conab"},
      *
      *     @OA\Parameter(
      *         name="userId",
-     *         description="Id do administrador",
+     *         description="Id do usuário",
      *         required=true,
      *         in="path",
      *         @OA\Schema(type="integer")
@@ -114,45 +98,27 @@ class CooperativeAdminController extends Controller
      *             )
      *         )
      *     ),
-     *     @OA\Response(response=401, description="Unathorized"),
      *     @OA\Response(response=404, description="Not Found"),
+     *     @OA\Response(response=401, description="Unathorized"),
      *     @OA\Response(response=500, description="Server Error")
      * )
      */
-    public function show(Cooperative $cooperative, $id)
+    public function show(int $id)
     {
-        $admin = $cooperative->admins()
-            ->with('phones')
-            ->where('id', $id)
-            ->firstOrFail();
-
-        if (Gate::denies('manage-cooperative-admin', $admin)) {
-            return response()->json([
-                'message' => 'Você não tem autorização a este recurso',
-            ], 401);
-        }
-
-        return response()->json($admin);
+        $admin = User::with('phones')->findOrFail($id);
+        return response()->json($admin, 200);
     }
 
     /**
      * @OA\Post(
-     *     path="/cooperatives/{cooperative}/admins",
+     *     path="/conab/admins",
      *     operationId="store",
      *     summary="Registra um novo administrador",
      *     description="Retorna os dados do administrador registrado",
-     *     tags={"Administradores da Cooperativa"},
-     *
-     *     @OA\Parameter(
-     *         name="cooperativeId",
-     *         description="Id da cooperativa",
-     *         required=true,
-     *         in="path",
-     *         @OA\Schema(type="integer")
-     *     ),
+     *     tags={"Administradores da Conab"},
      *
      *     @OA\RequestBody(
-     *         request="Administrador",
+     *         request="Administradores",
      *         description="Objeto de usuário",
      *         required=true,
      *         @OA\MediaType(
@@ -194,68 +160,47 @@ class CooperativeAdminController extends Controller
      *         )
      *     ),
      *     @OA\Response(response=422, description="Unprocessable Entity"),
-     *     @OA\Response(response=404, description="Not Found"),
      *     @OA\Response(response=401, description="Unathorized"),
      *     @OA\Response(response=500, description="Server Error")
      * )
      */
-    public function store(StoreRequest $request, Cooperative $cooperative, UploadHandler $uploader)
+    public function store(StoreRequest $request, UploadHandler $uploader)
     {
-        if (Gate::denies('manage-cooperative-admin')) {
-            return response()->json([
-                'message' => 'Você não tem autorização a este recurso',
-            ], 401);
-        }
-
-        $coopAdminInformation = array_merge($request->validated(), [
-            'password' => $request->cpf,
-            'user_type' => 'ADMIN_COOP',
+        $validatedData = $request->validated();
+        $userData = array_merge($validatedData, [
+            'password' => $validatedData['cpf'],
+            'user_type' => 'CONAB_ADMIN'
         ]);
 
         try {
             DB::beginTransaction();
 
-            $user = User::create($coopAdminInformation);
-            $user->profile_picture = $uploader->upload($coopAdminInformation['avatar']);
-            $cooperative->admins()->save($user);
+            $user = new User();
+            $user->fill($userData);
+            $user->profile_picture = $uploader->upload($validatedData['avatar']);
+            $user->save();
 
-            $user->phones()->createMany($coopAdminInformation['phones']);
+            $user->phones()->createMany($validatedData['phones']);
             $user->load(['phones']);
 
             DB::commit();
 
             return response()->json($user, 201);
         } catch (\Exception $err) {
-            DB::rollback();
+            DB::rollBack();
             return response()->json([
-                'message' => 'Algo deu errado, tente novamente em alguns instantes',
+                'message' => 'Algo deu errado, tente novamente em alguns instantes'
             ], 500);
         }
     }
 
     /**
      * @OA\Put(
-     *     path="/cooperatives/{cooperative}/admins/{userId}",
+     *     path="/conab/admins",
      *     operationId="update",
-     *     summary="Atualiza os dados do administrador da cooperativa",
+     *     summary="Atualiza os dados do administrador autenticado",
      *     description="Retorna os dados do administrador atualizado",
-     *     tags={"Administradores da Cooperativa"},
-     *
-     *     @OA\Parameter(
-     *         name="cooperativeId",
-     *         description="Id da cooperativa",
-     *         required=true,
-     *         in="path",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="userId",
-     *         description="Id do administrador",
-     *         required=true,
-     *         in="path",
-     *         @OA\Schema(type="integer")
-     *     ),
+     *     tags={"Administradores da Conab"},
      *
      *     @OA\RequestBody(
      *         request="Administrador",
@@ -307,33 +252,34 @@ class CooperativeAdminController extends Controller
      */
     public function update(UpdateRequest $request)
     {
-        $admin = $request->user();
-        $validatedData = $request->validated();
+        $userData = $request->validated();
+        $user = $request->user();
 
         try {
             DB::beginTransaction();
 
-            $admin->fill($validatedData);
+            $user->fill($userData);
 
-            if (!empty($validatedData['password'])) {
-                if (!Hash::check($validatedData['password'], $admin->password)) {
+            if (!empty($userData['password'])) {
+                if (!Hash::check($userData['password'], $user->password)) {
                     return response()->json('Senha inválida', 400);
                 }
-                $admin->password = $validatedData['new_password'];
+                $user->password = $userData['new_password'];
             }
 
-            if (!empty($validatedData['phones'])) {
-                $admin->phones()->delete();
-                $admin->phones()->createMany($validatedData['phones']);
+            if (!empty($userData['phones'])) {
+                $user->phones()->delete();
+                $user->phones()->createMany($userData['phones']);
             }
 
-            $admin->save();
+            $user->save();
+            $user->load(['phones']);
 
             DB::commit();
 
-            return response()->json($admin);
-        } catch (\Exception $error) {
-            DB::rollback();
+            return response()->json($user, 200);
+        } catch (\Exception $err) {
+            DB::rollBack();
             return response()->json([
                 'message' => 'Algo deu errado, tente novamente em alguns instantes'
             ], 500);

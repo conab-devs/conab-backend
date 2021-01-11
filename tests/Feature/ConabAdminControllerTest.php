@@ -3,14 +3,14 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
-
 use App\User;
 use App\Phone;
 
-/*Integration Tests For Routes Related with AdminConabController*/
-class AdminConabControllerTest extends TestCase
+/** @group conab_admins */
+class ConabAdminControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -95,6 +95,10 @@ class AdminConabControllerTest extends TestCase
     public function should_create_an_admin()
     {
         $authenticatedUser = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+
+        Storage::fake('public');
+        $file = UploadedFile::fake()->image('photo.png');
+
         $data = [
             'name' => 'any_name',
             'email' => 'any@email.com',
@@ -102,12 +106,20 @@ class AdminConabControllerTest extends TestCase
             'phones' => [
                 [ 'number' => '(99) 99999-9999' ],
                 [ 'number' => '(88) 88888-8888' ]
-            ]
+            ],
+            'avatar' => $file
         ];
         $response = $this->actingAs($authenticatedUser, 'api')
             ->postJson('/api/conab/admins', $data);
         $response->assertStatus(201)
-            ->assertJsonFragment($data);
+            ->assertJsonStructure([ 'name', 'email', 'cpf', 'phones' ]);
+
+        Storage::disk('public')->assertExists('uploads/'. $file->hashName());
+
+        $this->assertDatabaseHas('users', ['email' => $data['email']]);
+
+        $this->assertDatabaseHas('phones', $data['phones'][0]);
+        $this->assertDatabaseHas('phones', $data['phones'][1]);
     }
 
     /** @test */
@@ -349,7 +361,6 @@ class AdminConabControllerTest extends TestCase
         $response->assertOk();
         $this->assertDatabaseHas('phones', ['number' => '(11) 11111-1111']);
         $this->assertDatabaseHas('phones', ['number' => '(22) 22222-2222']);
-
     }
 
     /** @test */
@@ -514,34 +525,37 @@ class AdminConabControllerTest extends TestCase
     {
         $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
         $authenticatedRoute = $this->actingAs($user, 'api');
-        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $response = $authenticatedRoute->deleteJson("/api/users/$fakeAdmin->id");
+        $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $authenticatedRoute->deleteJson("/api/users/$conabAdmin->id");
         $response->assertStatus(204);
-        $this->assertDatabaseMissing('users', ['id' => $fakeAdmin->id]);
+        $this->assertDatabaseMissing('users', ['id' => $conabAdmin->id]);
     }
 
     /** @test */
-    public function should_return_unauthorized_if_admin_conab_try_to_delete_customer()
+    public function should_return_unathorizated_if_conab_admin_try_to_delete_customer()
     {
-        $user = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $authenticatedRoute = $this->actingAs($user, 'api');
-        $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $authenticatedRoute = $this->actingAs($conabAdmin, 'api');
+        $customer = factory(User::class)->create([
+            'user_type' => 'CUSTOMER',
+            'cooperative_id' => null
+        ]);
         $response = $authenticatedRoute->deleteJson("/api/users/$customer->id");
         $response->assertStatus(401);
     }
 
     /** @test */
-    public function should_return_unauthorized_if_customer_try_to_delete_an_admin_conab()
+    public function should_return_unathorizated_if_customer_try_to_delete_a_conab_admin()
     {
-        $user = factory(User::class)->create(['user_type' => 'CUSTOMER']);
-        $authenticatedRoute = $this->actingAs($user, 'api');
-        $fakeAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
-        $response = $authenticatedRoute->deleteJson("/api/users/$fakeAdmin->id");
+        $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
+        $authenticatedRoute = $this->actingAs($customer, 'api');
+        $conabAdmin = factory(User::class)->create(['user_type' => 'ADMIN_CONAB']);
+        $response = $authenticatedRoute->deleteJson("/api/users/$conabAdmin->id");
         $response->assertStatus(401);
     }
 
     /** @test */
-    public function should_return_unauthorized_if_customer_try_to_destroy_admin_coop()
+    public function should_return_unathorizated_if_customer_try_to_destroy_admin_coop()
     {
         $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $admin = factory(User::class)->create(['user_type' => 'ADMIN_COOP']);
@@ -551,7 +565,7 @@ class AdminConabControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_return_unauthorized_if_customer_try_to_destroy_other_customer_account()
+    public function should_return_unathorizated_if_customer_try_to_destroy_other_customer_account()
     {
         $customer = factory(User::class)->create(['user_type' => 'CUSTOMER']);
         $anotherCustomer = factory(User::class)->create(['user_type' => 'CUSTOMER']);

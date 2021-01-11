@@ -4,6 +4,32 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @OA\Schema(
+ *     schema="Address",
+ *     type="object",
+ *     @OA\Property(
+ *        property="street",
+ *        type="string",
+ *        description="Rua do endereço"
+ *    ),
+ *    @OA\Property(
+ *        property="neighborhood",
+ *        type="string",
+ *        description="Bairro do endereço"
+ *    ),
+ *    @OA\Property(
+ *        property="city",
+ *        type="string",
+ *        description="Cidade do endereço"
+ *    ),
+ *    @OA\Property(
+ *        property="number",
+ *        type="string",
+ *        description="Número do endereço"
+ *    )
+ * )
+ */
 class Address extends Model
 {
     protected $fillable = [
