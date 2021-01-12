@@ -30,6 +30,13 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Cart extends Model
 {
+    protected $table = 'carts';
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     public function products()
     {
         return $this->belongsToMany('App\Products', 'product_carts');
