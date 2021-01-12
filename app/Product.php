@@ -33,6 +33,11 @@ use Illuminate\Support\Facades\Storage;
  *        description="Tempo estimado de entrega do produto em dias"
  *    ),
  *    @OA\Property(
+ *        property="unit_of_measure",
+ *        type="string",
+ *        description="Unidade de medida do Produto (kg ou unit)"
+ *    )
+ *    @OA\Property(
  *        property="category_id",
  *        type="integer",
  *        description="Id da categoria que o produto pertence"
@@ -58,7 +63,7 @@ class Product extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
     protected $with = ['cooperative'];
-  
+
     public function getPhotoPathAttribute()
     {
         return App::environment('testing')
@@ -76,5 +81,10 @@ class Product extends Model
     public function cooperative()
     {
         return $this->belongsTo('App\Cooperative');
+    }
+
+    public function carts()
+    {
+        return $this->belongsToMany('App\Cart', 'product_carts');
     }
 }
