@@ -32,6 +32,11 @@ class Cart extends Model
 {
     protected $table = 'carts';
 
+    protected $fillable = [
+        'user_id',
+        'is_closed'
+    ];
+
     public function user()
     {
         return $this->belongsTo('App\User');
@@ -39,6 +44,6 @@ class Cart extends Model
 
     public function products()
     {
-        return $this->belongsToMany('App\Products', 'product_carts');
+        return $this->belongsToMany('App\Product', 'product_carts');
     }
 }
