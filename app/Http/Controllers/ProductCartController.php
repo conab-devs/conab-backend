@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Cart;
 use App\Http\Requests\ProductCart\StoreRequest;
+use App\Product;
 use App\ProductCart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductCartController extends Controller
 {
@@ -37,9 +39,15 @@ class ProductCartController extends Controller
                 'is_closed' => false
             ]);
 
+            $product = Product::firstWhere('id', $request->product_id);
+
             $product_cart = new ProductCart();
-            $product_cart->fill($request->all());
-            $product_cart->cart_id = $cart->id;
+            $product_cart->fill(array_merge($request->all(), [
+                'cart_id' => $cart->id,
+                'unit_of_measure' => $product->unit_of_measure,
+                'price' => $product->price,
+                'delivered_at' => date('Y-m-d H:i:s', strtotime("+$product->estimated_delivery_time day"))
+            ]));
             $product_cart->save();
 
             DB::commit();
@@ -48,7 +56,7 @@ class ProductCartController extends Controller
         } catch (\Exception $err) {
             DB::rollback();
             return response()->json([
-                'message' => 'Algo deu errado, tente novamente em alguns instantes'
+                'message' => $err->getMessage()
             ], 500);
         }
     }
