@@ -35,6 +35,7 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::put('/products/{product}', 'ProductController@update');
 
     Route::post('/product-carts', 'ProductCartController@store');
+    Route::patch('/product-carts/{productCart}', 'ProductCartController@update');
 
     Route::put('/users', 'UserController@update');
     Route::get('/users', 'UserController@show');
