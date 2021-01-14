@@ -25,4 +25,9 @@ class ProductCart extends Model
 
         $this->attributes['amount'] = $value;
     }
+
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class);
+    }
 }
