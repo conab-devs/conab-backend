@@ -34,10 +34,11 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::delete('/products/{product}', 'ProductController@destroy');
     Route::put('/products/{product}', 'ProductController@update');
 
+    Route::post('/product-carts', 'ProductCartController@store');
+
     Route::put('/users', 'UserController@update');
     Route::get('/users', 'UserController@show');
     Route::delete('/users/{user}', 'UserController@destroy');
-
 
     Route::put('/phones', 'PhoneController@update');
     Route::post('/phones', 'PhoneController@store');
