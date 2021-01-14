@@ -41,12 +41,13 @@ class ProductCartController extends Controller
 
             $product = Product::firstWhere('id', $request->product_id);
 
-            $product_cart = new ProductCart();
-            $product_cart->fill(array_merge($request->all(), [
+            $product_cart = ProductCart::firstOrNew([
                 'cart_id' => $cart->id,
+            ]);
+
+            $product_cart->fill(array_merge($request->all(), [
                 'unit_of_measure' => $product->unit_of_measure,
                 'price' => $product->price,
-                'delivered_at' => date('Y-m-d H:i:s', strtotime("+$product->estimated_delivery_time day"))
             ]));
             $product_cart->save();
 
