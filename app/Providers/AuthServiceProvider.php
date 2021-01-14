@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\ProductCart;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use App\User;
@@ -53,6 +54,10 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('manage-product', function (User $user, Product $resource) {
             return $user->cooperative
                && (int) $resource->cooperative_id === $user->cooperative_id;
+        });
+
+        Gate::define('manage-product-cart', function (User $user, ProductCart $resource) {
+            return $user->id === $resource->cart->user_id;
         });
     }
 }
