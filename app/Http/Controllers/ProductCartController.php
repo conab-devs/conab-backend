@@ -8,6 +8,7 @@ use App\Http\Requests\ProductCart\UpdateRequest;
 use App\Product;
 use App\ProductCart;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class ProductCartController extends Controller
 {
@@ -65,8 +66,16 @@ class ProductCartController extends Controller
         return response()->json($productCart, 200);
     }
 
-    public function destroy($id)
+    public function destroy(ProductCart $productCart)
     {
-        //
+        if (Gate::denies('manage-product-cart', $productCart)) {
+            return response()->json([
+                'message' => 'Você não tem autorização a este recurso',
+            ], 401);
+        }
+
+        $productCart->delete();
+
+        return response()->json(null, 204);
     }
 }
