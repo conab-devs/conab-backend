@@ -57,7 +57,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('manage-product-cart', function (User $user, ProductCart $resource) {
-            return $user->id === $resource->cart->user_id;
+            return $user->id === $resource->cart->user_id && !$resource->cart->is_closed;
         });
     }
 }
