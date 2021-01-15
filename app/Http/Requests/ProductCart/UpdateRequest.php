@@ -18,7 +18,7 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => 'required|numeric|between:0,99999999.99',
+            'amount' => 'required|numeric|between:0.001,99999999.99',
         ];
     }
 }
