@@ -33,7 +33,12 @@ class ProductCartController extends Controller
 
             $product_cart = ProductCart::firstOrNew([
                 'cart_id' => $cart->id,
+                'product_id' => $request->product_id
             ]);
+
+            if ($product_cart->exists) {
+                $cart->decrement('total_price', $product_cart->price * $product_cart->amount);
+            }
 
             $product_cart->fill(array_merge($request->except('cart_id'), [
                 'unit_of_measure' => $product->unit_of_measure,
