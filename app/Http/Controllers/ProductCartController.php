@@ -35,11 +35,6 @@ class ProductCartController extends Controller
                 'cart_id' => $cart->id,
                 'product_id' => $request->product_id
             ]);
-
-            if ($product_cart->exists) {
-                $cart->decrement('total_price', $product_cart->price * $product_cart->amount);
-            }
-
             $product_cart->fill(array_merge($request->except('cart_id'), [
                 'unit_of_measure' => $product->unit_of_measure,
                 'price' => $product->price,
@@ -52,7 +47,7 @@ class ProductCartController extends Controller
         } catch (\Exception $err) {
             DB::rollback();
             return response()->json([
-                'message' => $err->getMessage()
+                'message' => 'Você não tem autorização a este recurso'
             ], 500);
         }
     }
