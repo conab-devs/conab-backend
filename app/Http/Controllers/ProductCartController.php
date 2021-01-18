@@ -47,7 +47,7 @@ class ProductCartController extends Controller
         } catch (\Exception $err) {
             DB::rollback();
             return response()->json([
-                'message' => 'Você não tem autorização a este recurso'
+                'message' => 'Algo deu errado, tente novamente em alguns instantes',
             ], 500);
         }
     }
