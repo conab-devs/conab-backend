@@ -30,4 +30,10 @@ class ProductCart extends Model
     {
         return $this->belongsTo('App\Cart', 'cart_id');
     }
+
+    public function product()
+    {
+        return $this->belongsTo('App\Product', 'product_id')
+            ->without('cooperative');
+    }
 }
