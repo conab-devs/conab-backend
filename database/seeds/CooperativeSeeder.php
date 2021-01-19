@@ -19,7 +19,8 @@ class CooperativeSeeder extends Seeder
                      'user_type' => 'ADMIN_COOP'
                  ]);
 
-                 factory(\App\Product::class, 5)->create([
+                 factory(\App\Product::class, 10)->create([
+                     'category_id' => factory(\App\Category::class)->create()->id,
                      'cooperative_id' => $cooperative->id
                  ]);
             });
