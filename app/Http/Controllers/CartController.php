@@ -17,7 +17,7 @@ class CartController extends Controller
     {
         $user = auth()->user();
 
-        $cart = Cart::with('product_carts')->where([
+        $cart = Cart::with('product_carts.product')->where([
             'user_id' => $user->id,
             'id' => $id
         ])->firstOrFail();
