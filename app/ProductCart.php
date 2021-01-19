@@ -28,6 +28,6 @@ class ProductCart extends Model
 
     public function cart()
     {
-        return $this->belongsTo(Cart::class);
+        return $this->belongsTo('App\Cart', 'cart_id');
     }
 }
