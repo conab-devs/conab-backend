@@ -12,11 +12,6 @@ use Illuminate\Support\Facades\Gate;
 
 class ProductCartController extends Controller
 {
-    public function index()
-    {
-        //
-    }
-
     public function store(StoreRequest $request)
     {
         $id = auth()->user()->id;
@@ -51,12 +46,6 @@ class ProductCartController extends Controller
             ], 500);
         }
     }
-
-    public function show($id)
-    {
-        //
-    }
-
 
     public function update(UpdateRequest $request, ProductCart $productCart)
     {
