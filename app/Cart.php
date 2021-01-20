@@ -9,13 +9,18 @@ use Illuminate\Database\Eloquent\Model;
  *     schema="Cart",
  *     type="object",
  *     @OA\Property(
+ *        property="id",
+ *        type="integer",
+ *    ),
+ *    @OA\Property(
  *        property="total_price",
- *        type="float",
+ *        type="number",
  *        description="Preço total dos items dentro do carrinho de compras"
  *    ),
  *    @OA\Property(
  *        property="closed_at",
- *        type="date-time"
+ *        type="string",
+ *        format="date-time"
  *    ),
  *    @OA\Property(
  *        property="is_closed",
@@ -24,7 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  *    @OA\Property(
  *        property="user_id",
  *        type="integer",
- *        description="ID do usuário dono do carrinho de compras"
+ *        description="Id do usuário dono do carrinho de compras"
  *    )
  * )
  */

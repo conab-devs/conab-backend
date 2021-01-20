@@ -4,6 +4,46 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @OA\Schema(
+ *     schema="ProductCart",
+ *     type="object",
+ *     @OA\Property(
+ *        property="id",
+ *        type="integer",
+ *    ),
+ *    @OA\Property(
+ *        property="amount",
+ *        type="number",
+ *        description="Quantidade do produto no carrinho"
+ *    ),
+ *     @OA\Property(
+ *        property="price",
+ *        type="number",
+ *        description="Preço do produto no carrinho"
+ *    ),
+ *     @OA\Property(
+ *        property="delivered_at",
+ *        type="string",
+ *        format="date-time"
+ *    ),
+ *    @OA\Property(
+ *        property="unit_of_measure",
+ *        type="string",
+ *        description="Unidade de medida do Produto (kg ou unit)"
+ *    ),
+ *    @OA\Property(
+ *        property="product_id",
+ *        type="integer",
+ *        description="Id do produto"
+ *    ),
+ *    @OA\Property(
+ *        property="cart_id",
+ *        type="integer",
+ *        description="Id do carrinho"
+ *    )
+ * )
+ */
 class ProductCart extends Model
 {
     protected $fillable = [
