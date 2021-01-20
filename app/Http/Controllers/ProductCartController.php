@@ -12,6 +12,29 @@ use Illuminate\Support\Facades\Gate;
 
 class ProductCartController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/product-carts",
+     *     operationId="store",
+     *     summary="Registra um novo produto no carrinho",
+     *     tags={"Carrinhos"},
+     *
+     *     @OA\RequestBody(
+     *         request="Produto Carrinho",
+     *         description="Objeto de produto carrinho",
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/ProductCart")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=201,
+     *         description="Created",
+     *         @OA\JsonContent(ref="#/components/schemas/ProductCart")
+     *     ),
+     *     @OA\Response(response=422, description="Unprocess Entity"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function store(StoreRequest $request)
     {
         $id = auth()->user()->id;
@@ -47,6 +70,46 @@ class ProductCartController extends Controller
         }
     }
 
+    /**
+     * @OA\Patch(
+     *     path="/product-carts/{productCart}",
+     *     operationId="update",
+     *     summary="Atualiza quantidade do produto no carrinho",
+     *     tags={"Carrinhos"},
+     *
+     *     @OA\Parameter(
+     *         name="ProductCart",
+     *         description="Id do produto no carrinho",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         request="Quantidade do produto no carrinho",
+     *         description="Quantidade do produto no carrinho",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="amount",
+     *                     type="number",
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(ref="#/components/schemas/ProductCart")
+     *     ),
+     *     @OA\Response(response=422, description="Unprocessable Entity"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function update(UpdateRequest $request, ProductCart $productCart)
     {
         $productCart->amount = $request->input('amount');
@@ -55,6 +118,27 @@ class ProductCartController extends Controller
         return response()->json($productCart, 200);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/product-carts/{productCart}",
+     *     operationId="destroy",
+     *     summary="Exclui os dados do produto no carrinho",
+     *     tags={"Carrinhos"},
+     *
+     *     @OA\Parameter(
+     *         name="productCart",
+     *         description="Id do produto no carrinho",
+     *         required=true,
+     *         in="path",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *
+     *     @OA\Response(response=204, description="No content"),
+     *     @OA\Response(response=401, description="Unathorized"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
+     */
     public function destroy(ProductCart $productCart)
     {
         if (Gate::denies('manage-product-cart', $productCart)) {
