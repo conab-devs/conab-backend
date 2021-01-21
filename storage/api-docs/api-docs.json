@@ -304,6 +304,91 @@
                 }
             }
         },
+        "/carts": {
+            "get": {
+                "tags": [
+                    "Carrinhos"
+                ],
+                "summary": "Retorna os carrinhos do usuário autenticado",
+                "operationId": "index",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Cart"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/carts/{id}": {
+            "get": {
+                "tags": [
+                    "Carrinhos"
+                ],
+                "summary": "Retorna um carrinho pelo ID",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do Carrinho",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Cart"
+                                        },
+                                        {
+                                            "properties": {
+                                                "product_carts": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/ProductCart"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
         "/categories": {
             "get": {
                 "tags": [
@@ -493,6 +578,579 @@
                     },
                     "401": {
                         "description": "Unathorized"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/conab/admins": {
+            "get": {
+                "tags": [
+                    "Administradores da Conab"
+                ],
+                "summary": "Retorna todos os administradores da Conab",
+                "operationId": "index",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "allOf": [
+                                                    {
+                                                        "$ref": "#/components/schemas/User"
+                                                    },
+                                                    {
+                                                        "properties": {
+                                                            "phones": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "$ref": "#/components/schemas/Phone"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unathorized"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Administradores da Conab"
+                ],
+                "summary": "Atualiza os dados do administrador autenticado",
+                "description": "Retorna os dados do administrador atualizado",
+                "operationId": "update",
+                "requestBody": {
+                    "request": "Administrador",
+                    "description": "Objeto de usuário",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "schema": "UserRequest",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/UserUpdateRequest"
+                                    },
+                                    {
+                                        "properties": {
+                                            "phones": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/components/schemas/Phone"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "UserResponse",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        {
+                                            "properties": {
+                                                "phones": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Phone"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unathorized"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Administradores da Conab"
+                ],
+                "summary": "Registra um novo administrador",
+                "description": "Retorna os dados do administrador registrado",
+                "operationId": "store",
+                "requestBody": {
+                    "request": "Administradores",
+                    "description": "Objeto de usuário",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "schema": "UserRequest",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/UserStoreRequest"
+                                    },
+                                    {
+                                        "properties": {
+                                            "phones": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/components/schemas/Phone"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "UserResponse",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        {
+                                            "properties": {
+                                                "phones": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Phone"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "401": {
+                        "description": "Unathorized"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/conab/admins/{userId}": {
+            "get": {
+                "tags": [
+                    "Administradores da Conab"
+                ],
+                "summary": "Retorna um administrador pelo ID",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "Id do usuário",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "UserResponse",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        {
+                                            "properties": {
+                                                "phones": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Phone"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "401": {
+                        "description": "Unathorized"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/cooperatives/{cooperativeId}/admins": {
+            "get": {
+                "tags": [
+                    "Administradores da Cooperativa"
+                ],
+                "summary": "Retorna uma lista de administradores da cooperativa",
+                "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "cooperativeId",
+                        "in": "path",
+                        "description": "Id da cooperativa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "allOf": [
+                                                    {
+                                                        "$ref": "#/components/schemas/User"
+                                                    },
+                                                    {
+                                                        "properties": {
+                                                            "phones": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "$ref": "#/components/schemas/Phone"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unathorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/cooperatives/{cooperativeId}/admins/{userId}": {
+            "get": {
+                "tags": [
+                    "Administradores da Cooperativa"
+                ],
+                "summary": "Retorna um administrador da cooperativa",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "cooperativeId",
+                        "in": "path",
+                        "description": "Id da cooperativa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "Id do administrador",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "UserResponse",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        {
+                                            "properties": {
+                                                "phones": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Phone"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unathorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/cooperatives/{cooperative}/admins": {
+            "post": {
+                "tags": [
+                    "Administradores da Cooperativa"
+                ],
+                "summary": "Registra um novo administrador",
+                "description": "Retorna os dados do administrador registrado",
+                "operationId": "store",
+                "parameters": [
+                    {
+                        "name": "cooperativeId",
+                        "in": "path",
+                        "description": "Id da cooperativa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "request": "Administrador",
+                    "description": "Objeto de usuário",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "schema": "UserRequest",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/UserStoreRequest"
+                                    },
+                                    {
+                                        "properties": {
+                                            "phones": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/components/schemas/Phone"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "UserResponse",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        {
+                                            "properties": {
+                                                "phones": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Phone"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "401": {
+                        "description": "Unathorized"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/cooperatives/{cooperative}/admins/{userId}": {
+            "put": {
+                "tags": [
+                    "Administradores da Cooperativa"
+                ],
+                "summary": "Atualiza os dados do administrador da cooperativa",
+                "description": "Retorna os dados do administrador atualizado",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "cooperativeId",
+                        "in": "path",
+                        "description": "Id da cooperativa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "Id do administrador",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "request": "Administrador",
+                    "description": "Objeto de usuário",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "schema": "UserRequest",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/UserUpdateRequest"
+                                    },
+                                    {
+                                        "properties": {
+                                            "phones": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/components/schemas/Phone"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "UserResponse",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        {
+                                            "properties": {
+                                                "phones": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Phone"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unathorized"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
                     },
                     "500": {
                         "description": "Server Error"
@@ -842,6 +1500,135 @@
                 }
             }
         },
+        "/product-carts": {
+            "post": {
+                "tags": [
+                    "Carrinhos"
+                ],
+                "summary": "Registra um novo produto no carrinho",
+                "operationId": "store",
+                "requestBody": {
+                    "request": "Produto Carrinho",
+                    "description": "Objeto de produto carrinho",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductCart"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductCart"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocess Entity"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/product-carts/{productCart}": {
+            "delete": {
+                "tags": [
+                    "Carrinhos"
+                ],
+                "summary": "Exclui os dados do produto no carrinho",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "productCart",
+                        "in": "path",
+                        "description": "Id do produto no carrinho",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "401": {
+                        "description": "Unathorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Carrinhos"
+                ],
+                "summary": "Atualiza quantidade do produto no carrinho",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "ProductCart",
+                        "in": "path",
+                        "description": "Id do produto no carrinho",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "request": "Quantidade do produto no carrinho",
+                    "description": "Quantidade do produto no carrinho",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "amount": {
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductCart"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
         "/products": {
             "get": {
                 "tags": [
@@ -1088,6 +1875,57 @@
                 }
             }
         },
+        "/uploads": {
+            "post": {
+                "tags": [
+                    "Upload"
+                ],
+                "summary": "Faz o upload do avatar do usuário",
+                "description": "Retorna a url do arquivo",
+                "operationId": "store",
+                "requestBody": {
+                    "request": "Upload",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "avatar": {
+                                        "type": "string",
+                                        "format": "base64"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "UploadResponse",
+                                    "properties": {
+                                        "url": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "tags": [
@@ -1144,7 +1982,7 @@
                                 "schema": "UserRequest",
                                 "allOf": [
                                     {
-                                        "$ref": "#/components/schemas/UserRequest"
+                                        "$ref": "#/components/schemas/UserUpdateRequest"
                                     },
                                     {
                                         "properties": {
@@ -1217,7 +2055,7 @@
                                 "schema": "UserRequest",
                                 "allOf": [
                                     {
-                                        "$ref": "#/components/schemas/UserRequest"
+                                        "$ref": "#/components/schemas/UserStoreRequest"
                                     },
                                     {
                                         "properties": {
@@ -1331,18 +2169,22 @@
             },
             "Cart": {
                 "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
                     "total_price": {
                         "description": "Preço total dos items dentro do carrinho de compras",
-                        "type": "float"
+                        "type": "number"
                     },
                     "closed_at": {
-                        "type": "date-time"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "is_closed": {
                         "type": "boolean"
                     },
                     "user_id": {
-                        "description": "ID do usuário dono do carrinho de compras",
+                        "description": "Id do usuário dono do carrinho de compras",
                         "type": "integer"
                     }
                 },
@@ -1354,6 +2196,19 @@
                         "description": "Id da categoria",
                         "type": "integer"
                     },
+                    "name": {
+                        "description": "Nome da categoria",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Descrição da categoria",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryRequest": {
+                "properties": {
                     "name": {
                         "description": "Nome da categoria",
                         "type": "string"
@@ -1378,6 +2233,36 @@
                     "address_id": {
                         "description": "Id do endereço da cooperativa",
                         "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "CooperativeRequest": {
+                "properties": {
+                    "name": {
+                        "description": "Nome da cooperativa",
+                        "type": "string"
+                    },
+                    "dap_path": {
+                        "description": "Arquivo do DAP no format PDF",
+                        "type": "string",
+                        "format": "base64"
+                    },
+                    "city": {
+                        "description": "Cidade da cooperativa",
+                        "type": "string"
+                    },
+                    "street": {
+                        "description": "Rua da cooperativa",
+                        "type": "string"
+                    },
+                    "neighborhood": {
+                        "description": "Bairro da cooperativa",
+                        "type": "string"
+                    },
+                    "number": {
+                        "description": "Número do endereço da cooperativa",
+                        "type": "string"
                     }
                 },
                 "type": "object"
@@ -1429,70 +2314,6 @@
                 },
                 "type": "object"
             },
-            "CategoryRequest": {
-                "properties": {
-                    "name": {
-                        "description": "Nome da categoria",
-                        "type": "string"
-                    },
-                    "description": {
-                        "description": "Descrição da categoria",
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "CooperativeRequest": {
-                "properties": {
-                    "name": {
-                        "description": "Nome da cooperativa",
-                        "type": "string"
-                    },
-                    "dap_path": {
-                        "description": "Arquivo do DAP no format PDF",
-                        "type": "string",
-                        "format": "base64"
-                    },
-                    "city": {
-                        "description": "Cidade da cooperativa",
-                        "type": "string"
-                    },
-                    "street": {
-                        "description": "Rua da cooperativa",
-                        "type": "string"
-                    },
-                    "neighborhood": {
-                        "description": "Bairro da cooperativa",
-                        "type": "string"
-                    },
-                    "number": {
-                        "description": "Número do endereço da cooperativa",
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "UserRequest": {
-                "properties": {
-                    "name": {
-                        "description": "Nome do usuário",
-                        "type": "string"
-                    },
-                    "email": {
-                        "description": "Email do usuário",
-                        "type": "string"
-                    },
-                    "cpf": {
-                        "description": "CPF do usuário no formato XXX.XXX.XXX-XX",
-                        "type": "string"
-                    },
-                    "profile_picture": {
-                        "description": "URL da foto de perfil do usuário",
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
             "Phone": {
                 "properties": {
                     "number": {
@@ -1510,8 +2331,7 @@
                     },
                     "price": {
                         "description": "Preço do produto",
-                        "type": "number",
-                        "format": "float"
+                        "type": "number"
                     },
                     "photo_path": {
                         "description": "Foto do produto",
@@ -1519,8 +2339,11 @@
                     },
                     "estimated_delivery_time": {
                         "description": "Tempo estimado de entrega do produto em dias",
-                        "type": "string",
-                        "format": "date-time"
+                        "type": "integer"
+                    },
+                    "unit_of_measure": {
+                        "description": "Unidade de medida do Produto (kg ou unit)",
+                        "type": "string"
                     },
                     "category_id": {
                         "description": "Id da categoria que o produto pertence",
@@ -1528,6 +2351,38 @@
                     },
                     "cooperative_id": {
                         "description": "Id da cooperativa que o produto pertence",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "ProductCart": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "amount": {
+                        "description": "Quantidade do produto no carrinho",
+                        "type": "number"
+                    },
+                    "price": {
+                        "description": "Preço do produto no carrinho",
+                        "type": "number"
+                    },
+                    "delivered_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "unit_of_measure": {
+                        "description": "Unidade de medida do Produto (kg ou unit)",
+                        "type": "string"
+                    },
+                    "product_id": {
+                        "description": "Id do produto",
+                        "type": "integer"
+                    },
+                    "cart_id": {
+                        "description": "Id do carrinho",
                         "type": "integer"
                     }
                 },
@@ -1549,6 +2404,60 @@
                     },
                     "user_type": {
                         "description": "Tipo do usuário (ADMIN_COOP, ADMIN_CONAB ou CUSTOMER)",
+                        "type": "string"
+                    },
+                    "profile_picture": {
+                        "description": "URL da foto de perfil do usuário",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "UserStoreRequest": {
+                "properties": {
+                    "name": {
+                        "description": "Nome do usuário",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Email do usuário",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "Senha do usuário",
+                        "type": "string"
+                    },
+                    "cpf": {
+                        "description": "CPF do usuário no formato XXX.XXX.XXX-XX",
+                        "type": "string"
+                    },
+                    "profile_picture": {
+                        "description": "URL da foto de perfil do usuário",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "UserUpdateRequest": {
+                "properties": {
+                    "name": {
+                        "description": "Nome do usuário",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Email do usuário",
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "Senha do usuário",
+                        "type": "string"
+                    },
+                    "new_password": {
+                        "description": "Nova senha do usuário",
+                        "type": "string"
+                    },
+                    "cpf": {
+                        "description": "CPF do usuário no formato XXX.XXX.XXX-XX",
                         "type": "string"
                     },
                     "profile_picture": {
