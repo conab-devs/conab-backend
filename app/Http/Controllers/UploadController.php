@@ -2,18 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Components\Upload\UploadHandler;
+use App\User;
 
 class UploadController extends Controller
 {
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/uploads",
+     *     operationId="store",
+     *     summary="Faz o upload do avatar do usuário",
+     *     description="Retorna a url do arquivo",
+     *     tags={"Upload"},
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     *     @OA\RequestBody(
+     *         request="Upload",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="avatar",
+     *                     type="string",
+     *                     format="base64"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 schema="UploadResponse",
+     *                 @OA\Property(
+     *                     property="url",
+     *                     type="string"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Bad Request"),
+     *     @OA\Response(response=500, description="Server Error")
+     * )
      */
     public function store(Request $request, UploadHandler $uploader)
     {
@@ -27,6 +62,8 @@ class UploadController extends Controller
             return response()->json(['url' => $user->profile_picture]);
         }
 
-        return response()->json(['error' => 'Avatar is required and should be a valid file'], 400);
+        return response()->json([
+            'message' => 'Avatar é obrigatório e deve ser um image válida'
+        ], 400);
     }
 }

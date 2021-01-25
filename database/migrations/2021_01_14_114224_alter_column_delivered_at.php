@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterCodeColumnType extends Migration
+class AlterColumnDeliveredAt extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class AlterCodeColumnType extends Migration
      */
     public function up()
     {
-        Schema::table('password_resets', function (Blueprint $table) {
-            $table->integer('code')->change();
+        Schema::table('product_carts', function (Blueprint $table) {
+            $table->dateTime('delivered_at')->nullable()->change();
         });
-
     }
 
     /**
@@ -26,9 +25,8 @@ class AlterCodeColumnType extends Migration
      */
     public function down()
     {
-        Schema::table('password_resets', function (Blueprint $table) {
-            $table->string('code')->change();
+        Schema::table('product_carts', function (Blueprint $table) {
+            $table->dateTime('delivered_at')->change();
         });
-
     }
 }

@@ -58,13 +58,13 @@ class AuthTest extends TestCase
         $tokenGenerator->shouldReceive('generate')
             ->once()
             ->with([
-                'email' => 'valid@valid.com', 
+                'email' => 'valid@valid.com',
                 'password' => 'invalid_password'
             ])
             ->andReturn('');
 
         (new AuthHandler($tokenGenerator))->authenticate([
-            'email' => 'valid@valid.com', 
+            'email' => 'valid@valid.com',
             'password' => 'invalid_password'
         ]);
     }
@@ -75,7 +75,7 @@ class AuthTest extends TestCase
         $tokenGenerator = Mockery::mock(JwtGenerator::class);
         $tokenGenerator->shouldReceive('generate')
             ->with([
-                'email' => 'valid@valid.com', 
+                'email' => 'valid@valid.com',
                 'password' => 'valid_password'
             ])
             ->once()
@@ -84,7 +84,7 @@ class AuthTest extends TestCase
         $sut = new AuthHandler($tokenGenerator);
 
         $response = $sut->authenticate([
-            'email' => 'valid@valid.com', 
+            'email' => 'valid@valid.com',
             'password' => 'valid_password'
         ]);
 

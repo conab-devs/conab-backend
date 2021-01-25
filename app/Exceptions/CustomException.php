@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
-class CustomException extends \Exception {
+class CustomException extends \Exception
+{
     public $status;
 }

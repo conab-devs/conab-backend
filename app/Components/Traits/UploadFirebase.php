@@ -3,14 +3,13 @@
 
 namespace App\Components\Traits;
 
-
-use App\Components\FirebaseStorageAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use App\Components\FirebaseStorageAdapter;
 
 trait UploadFirebase
 {
-    function uploadFileOnFirebase(UploadedFile $file): ?string
+    public function uploadFileOnFirebase(UploadedFile $file): ?string
     {
         $localFolder = public_path('storage/uploads') . '/';
         $filename = Str::random(80) . "." . $file->getClientOriginalExtension();

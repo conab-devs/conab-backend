@@ -4,6 +4,17 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @OA\Schema(
+ *     schema="Phone",
+ *     type="object",
+ *     @OA\Property(
+ *        property="number",
+ *        type="string",
+ *        description="Número do telefone no formato (99) 99999-9999"
+ *    )
+ * )
+ */
 class Phone extends Model
 {
     protected $fillable = ['number'];
@@ -14,8 +25,9 @@ class Phone extends Model
     {
         return $this->belongsToMany('App\Cooperative', 'cooperative_phones');
     }
-  
-    public function users() {
+
+    public function users()
+    {
         return $this->belongsToMany('App\User', 'user_phones');
     }
 }
