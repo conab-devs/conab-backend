@@ -133,6 +133,8 @@ class ProductController extends Controller
 
         $product->save();
 
+        $product->load('cooperative');
+
         return response()->json($product, 201);
     }
 
