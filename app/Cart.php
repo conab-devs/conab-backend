@@ -13,38 +13,28 @@ use Illuminate\Database\Eloquent\Model;
  *        type="integer",
  *    ),
  *    @OA\Property(
- *        property="total_price",
- *        type="number",
- *        description="Preço total dos items dentro do carrinho de compras"
- *    ),
- *    @OA\Property(
- *        property="closed_at",
+ *        property="status",
  *        type="string",
- *        format="date-time"
+ *        description="Status do carrinho (Aberto, Aguardando Pagamento ou Aguardando Pagamento)"
  *    ),
  *    @OA\Property(
- *        property="is_closed",
- *        type="boolean"
- *    ),
- *    @OA\Property(
- *        property="user_id",
+ *        property="order_id",
  *        type="integer",
- *        description="Id do usuário dono do carrinho de compras"
+ *        description="Id do pedido"
  *    )
  * )
  */
 class Cart extends Model
 {
-    protected $table = 'carts';
+    const STATUS_OPEN = 'Aberto';
+    const STATUS_PENDING = 'Aguardando Pagamento';
+    const STATUS_COMPLETED = 'Aguardando Pagamento';
 
-    protected $fillable = [
-        'user_id',
-        'is_closed'
-    ];
+    protected $fillable = ['status'];
 
-    public function user()
+    public function order()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\Carts');
     }
 
     public function product_carts()
