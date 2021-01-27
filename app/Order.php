@@ -44,4 +44,9 @@ class Order extends Model
     {
         return $this->hasMany('App\Cart', 'order_id');
     }
+
+    public function product_carts()
+    {
+        return $this->hasManyThrough('App\ProductCart', 'App\Cart');
+    }
 }
