@@ -55,6 +55,10 @@ class ProductCart extends Model
         'delivered_at'
     ];
 
+    public $order_id;
+
+    protected $guarded = ['order_id'];
+
     protected $appends = ['total_price'];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -77,5 +81,10 @@ class ProductCart extends Model
     {
         return $this->belongsTo('App\Product', 'product_id')
             ->without('cooperative');
+    }
+
+    public function cart()
+    {
+        return $this->belongsTo('App\Cart', 'cart_id');
     }
 }
