@@ -2,29 +2,32 @@
 
 namespace App\Observers;
 
+use App\Cart;
+use App\Order;
 use App\ProductCart;
 
 class ProductCartObserver
 {
-    public function created(ProductCart $productCart)
+    public function creating(ProductCart $productCart)
     {
-        $productCart->cart->increment('total_price', $productCart->price * $productCart->amount);
-    }
+        $order_id = $productCart->order_id;
 
-    public function updated(ProductCart $productCart)
-    {
-        $productCart->cart->increment('total_price', $productCart->price * $productCart->amount);
-    }
+        $product_cart = Order::findOrFail($order_id)->product_carts->first(function ($product_cart, $key) use ($productCart) {
+            return $product_cart->product->cooperative->id == $productCart->product->cooperative->id;
+        });
 
-    public function updating(ProductCart $productCart)
-    {
-        $amount = $productCart->getOriginal('amount');
-        $price = $productCart->getOriginal('price');
-        $productCart->cart->decrement('total_price', $price * $amount);
-    }
+        $cart = new Cart();
 
-    public function deleted(ProductCart $productCart)
-    {
-        $productCart->cart->decrement('total_price', $productCart->price * $productCart->amount);
+
+        if ($product_cart === null) {
+            ($cart->fill([
+                'order_id' => $order_id,
+                'status' => Cart::STATUS_OPEN
+            ]))->saveOrFail();
+        } else {
+            $cart = $product_cart->cart;
+        }
+
+        $productCart->cart_id = $cart->id;
     }
 }
