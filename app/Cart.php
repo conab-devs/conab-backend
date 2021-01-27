@@ -30,7 +30,10 @@ class Cart extends Model
     const STATUS_PENDING = 'Aguardando Pagamento';
     const STATUS_COMPLETED = 'Aguardando Pagamento';
 
-    protected $fillable = ['status'];
+    protected $fillable = [
+        'status',
+        'order_id'
+    ];
 
     public function order()
     {
