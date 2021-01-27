@@ -23,6 +23,7 @@ class UpdateRequest extends FormRequest
             'photo_path' => 'image',
             'estimated_delivery_time' => 'integer',
             'category_id' => 'exists:App\Category,id',
+            'available' => 'boolean'
         ];
     }
 }

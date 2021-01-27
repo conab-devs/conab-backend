@@ -163,6 +163,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $product->load('category');
         return response()->json($product);
     }
 
