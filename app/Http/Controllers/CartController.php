@@ -3,39 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Cart;
+use App\Order;
 
 class CartController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/carts",
-     *     operationId="index",
-     *     summary="Retorna os carrinhos do usuário autenticado",
-     *     tags={"Carrinhos"},
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="OK",
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 @OA\Property(
-     *                     type="array",
-     *                     @OA\Items(ref="#/components/schemas/Cart")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(response=500, description="Server Error")
-     * )
-     */
-    public function index()
-    {
-        $user = auth()->user();
-
-        return response()->json($user->carts);
-    }
-
     /**
      * @OA\Get(
      *     path="/carts/{id}",
@@ -78,10 +49,10 @@ class CartController extends Controller
     {
         $user = auth()->user();
 
-        $cart = Cart::with('product_carts.product')->where([
-            'user_id' => $user->id,
-            'id' => $id
-        ])->firstOrFail();
+        $cart = $user->hasManyThrough(Cart::class, Order::class)
+            ->where('carts.id', $id)
+            ->with('product_carts.product')
+            ->firstOrFail();
 
         return response()->json($cart);
     }
