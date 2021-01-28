@@ -38,7 +38,6 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::patch('/product-carts/{productCart}', 'ProductCartController@update');
     Route::delete('/product-carts/{productCart}', 'ProductCartController@destroy');
 
-    Route::get('/carts', 'CartController@index');
     Route::get('/carts/{id}', 'CartController@show');
 
     Route::get('/orders', 'OrderController@index');
