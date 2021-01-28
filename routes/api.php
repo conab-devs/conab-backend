@@ -41,6 +41,10 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::get('/carts', 'CartController@index');
     Route::get('/carts/{id}', 'CartController@show');
 
+    Route::get('/orders', 'OrderController@index');
+    Route::get('/orders/{id}', 'OrderController@show');
+    Route::delete('/orders/{id}', 'OrderController@destroy');
+
     Route::put('/users', 'UserController@update');
     Route::get('/users', 'UserController@show');
     Route::delete('/users/{user}', 'UserController@destroy');
