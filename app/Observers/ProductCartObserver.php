@@ -12,12 +12,11 @@ class ProductCartObserver
     {
         $order_id = $productCart->order_id;
 
-        $product_cart = Order::findOrFail($order_id)->product_carts->first(function ($product_cart, $key) use ($productCart) {
+        $product_cart = Order::findOrFail($order_id)->product_carts->first(function ($product_cart) use ($productCart) {
             return $product_cart->product->cooperative->id == $productCart->product->cooperative->id;
         });
 
         $cart = new Cart();
-
 
         if ($product_cart === null) {
             ($cart->fill([
@@ -29,5 +28,14 @@ class ProductCartObserver
         }
 
         $productCart->cart_id = $cart->id;
+    }
+
+    public function deleting(ProductCart $productCart)
+    {
+        $cart = $productCart->cart;
+
+        if ($cart->product_carts()->count() === 1) {
+            $cart->delete();
+        }
     }
 }
