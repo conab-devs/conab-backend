@@ -122,7 +122,7 @@ class ProductCartController extends Controller
         $productCart->amount = $request->input('amount');
         $productCart->save();
 
-        return response()->json($productCart, 200);
+        return response()->json('');
     }
 
     /**
@@ -148,7 +148,7 @@ class ProductCartController extends Controller
      */
     public function destroy(ProductCart $productCart)
     {
-        if (Gate::denies('manage-product-cart', $productCart)) {
+        if (Gate::denies('consumer-manage-order', $productCart->cart->order)) {
             return response()->json([
                 'message' => 'Você não tem autorização a este recurso',
             ], 401);
