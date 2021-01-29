@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  *    @OA\Property(
  *        property="status",
  *        type="string",
- *        description="Status do carrinho (Aberto, Aguardando Pagamento ou Aguardando Pagamento)"
+ *        description="Status do carrinho (Aberto, Aguardando Pagamento ou Concluído)"
  *    ),
  *    @OA\Property(
  *        property="order_id",
@@ -28,12 +28,19 @@ class Cart extends Model
 {
     const STATUS_OPEN = 'Aberto';
     const STATUS_PENDING = 'Aguardando Pagamento';
-    const STATUS_COMPLETED = 'Aguardando Pagamento';
+    const STATUS_COMPLETED = 'Concluído';
 
     protected $fillable = [
         'status',
         'order_id'
     ];
+
+    protected $appends = ['total_price'];
+
+    public function getTotalPriceAttribute()
+    {
+        return $this->product_carts->sum('total_price');
+    }
 
     public function order()
     {
