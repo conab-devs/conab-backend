@@ -35,6 +35,13 @@ class Order extends Model
         'is_closed'
     ];
 
+    protected $appends = ['total_price'];
+
+    public function getTotalPriceAttribute()
+    {
+        return $this->carts->sum('total_price');
+    }
+
     public function user()
     {
         return $this->belongsTo('App\User');
