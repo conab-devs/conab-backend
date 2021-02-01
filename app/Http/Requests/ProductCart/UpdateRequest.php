@@ -12,7 +12,7 @@ class UpdateRequest extends FormRequest
 
     public function authorize()
     {
-        return Gate::allows('manage-product-cart', $this->route('productCart'));
+        return Gate::allows('consumer-manage-order', ($this->route('productCart'))->cart->order);
     }
 
     public function rules()

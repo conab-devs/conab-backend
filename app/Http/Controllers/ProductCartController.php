@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Cart;
+use App\Order;
 use App\Http\Requests\ProductCart\StoreRequest;
 use App\Http\Requests\ProductCart\UpdateRequest;
 use App\Product;
@@ -31,6 +31,7 @@ class ProductCartController extends Controller
      *         description="Created",
      *         @OA\JsonContent(ref="#/components/schemas/ProductCart")
      *     ),
+     *     @OA\Response(response=409, description="Conflict"),
      *     @OA\Response(response=422, description="Unprocess Entity"),
      *     @OA\Response(response=500, description="Server Error")
      * )
@@ -39,20 +40,26 @@ class ProductCartController extends Controller
     {
         $id = auth()->user()->id;
 
+        $order = Order::firstOrCreate([
+            'user_id' => $id,
+            'is_closed' => false
+        ]);
+        $product = Product::where('id', $request->product_id)->firstOrFail();
+
+        if($order->product_carts->where('product_id', $product->id)->first() !== null) {
+            return response()->json([
+                'message' => 'Você já adicionou esse produto no carrinho',
+            ], 409);
+        }
+
         try {
             DB::beginTransaction();
 
-            $cart = Cart::firstOrCreate([
-                'user_id' => $id,
-                'is_closed' => false
-            ]);
-
-            $product = Product::firstWhere('id', $request->product_id);
-
             $product_cart = ProductCart::firstOrNew([
-                'cart_id' => $cart->id,
                 'product_id' => $request->product_id
             ]);
+
+            $product_cart->order_id = $order->id;
             $product_cart->fill(array_merge($request->except('cart_id'), [
                 'unit_of_measure' => $product->unit_of_measure,
                 'price' => $product->price,
@@ -115,7 +122,7 @@ class ProductCartController extends Controller
         $productCart->amount = $request->input('amount');
         $productCart->save();
 
-        return response()->json($productCart, 200);
+        return response()->json('');
     }
 
     /**
@@ -141,7 +148,7 @@ class ProductCartController extends Controller
      */
     public function destroy(ProductCart $productCart)
     {
-        if (Gate::denies('manage-product-cart', $productCart)) {
+        if (Gate::denies('consumer-manage-order', $productCart->cart->order)) {
             return response()->json([
                 'message' => 'Você não tem autorização a este recurso',
             ], 401);
