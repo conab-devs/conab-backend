@@ -25,6 +25,16 @@ class Conversation extends Model
 
     public function cart()
     {
-        $this->belongsTo('App\Cart');
+        return $this->belongsTo('App\Cart');
+    }
+
+    public function cooperative()
+    {
+        return $this->cart()->product_carts()[0]->product()->cooperative();
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\Cart')->order()->user();
     }
 }
