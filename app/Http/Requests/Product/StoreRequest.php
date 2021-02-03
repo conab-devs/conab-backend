@@ -29,6 +29,7 @@ class StoreRequest extends FormRequest
                 'string',
                 Rule::in('kg', 'unit'),
             ],
+            'available' => 'boolean'
         ];
     }
 }

@@ -30,6 +30,7 @@ class ProductControllerTest extends TestCase
             'photo_path' => UploadedFile::fake()->image('photo.png'),
             'estimated_delivery_time' => 1,
             'unit_of_measure' => 'kg',
+            'available' => true,
             'category_id' => factory(Category::class)->create()->id
         ];
 
@@ -59,6 +60,7 @@ class ProductControllerTest extends TestCase
 
         $expectedProductStructure = array_keys($product->toArray());
         array_push($expectedProductStructure, 'cooperative');
+        array_push($expectedProductStructure, 'category');
         $response->assertOk()->assertJson($product->toArray());
         $response->assertJsonStructure($expectedProductStructure);
     }

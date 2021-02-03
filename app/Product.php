@@ -56,6 +56,7 @@ class Product extends Model
         'estimated_delivery_time',
         'unit_of_measure',
         'category_id',
+        'available'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

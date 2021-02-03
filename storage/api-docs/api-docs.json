@@ -304,38 +304,6 @@
                 }
             }
         },
-        "/carts": {
-            "get": {
-                "tags": [
-                    "Carrinhos"
-                ],
-                "summary": "Retorna os carrinhos do usuário autenticado",
-                "operationId": "index",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Cart"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Server Error"
-                    }
-                }
-            }
-        },
         "/carts/{id}": {
             "get": {
                 "tags": [
@@ -1500,6 +1468,88 @@
                 }
             }
         },
+        "/order/{id}": {
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Retorna um pedido pelo ID",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do Pedido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Order"
+                                        },
+                                        {
+                                            "properties": {
+                                                "carts": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Cart"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Exclui o pedido",
+                "operationId": "destroy",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id do pedido",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
         "/product-carts": {
             "post": {
                 "tags": [
@@ -1529,6 +1579,9 @@
                                 }
                             }
                         }
+                    },
+                    "409": {
+                        "description": "Conflict"
                     },
                     "422": {
                         "description": "Unprocess Entity"
@@ -2172,19 +2225,12 @@
                     "id": {
                         "type": "integer"
                     },
-                    "total_price": {
-                        "description": "Preço total dos items dentro do carrinho de compras",
-                        "type": "number"
+                    "status": {
+                        "description": "Status do carrinho (Aberto, Aguardando Pagamento ou Concluído)",
+                        "type": "string"
                     },
-                    "closed_at": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "is_closed": {
-                        "type": "boolean"
-                    },
-                    "user_id": {
-                        "description": "Id do usuário dono do carrinho de compras",
+                    "order_id": {
+                        "description": "Id do pedido",
                         "type": "integer"
                     }
                 },
@@ -2309,6 +2355,25 @@
                     },
                     "code": {
                         "description": "Email do usuário",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "Order": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "closed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "is_closed": {
+                        "type": "boolean"
+                    },
+                    "user_id": {
+                        "description": "Id do usuário dono do carrinho de compras",
                         "type": "integer"
                     }
                 },
