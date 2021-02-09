@@ -27,6 +27,7 @@ class ProductCartObserver
             $cart = $product_cart->cart;
         }
 
+        unset($productCart->order_id);
         $productCart->cart_id = $cart->id;
     }
 

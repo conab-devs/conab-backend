@@ -80,9 +80,8 @@ class OrderController extends Controller
      *             )
      *         )
      *     ),
-     *     @OA\Response(response=200, description="Ok"),
      *     @OA\Response(response=404, description="Not Found"),
-     *     @OA\Response(response=500, description="Server Error")
+     *     @OA\Response(response=500, description="Server Error"),
      * )
      */
     public function show($id)

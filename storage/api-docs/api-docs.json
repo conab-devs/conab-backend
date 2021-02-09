@@ -1468,6 +1468,45 @@
                 }
             }
         },
+        "/order": {
+            "get": {
+                "tags": [
+                    "Pedidos"
+                ],
+                "summary": "Retorna lista de pedido do usuário logado",
+                "operationId": "index",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Order"
+                                        },
+                                        {
+                                            "properties": {
+                                                "carts": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Cart"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
         "/order/{id}": {
             "get": {
                 "tags": [
@@ -1538,6 +1577,9 @@
                     }
                 ],
                 "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
                     "400": {
                         "description": "Bad Request"
                     },
@@ -2355,6 +2397,46 @@
                     },
                     "code": {
                         "description": "Email do usuário",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "Message": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "content": {
+                        "description": "Texto da mensagem",
+                        "type": "number"
+                    },
+                    "source_id": {
+                        "description": "Id do usuário que mandou a mensagem",
+                        "type": "integer"
+                    },
+                    "destination_id": {
+                        "description": "Id do usuário destino da mensagem",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "Offer": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "expired_at": {
+                        "description": "Data de expiração da oferta",
+                        "type": "integer"
+                    },
+                    "discount": {
+                        "description": "Valor de desconto",
+                        "type": "integer"
+                    },
+                    "cart_id": {
+                        "description": "Id do carrinho",
                         "type": "integer"
                     }
                 },
