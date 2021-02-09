@@ -19,7 +19,7 @@ class AlterCartStatusColumn extends Migration
         });
 
         Schema::table('carts', function (Blueprint $table) {
-            $table->enum('status', ['Aberto', 'Aguardando Pagamento', 'Concluído']);
+            $table->enum('status', ['Aberto', 'Aguardando Pagamento', 'Concluído'])->default('Aberto');
         });
     }
 
