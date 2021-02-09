@@ -51,9 +51,9 @@ class CreateOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orders');
         Schema::dropIfExists('product_carts');
         Schema::dropIfExists('carts');
+        Schema::dropIfExists('orders');
 
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
