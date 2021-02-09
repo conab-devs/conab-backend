@@ -17,8 +17,8 @@ class CreateMessagesTable extends Migration
             $table->id();
             $table->text('content');
             $table->unsignedBigInteger('source_id');
-            $table->unsignedBigInteger('destination_id');
-            $table->foreignId('cooperative_id')->constrained()->onDelete('CASCADE');
+            $table->unsignedBigInteger('destination_id')->nullable();
+            $table->foreignId('cooperative_id')->nullable()->constrained()->onDelete('CASCADE');
             $table->timestamps();
 
             $table->foreign('source_id')->references('id')->on('users')->onDelete('CASCADE');
