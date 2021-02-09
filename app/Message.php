@@ -21,11 +21,16 @@ use Illuminate\Database\Eloquent\Model;
  *        property="source_id",
  *        type="integer",
  *        description="Id do usuário que mandou a mensagem"
- *    )
+ *    ),
  *    @OA\Property(
  *        property="destination_id",
  *        type="integer",
  *        description="Id do usuário destino da mensagem"
+ *    ),
+ *    @OA\Property(
+ *        property="cooperative_id",
+ *        type="integer",
+ *        description="Id da cooperativa"
  *    )
  * )
  */
@@ -34,8 +39,14 @@ class Message extends Model
     protected $fillable = [
         'content',
         'source_id',
-        'destination_id'
+        'destination_id',
+        'cooperative_id'
     ];
+
+    public function cooperative()
+    {
+        $this->belongsTo('App\Cooperative', 'cooperative_id');
+    }
 
     public function source()
     {
