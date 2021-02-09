@@ -91,6 +91,11 @@ class Cooperative extends Model
         return $this->hasMany('App\Product');
     }
 
+    public function message()
+    {
+        return $this->hasMany('App\Message');
+    }
+
     public function getDapUrlAttribute()
     {
         if (App::environment(['local','testing'])) {

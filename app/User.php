@@ -175,6 +175,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany('App\Order', 'user_id');
     }
 
+    public function message()
+    {
+        return $this->hasMany('App\Message');
+    }
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

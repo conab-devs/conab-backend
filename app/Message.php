@@ -38,23 +38,15 @@ class Message extends Model
 {
     protected $fillable = [
         'content',
-        'source_id',
-        'destination_id',
-        'cooperative_id'
     ];
 
     public function cooperative()
     {
-        $this->belongsTo('App\Cooperative', 'cooperative_id');
+        return $this->belongsTo('App\Cooperative');
     }
 
-    public function source()
+    public function user()
     {
-        $this->belongsTo('App\User', 'source_id');
-    }
-
-    public function destination()
-    {
-        $this->belongsTo('App\User', 'destination_id');
+        return $this->belongsTo('App\User');
     }
 }
