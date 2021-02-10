@@ -16,6 +16,15 @@ class MessageController extends Controller
         ] = $request->all();
 
         $user = auth()->user();
+
+        $order = $user->orders()->firstWhere('closed_at', null);
+        
+        if (! filled($order)) {
+            return response()->json([
+                'message' => 'Não há pedidos abertos',
+            ], 400);
+        }
+
         $cooperative = Cooperative::find($id);
             
         $message = new Message();
