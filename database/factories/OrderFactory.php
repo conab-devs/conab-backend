@@ -8,7 +8,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Order::class, function (Faker $faker) {
     return [
-        'created_at' => null,
+        'closed_at' => null,
         'user_id' => factory(User::class),
     ];
 });
