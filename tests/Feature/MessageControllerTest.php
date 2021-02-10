@@ -8,6 +8,8 @@ use Tests\TestCase;
 use App\User;
 use App\Order;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Event;
+use App\Events\Chat\SendMessage;
 
 /** @author Messages */
 class MessageControllerTest extends TestCase
@@ -16,18 +18,22 @@ class MessageControllerTest extends TestCase
     
     //  TODO
     //  - O cliente deve poder criar mensagem.
-    //  * Deve checar se o pedido está aberto.
+    //  - Deve checar se o pedido está aberto.
     //  * Deve fazer Dispatch da mensagem.
-    // /**
-    //  * Create message between client and cooperative.
-    //  * 
-    //  * @test
-    //  */
+    /**
+     * Create message between client and cooperative.
+     * 
+     * @test
+     */
     public function create_message()
-    {
+    {        
         $client = factory(User::class)->create([
             'user_type' => 'customer',
             'cooperative_id' => null,
+        ]);
+
+        factory(Order::class)->create([
+            'user_id' => $client->id,
         ]);
 
         $cooperative = (factory(User::class)->create())->cooperative()->first();
@@ -64,5 +70,36 @@ class MessageControllerTest extends TestCase
         ]);
     
         $response->assertStatus(400);
+    }
+
+    /** 
+     * Dispatch the message with the proper data and permissions
+     * 
+     * @test
+     */
+    public function dispatch_message()
+    {
+        Event::fake();
+
+        $client = factory(User::class)->create([
+            'user_type' => 'customer',
+            'cooperative_id' => null,
+        ]);
+
+        factory(Order::class)->create([
+            'user_id' => $client->id,
+        ]);
+
+        $cooperative = (factory(User::class)->create())->cooperative()->first();
+
+        $this->actingAs($client)->post('/api/messages', [
+            'content' => 'Olá, bom dia!',
+            'cooperative_id' => $cooperative->id
+        ]);
+
+        Event::assertDispatched(function (SendMessage $event) use ($cooperative, $client) {
+            return $event->message->cooperative_id === $cooperative->id
+                && $event->message->user_id === $client->id;
+        });
     }
 }
