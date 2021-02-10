@@ -9,17 +9,28 @@ use App\Events\Chat\SendMessage;
 
 class MessageController extends Controller
 {
+    public function index()
+    {
+        $conversations = auth()->user()
+            ->messages()
+            ->groupBy('cooperative_id')
+            ->with('cooperative')
+            ->get();
+
+        return response()->json($conversations->toArray());
+    }
+
     public function store(Request $request)
     {
         [
-            'cooperative_id' => $id, 
+            'cooperative_id' => $id,
             'content' => $content
         ] = $request->all();
 
         $user = auth()->user();
 
         $order = $user->orders()->firstWhere('closed_at', null);
-        
+
         if (! filled($order)) {
             return response()->json([
                 'message' => 'Não há pedidos abertos',
@@ -27,7 +38,7 @@ class MessageController extends Controller
         }
 
         $cooperative = Cooperative::find($id);
-            
+
         $message = new Message();
         $message->content = $content;
         $message->cooperative()->associate($cooperative);
