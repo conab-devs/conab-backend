@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
+use App\Message;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,13 @@ Broadcast::channel('App.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('user.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+Broadcast::channel('message.{id}', function ($user, $id) {
+    $message = Message::find($id);
+    $cooperativeUser = $message
+        ->cooperative()
+        ->first()
+        ->users()
+        ->where('id', $user->id)
+        ->first();
+    return (int) $user->id === (int) $message->user_id || filled($cooperativeUser);
 });

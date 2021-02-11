@@ -55,9 +55,9 @@ class ProductCart extends Model
         'delivered_at'
     ];
 
-    public $order_id;
+    // public $order_id;
 
-    protected $guarded = ['order_id'];
+    // protected $guarded = ['order_id'];
 
     protected $appends = ['total_price'];
 
@@ -70,6 +70,16 @@ class ProductCart extends Model
         }
 
         $this->attributes['amount'] = $value;
+    }
+
+    public function setOrderIdAttribute($value)
+    {
+        $this->attributes['order_id'] = $value;
+    }
+
+    public function getOrderIdAttribute($value)
+    {
+        return $this->attributes['order_id'];
     }
 
     public function getTotalPriceAttribute()

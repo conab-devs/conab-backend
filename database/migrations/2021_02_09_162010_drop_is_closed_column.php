@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOffersTable extends Migration
+class DropIsClosedColumn extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateOffersTable extends Migration
      */
     public function up()
     {
-        Schema::create('offers', function (Blueprint $table) {
-            $table->id();
-            $table->dateTime('expired_at');
-            $table->decimal('discount', 8, 2);
-            $table->foreignId('cart_id');
-            $table->timestamps();
+        Schema::table('orders', function (Blueprint $table) {
+            $table->dropColumn('is_closed');
         });
     }
 
@@ -29,6 +25,8 @@ class CreateOffersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('offers');
+        Schema::table('orders', function (Blueprint $table) {
+            $table->boolean('is_closed')->default(false);
+        });
     }
 }

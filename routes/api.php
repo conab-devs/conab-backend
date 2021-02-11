@@ -55,6 +55,9 @@ Route::group(['middleware' => ['auth:api', 'bindings']], function () {
     Route::post('/addresses', 'AddressController@store');
     Route::put('/addresses', 'AddressController@update');
     Route::get('/addresses', 'AddressController@index');
+
+    Route::get('/messages', 'MessageController@index');
+    Route::post('/messages', 'MessageController@store');
 });
 
 Route::post('/users', 'UserController@store');
