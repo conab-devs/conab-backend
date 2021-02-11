@@ -38,6 +38,8 @@ class Message extends Model
 {
     protected $fillable = [
         'content',
+        'user_id',
+        'cooperative_id'
     ];
 
     public function cooperative()
