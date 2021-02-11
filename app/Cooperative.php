@@ -91,7 +91,7 @@ class Cooperative extends Model
         return $this->hasMany('App\Product');
     }
 
-    public function message()
+    public function messages()
     {
         return $this->hasMany('App\Message');
     }
