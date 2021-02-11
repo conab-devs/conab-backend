@@ -11,16 +11,15 @@ class StoreRequest extends FormRequest
 
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     public function rules()
     {
         return [
             'content' => 'required|string',
-            'source_id' => 'required|integer|exists:users,id',
-            'destination_id' => 'nullable|integer|exists:users,id',
-            'cooperative_id' => 'nullable|integer|exists:cooperatives,id'
+            'user_id' => 'required|integer|exists:users,id',
+            'cooperative_id' => 'nullable|integer|exists:cooperatives,id',
         ];
     }
 }
