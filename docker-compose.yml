@@ -2,6 +2,8 @@ version: "3.7"
 services:
   app:
     build:
+      args:
+        user: conark
       context: ./
       dockerfile: Dockerfile
     container_name: conarket-api
